@@ -1,0 +1,84 @@
+version: '3.8'
+
+x-airflow-common: &airflow-common
+  image: apache/airflow:2.5.1
+  restart: always
+  env_file: .env
+  environment:
+    AIRFLOW__CORE__EXECUTOR: ${AIRFLOW_EXECUTOR}
+    AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:${POSTGRES_PORT}/${POSTGRES_DB}
+    AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW_FERNET_KEY}
+    AIRFLOW__WEBSERVER__SECRET_KEY: ${AIRFLOW_SECRET_KEY}
+    AIRFLOW_CONN_POSTGRES_DEFAULT: ${AIRFLOW_CONN_POSTGRES_DEFAULT}
+    AIRFLOW_CONN_GREENPLUM_DEFAULT: ${AIRFLOW_CONN_GREENPLUM_DEFAULT}
+  volumes:
+    - ./dags:/opt/airflow/dags
+    - ./logs:/opt/airflow/logs
+
+services:
+  postgres:
+    image: postgres:13
+    env_file: .env
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  greenplum:
+    image: greenplum/greenplum:6
+    env_file: .env
+    environment:
+      PGPORT: ${GREENPLUM_PORT}
+      PGUSER: ${GREENPLUM_USER}
+      PGPASSWORD: ${GREENPLUM_PASSWORD}
+    ports:
+      - "${GREENPLUM_PORT}:5433"
+    volumes:
+      - greenplum_data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${GREENPLUM_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  airflow-webserver:
+    <<: *airflow-common
+    ports:
+      - "8080:8080"
+    command: >
+      bash -c "
+      airflow db init &&
+      (airflow users create \
+        --username ${AIRFLOW_ADMIN_USERNAME} \
+        --password ${AIRFLOW_ADMIN_PASSWORD} \
+        --firstname ${AIRFLOW_ADMIN_FIRSTNAME} \
+        --lastname ${AIRFLOW_ADMIN_LASTNAME} \
+        --role Admin \
+        --email ${AIRFLOW_ADMIN_EMAIL} || true) &&
+      airflow webserver
+      "
+    healthcheck:
+      test: ["CMD-SHELL", "[ -f /opt/airflow/airflow-webserver.pid ]"]
+      interval: 30s
+      timeout: 30s
+      retries: 3
+
+  airflow-scheduler:
+    <<: *airflow-common
+    command: scheduler
+    depends_on:
+      airflow-webserver:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
+  greenplum_data:
