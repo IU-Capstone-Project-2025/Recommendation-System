@@ -1,21 +1,38 @@
-version: '3.8'
-
 x-airflow-common: &airflow-common
   image: apache/airflow:2.5.1
   restart: always
   env_file: .env
   environment:
     AIRFLOW__CORE__EXECUTOR: ${AIRFLOW_EXECUTOR}
-    AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:${POSTGRES_PORT}/${POSTGRES_DB}
+    AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${AIRFLOW_DB_USER}:${AIRFLOW_DB_PASSWORD}@airflow-db:5432/${AIRFLOW_DB_NAME}
     AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW_FERNET_KEY}
     AIRFLOW__WEBSERVER__SECRET_KEY: ${AIRFLOW_SECRET_KEY}
     AIRFLOW_CONN_POSTGRES_DEFAULT: ${AIRFLOW_CONN_POSTGRES_DEFAULT}
     AIRFLOW_CONN_GREENPLUM_DEFAULT: ${AIRFLOW_CONN_GREENPLUM_DEFAULT}
   volumes:
-    - ./dags:/opt/airflow/dags
-    - ./logs:/opt/airflow/logs
+    - ./airflow/dags:/opt/airflow/dags
+    - ./airflow/logs:/opt/airflow/logs
 
 services:
+  # Airflow's dedicated database
+  airflow-db:
+    image: postgres:13
+    env_file: .env
+    environment:
+      POSTGRES_USER: ${AIRFLOW_DB_USER}
+      POSTGRES_PASSWORD: ${AIRFLOW_DB_PASSWORD}
+      POSTGRES_DB: ${AIRFLOW_DB_NAME}
+    ports:
+      - "${AIRFLOW_DB_PORT}:5432"
+    volumes:
+      - airflow_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${AIRFLOW_DB_USER} -d ${AIRFLOW_DB_NAME}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # Backend database
   postgres:
     image: postgres:13
     env_file: .env
@@ -27,58 +44,64 @@ services:
       - "${POSTGRES_PORT}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 5s
       timeout: 5s
-      retries: 5
+      retries: 10
 
   greenplum:
-    image: greenplum/greenplum:6
+    image: datagrip/greenplum:6.8
     env_file: .env
     environment:
-      PGPORT: ${GREENPLUM_PORT}
+      PGPORT: 5432
       PGUSER: ${GREENPLUM_USER}
       PGPASSWORD: ${GREENPLUM_PASSWORD}
     ports:
-      - "${GREENPLUM_PORT}:5433"
+      - "${GREENPLUM_PORT}:5432"
     volumes:
       - greenplum_data:/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${GREENPLUM_USER}"]
+      test: ["CMD-SHELL", "pg_isready -U ${GREENPLUM_USER} -p 5432"]
       interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 10
 
   airflow-webserver:
     <<: *airflow-common
+    depends_on:
+      airflow-db:
+        condition: service_healthy
     ports:
       - "8080:8080"
     command: >
       bash -c "
+      while ! pg_isready -h airflow-db -p 5432 -U ${AIRFLOW_DB_USER}; do sleep 1; done &&
       airflow db init &&
-      (airflow users create \
-        --username ${AIRFLOW_ADMIN_USERNAME} \
-        --password ${AIRFLOW_ADMIN_PASSWORD} \
-        --firstname ${AIRFLOW_ADMIN_FIRSTNAME} \
-        --lastname ${AIRFLOW_ADMIN_LASTNAME} \
-        --role Admin \
-        --email ${AIRFLOW_ADMIN_EMAIL} || true) &&
+      (airflow users create -u ${AIRFLOW_ADMIN_USERNAME} -p ${AIRFLOW_ADMIN_PASSWORD} -f ${AIRFLOW_ADMIN_FIRSTNAME} -l ${AIRFLOW_ADMIN_LASTNAME} -r Admin -e ${AIRFLOW_ADMIN_EMAIL}) &&
       airflow webserver
       "
     healthcheck:
       test: ["CMD-SHELL", "[ -f /opt/airflow/airflow-webserver.pid ]"]
       interval: 30s
       timeout: 30s
-      retries: 3
+      retries: 5
 
   airflow-scheduler:
     <<: *airflow-common
-    command: scheduler
     depends_on:
+      airflow-db:
+        condition: service_healthy
       airflow-webserver:
         condition: service_healthy
+    command: >
+      bash -c "
+      while ! pg_isready -h airflow-db -p 5432 -U ${AIRFLOW_DB_USER}; do sleep 1; done &&
+      airflow scheduler
+      "
 
 volumes:
+  airflow_db_data:
   postgres_data:
   greenplum_data:
