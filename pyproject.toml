@@ -1,0 +1,19 @@
+[project]
+name = "recommendation-system-project"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Abraham14711",email = "pet_zed@rambler.ru"}
+]
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "uvicorn (>=0.34.3,<0.35.0)",
+    "fastapi (>=0.115.12,<0.116.0)",
+    "jinja2 (>=3.1.6,<4.0.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
