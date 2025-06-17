@@ -16,7 +16,6 @@ app.include_router(router, tags=["Main"])
 
 #mounting static data
 
-app.mount("/html", StaticFiles(directory="src/frontend/html"), name="html")
 app.mount("/css", StaticFiles(directory="src/frontend/css"), name="css")
 app.mount("/js", StaticFiles(directory="src/frontend/js"), name="js")
 app.mount("/img", StaticFiles(directory="src/frontend/img"), name="img")
