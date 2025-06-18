@@ -9,6 +9,9 @@ document.addEventListener("DOMContentLoaded", () => {
             <h3 class="book-title">${exampleBook.title}</h3>
             <p class="book-author">${exampleBook.author}</p>
         `;
+        card.addEventListener("click", () => {
+            window.location = "/book";
+        })
         grid.appendChild(card);
     }
 });
