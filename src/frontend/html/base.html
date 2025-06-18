@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recomendation System</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href='/css/style.css' rel='stylesheet'>
+</head>
+<body>
+    <img class="image-gradient" src="gradient.png" alt="gradient">
+    <div class="layer-blur"></div>
+    <div class="container">
+        <header>
+            <h1 class="logo"><a href="/" style="text-decoration: none; color: inherit;">Recomendation System</a></h1>
+
+
+            <div class="user-box">
+                <div class="avatar-circle"></div>
+                <span class="username"><a href="/personal" style="text-decoration: none; color: inherit;">Username</a></span>
+            </div>
+        </header>
+    </div>
+
+    {% block content %}{% endblock %}
+
+    <script src="/js/books.js"></script>
+    <script src="/js/main.js"></script>
+
+</body>
+</html>
