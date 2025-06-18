@@ -401,5 +401,7 @@ input[type="radio"]:checked::before {
     background-color: rgba(0, 0, 0, 0.2);
 
 }
-
-
+input.tag {
+    color: white;
+    border: none;
+}

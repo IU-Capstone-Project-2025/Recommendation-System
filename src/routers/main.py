@@ -1,13 +1,12 @@
 import fastapi
-from fastapi import APIRouter, Request
-from fastapi.responses import JSONResponse
+from fastapi import APIRouter, Form, Request
+from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
 # from fastapi.templates import Jinja2Templates
 router = APIRouter()
 
-# templates = Jinja2Templates(directory = "src/frontend/html")
 templates = Jinja2Templates(directory="src/frontend/html")
 
 
@@ -30,3 +29,16 @@ async def personal(request: Request):
 async def account(request: Request):
     return templates.TemplateResponse("book_info.html", {"request": request})
 
+
+@router.get("/signin", response_class=HTMLResponse)
+async def signin_get(request: Request):
+    return templates.TemplateResponse("signin.html", {"request": request})
+
+
+@router.post("/signin", response_class=RedirectResponse)
+async def signin_post(
+    request: Request, username: str = Form(...), password: str = Form(...)
+):
+    response = RedirectResponse("/personal", status_code=303)
+    response.set_cookie("username", username)
+    return response
