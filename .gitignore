@@ -1,7 +1,3 @@
 .env
 __pycache__
 venv
-
-# Airflow
-dag_processor_manager
-scheduler
