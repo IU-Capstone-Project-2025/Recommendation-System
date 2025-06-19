@@ -11,7 +11,6 @@ x-airflow-common: &airflow-common
     AIRFLOW_CONN_GREENPLUM_DEFAULT: ${AIRFLOW_CONN_GREENPLUM_DEFAULT}
   volumes:
     - ./airflow/dags:/opt/airflow/dags
-    - ./airflow/logs:/opt/airflow/logs
 
 services:
   # Airflow's dedicated database
@@ -55,13 +54,15 @@ services:
     image: datagrip/greenplum:6.8
     env_file: .env
     environment:
-      PGPORT: 5432
-      PGUSER: ${GREENPLUM_USER}
-      PGPASSWORD: ${GREENPLUM_PASSWORD}
+      GP_PORT: 5432
+      GP_USER: ${GREENPLUM_USER}
+      GP_PASSWORD: ${GREENPLUM_PASSWORD}
+      GP_DB: ${GREENPLUM_DB}
     ports:
       - "${GREENPLUM_PORT}:5432"
     volumes:
       - greenplum_data:/data
+      - ./init-greenplum.sql:/opt/init.sql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${GREENPLUM_USER} -p 5432"]
       interval: 10s
@@ -84,9 +85,9 @@ services:
       "
     healthcheck:
       test: ["CMD-SHELL", "[ -f /opt/airflow/airflow-webserver.pid ]"]
-      interval: 30s
-      timeout: 30s
-      retries: 5
+      interval: 10s
+      timeout: 10s
+      retries: 10
 
   airflow-scheduler:
     <<: *airflow-common
