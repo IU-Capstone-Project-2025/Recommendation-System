@@ -5,3 +5,5 @@ venv
 # Airflow
 dag_processor_manager
 scheduler
+
+.DS_Store

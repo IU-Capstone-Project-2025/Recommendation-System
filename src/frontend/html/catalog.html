@@ -1,60 +1,33 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recomendation System</title>
-    <link rel="stylesheet" href="/css/style.css">
-    <link href='/css/style.css' rel='stylesheet'>
-</head>
-<body>
-    <img class="image-gradient" src="gradient.png" alt="gradient">
-    <div class="layer-blur"></div>
-    <div class="container">
-        <header>
-            <h1 class="logo"><a href="/" style="text-decoration: none; color: inherit;">Recomendation System</a></h1>
-
-            <div class="search-box">
-                <input type="search" placeholder="Search..." class="search-input">
-            </div>
-
-            <div class="user-box">
-                <div class="avatar-circle"></div>
-                <span class="username"><a href="/personal" style="text-decoration: none; color: inherit;">Username</a></span>
-            </div>
-        </header>
-    </div>
-        <main class="book-catalog">
-            <h2 class="section-title">Top</h2>
-            <div class="book-grid" id="bookGrid"></div>
-            <div class="side-nav">
-                <div class="catalog-sidebar">
-                    <h3 class="filter-title">Filter by:</h3>
-                    <div class="filter-options">
-                      <div class="radio-option">
-                        <input type="radio" id="filter-top" name="filter" checked>
-                        <label for="filter-top">Top</label>
-                      </div>
-                      <div class="radio-option">
-                        <input type="radio" id="filter-popular" name="filter">
-                        <label for="filter-popular">Popular</label>
-                      </div>
-                      <div class="radio-option">
-                        <input type="radio" id="filter-week" name="filter">
-                        <label for="filter-week">Popular per week</label>
-                      </div>
-                      <div class="radio-option">
-                        <input type="radio" id="filter-recommend" name="filter">
-                        <label for="filter-recommend">Recommendations</label>
-                      </div>
-                    </div>
+{% extends "base.html" %}
+{% block content %}
+<main class="book-catalog">
+    <h2 class="section-title">Top</h2>
+    <div class="book-grid" id="bookGrid"></div>
+    <button id="toggleButton" class="mobile-only"><</button>
+      <div id="hiddenContent" class="desktop-content">
+        <div class="side-nav">
+            <div class="catalog-sidebar">
+                <h3 class="filter-title">Filter by:</h3>
+                <div class="filter-options">
+                  <div class="radio-option">
+                    <input type="radio" id="filter-top" name="filter" checked>
+                    <label for="filter-top">Top</label>
                   </div>
-            </div>
-        </main>
-
-
-        <script src="/js/books.js"></script>
-        <script src="/js/main.js"></script>
-
-</body>
-</html>
+                  <div class="radio-option">
+                    <input type="radio" id="filter-popular" name="filter">
+                    <label for="filter-popular">Popular</label>
+                  </div>
+                  <div class="radio-option">
+                    <input type="radio" id="filter-week" name="filter">
+                    <label for="filter-week">Popular per week</label>
+                  </div>
+                  <div class="radio-option">
+                    <input type="radio" id="filter-recommend" name="filter">
+                    <label for="filter-recommend">Recommendations</label>
+                  </div>
+                </div>
+              </div>
+        </div>
+      </div>
+</main>
+{% endblock %}

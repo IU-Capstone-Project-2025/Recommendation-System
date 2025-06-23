@@ -1,68 +1,44 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recomendation System</title>
-    <link rel="stylesheet" href="/css/style.css">
-    <link href='/css/style.css' rel='stylesheet'>
-</head>
-<body>
-    <img class="image-gradient" src="gradient.png" alt="gradient">
-    <div class="layer-blur"></div>
-    <div class="container">
-        <header>
-            <h1 class="logo"><a href="/" style="text-decoration: none; color: inherit;">Recomendation System</a></h1>
+{% extends "base.html" %}
+{% block content %}
+<main class="book-catalog">
+    <h2 class="section-title">Some Book info + Comments</h2>
+
+    <button id="toggleButton" class="mobile-only"><</button>
+      <div id="hiddenContent" class="desktop-content">
+        <div class="side-nav-prog">
 
 
-            <div class="user-box">
-                <div class="avatar-circle"></div>
-                <span class="username"><a href="/personal" style="text-decoration: none; color: inherit;">Username</a></span>
-            </div>
-        </header>
-    </div>
-        <main class="book-catalog">
-            <h2 class="section-title">Some Book info + Comments</h2>
-
-            <div class="side-nav-prog">
-
-
-                <div class="progress-bars">
-                    <h3 class="progress-title">On user lists:</h3>
-                    <div class="progress-item">
-                        <span class="progress-label">Planned</span>
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width: 90%;"></div>
-                        </div>
-                    </div>
-                    <div class="progress-item">
-                        <span class="progress-label">Already read</span>
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width: 75%;"></div>
-                        </div>
-                    </div>
-                    <div class="progress-item">
-                        <span class="progress-label">In progress</span>
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width: 60%;"></div>
-                        </div>
-                    </div>
-                    <div class="progress-item">
-                        <span class="progress-label">Recommended</span>
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width: 82%;"></div>
-                        </div>
+            <div class="progress-bars">
+                <h3 class="progress-title">On user lists:</h3>
+                <div class="progress-item">
+                    <span class="progress-label">Planned</span>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 90%;"></div>
                     </div>
                 </div>
-
-
-
+                <div class="progress-item">
+                    <span class="progress-label">Already read</span>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 75%;"></div>
+                    </div>
+                </div>
+                <div class="progress-item">
+                    <span class="progress-label">In progress</span>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 60%;"></div>
+                    </div>
+                </div>
+                <div class="progress-item">
+                    <span class="progress-label">Recommended</span>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 82%;"></div>
+                    </div>
+                </div>
             </div>
-        </main>
 
 
-        <script src="/js/books.js"></script>
-        <script src="/js/main.js"></script>
 
-</body>
-</html>
+        </div>
+      </div>
+</main>
+{% endblock %}
