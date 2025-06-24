@@ -1,5 +1,7 @@
 x-airflow-common: &airflow-common
-  image: apache/airflow:2.5.1
+  build:
+    context: .
+    dockerfile: airflow.Dockerfile
   restart: always
   env_file: .env
   environment:
@@ -11,9 +13,59 @@ x-airflow-common: &airflow-common
     AIRFLOW_CONN_GREENPLUM_DEFAULT: ${AIRFLOW_CONN_GREENPLUM_DEFAULT}
   volumes:
     - ./airflow/dags:/opt/airflow/dags
-    - ./airflow/logs:/opt/airflow/logs
 
 services:
+
+  #Backend
+  backend:
+    build:
+      context: .
+      dockerfile: backend.Dockerfile
+    ports:
+      - "${BACKEND_PORT}:8000"
+    depends_on:
+      - postgres
+      - greenplum
+    networks:
+      - backend_network
+
+  # Keycloak
+  keycloak:
+    image: quay.io/keycloak/keycloak:latest
+    restart: always
+    ports:
+      - "${KEYCLOAK_PORT}:8080"
+      - "${KEYCLOAK_HTTPS_PORT}:8443"
+      - "${KEYCLOAK_HEALTH_CHECK_PORT}:9000"
+
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_USER}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_PASSWORD}
+    command: start-dev
+    networks:
+      - backend_network
+
+
+
+ #Lldap 
+  lldap:
+    image: lldap/lldap:stable
+    container_name: lldap
+    restart: unless-stopped
+    ports:
+      - "${LLDAP_HTTPS_CONN}:3890"
+      - "${LLDAP_WEB_UI}:17170"
+    volumes:
+      - ./lldap_data:/data
+      - ./lldap_config:/config
+    environment:
+      LLDAP_JWT_SECRET: ${LLDAP_JWT_SECRET}
+      LLDAP_LDAP_USER_PASS: ${LLDAP_LDAP_USER_PASS}
+      LLDAP_LDAP_BASE_DN: ${LLDAP_LDAP_BASE_DN}
+      LLDAP_LDAP_USER_DN: ${LLDAP_LDAP_USER_DN}
+    networks:
+      - backend_network
+  
   # Airflow's dedicated database
   airflow-db:
     image: postgres:13
@@ -50,23 +102,29 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
+    networks:
+      - backend_network
 
   greenplum:
     image: datagrip/greenplum:6.8
     env_file: .env
     environment:
-      PGPORT: 5432
-      PGUSER: ${GREENPLUM_USER}
-      PGPASSWORD: ${GREENPLUM_PASSWORD}
+      GP_PORT: 5432
+      GP_USER: ${GREENPLUM_USER}
+      GP_PASSWORD: ${GREENPLUM_PASSWORD}
+      GP_DB: ${GREENPLUM_DB}
     ports:
       - "${GREENPLUM_PORT}:5432"
     volumes:
       - greenplum_data:/data
+      - ./init-greenplum.sql:/opt/init.sql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${GREENPLUM_USER} -p 5432"]
       interval: 10s
       timeout: 5s
       retries: 10
+    networks:
+      - backend_network
 
   airflow-webserver:
     <<: *airflow-common
@@ -84,9 +142,9 @@ services:
       "
     healthcheck:
       test: ["CMD-SHELL", "[ -f /opt/airflow/airflow-webserver.pid ]"]
-      interval: 30s
-      timeout: 30s
-      retries: 5
+      interval: 10s
+      timeout: 10s
+      retries: 10
 
   airflow-scheduler:
     <<: *airflow-common
@@ -105,3 +163,7 @@ volumes:
   airflow_db_data:
   postgres_data:
   greenplum_data:
+
+networks:
+  backend_network:
+    driver: bridge
