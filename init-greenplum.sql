@@ -256,8 +256,7 @@ WITH scores AS (
         AVG(s.score) as score,
         COUNT(s.score) as votes
     FROM Book b
-    LEFT JOIN Score s ON b.ID = s.bookID
-    WHERE s.isactual = TRUE
+    LEFT JOIN Score s ON b.ID = s.bookID AND s.isactual = TRUE
     GROUP BY b.ID
 ),
 normalized AS (

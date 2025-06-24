@@ -1,5 +1,7 @@
 x-airflow-common: &airflow-common
-  image: apache/airflow:2.5.1
+  build:
+    context: .
+    dockerfile: airflow.Dockerfile
   restart: always
   env_file: .env
   environment:
