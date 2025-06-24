@@ -324,7 +324,6 @@ input[type="radio"]:checked::before {
 }
 .progress-bars {
     max-width: 300px;
-    margin-top: 2rem;
     margin-left: auto;
     margin-right: auto;
     padding: 1rem;
@@ -334,7 +333,6 @@ input[type="radio"]:checked::before {
 }
 
 .progress-title {
-    color: #fff;
     font-size: 1.2rem;
     margin-bottom: 1rem;
     text-align: center;
@@ -401,5 +399,132 @@ input[type="radio"]:checked::before {
     background-color: rgba(0, 0, 0, 0.2);
 
 }
+input.tag {
+    color: white;
+    border: none;
+}
+.anim-border {
+    position: relative;
+    width: 250px;
+    height: 400px;
+    margin: 30px 0;
+    box-sizing: border-box;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    margin: 0 0 30px -10px;
+}
+.anim-border span {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    box-sizing: border-box;
+    z-index: 1;
+    pointer-events: none;
+}
+.anim-border span:nth-child(1) { transform: rotate(0deg); }
+.anim-border span:nth-child(3) { transform: rotate(180deg); }
+.anim-border span::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 6px;
+    background: #5300a0;
+    animation: anim-anim-border 4s linear infinite;
+}
+@keyframes anim-anim-border {
+    0% {
+        transform: scaleX(0);
+        transform-origin: left;
+    }
+    50% {
+        transform: scaleX(1);
+        transform-origin: left;
+    }
+    50.1% {
+        transform: scaleX(1);
+        transform-origin: right;
+    }
+    100% {
+        transform: scaleX(0);
+        transform-origin: right;
+    }
+}
+.anim-border img {
+    width: 90%;
+    height: 90%;
+    object-fit: cover;
+    border-radius: 12px;
+    z-index: 0;
+}
+.book-info {
+  display: flex;
+  gap: 60px;
+  align-items: flex-start;
+}
+.book-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+.comments-section {
+  margin-top: 20px;
+  max-width: 75%;
+  padding: 20px;
+  background-color: transparent;
+  border-radius: 8px;
+}
 
+.comments-section h3 {
+  margin-bottom: 15px;
+  font-size: 1.5em;
+}
 
+.comment-form textarea {
+  width: 100%;
+  padding: 10px;
+  resize: vertical;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-family: inherit;
+  font-size: 1em;
+}
+
+.comment-form button {
+  margin-top: 10px;
+  padding: 8px 16px;
+  background-color: #5300a0;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.comment-form button:hover {
+  background-color: #3f007a;
+}
+
+.comment-list {
+  margin-top: 20px;
+}
+
+.comment {
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.comment-author {
+  margin: 0;
+  font-weight: bold;
+}
+
+.comment-text {
+  margin: 5px 0 0 0;
+}
