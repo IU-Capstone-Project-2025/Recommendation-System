@@ -43,6 +43,27 @@ services:
     networks:
       - backend_network
 
+
+
+ #Lldap 
+  lldap:
+    image: lldap/lldap:stable
+    container_name: lldap
+    restart: unless-stopped
+    ports:
+      - "${LLDAP_HTTPS_CONN}:3890"
+      - "${LLDAP_WEB_UI}:17170"
+    volumes:
+      - ./lldap_data:/data
+      - ./lldap_config:/config
+    environment:
+      LLDAP_JWT_SECRET: ${LLDAP_JWT_SECRET}
+      LLDAP_LDAP_USER_PASS: ${LLDAP_LDAP_USER_PASS}
+      LLDAP_LDAP_BASE_DN: ${LLDAP_LDAP_BASE_DN}
+      LLDAP_LDAP_USER_DN: ${LLDAP_LDAP_USER_DN}
+    networks:
+      - backend_network
+  
   # Airflow's dedicated database
   airflow-db:
     image: postgres:13
