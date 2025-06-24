@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
 <main class="book-catalog">
-    <h2 class="section-title">User lists</h2>
 
     <div class="side-nav-rating">
 
@@ -44,5 +43,16 @@
 
 
     </div>
+    <section class="book-list-section" style="margin-bottom: 2rem;">
+        <h3>Planned to Read</h3>
+        <ul id="plannedList" class="book-list"></ul>
+    </section>
+
+    <section class="book-list-section" style="margin-bottom: 2rem;">
+        <h3>Currently Reading</h3>
+        <ul id="currentList" class="book-list"></ul>
+    </section>
+
+
 </main>
 {% endblock %}
