@@ -13,6 +13,9 @@ x-airflow-common: &airflow-common
     AIRFLOW_CONN_GREENPLUM_DEFAULT: ${AIRFLOW_CONN_GREENPLUM_DEFAULT}
   volumes:
     - ./airflow/dags:/opt/airflow/dags
+    - ./parse/books.csv:/opt/airflow/data/books.csv
+  networks:
+    - airflow_network
 
 services:
 
@@ -83,6 +86,8 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
+    networks:
+      - airflow_network
 
   # Backend database
   postgres:
@@ -104,6 +109,7 @@ services:
       retries: 10
     networks:
       - backend_network
+      - airflow_network
 
   greenplum:
     image: datagrip/greenplum:6.8
@@ -125,6 +131,7 @@ services:
       retries: 10
     networks:
       - backend_network
+      - airflow_network
 
   airflow-webserver:
     <<: *airflow-common
@@ -166,4 +173,6 @@ volumes:
 
 networks:
   backend_network:
+    driver: bridge
+  airflow_network:
     driver: bridge
