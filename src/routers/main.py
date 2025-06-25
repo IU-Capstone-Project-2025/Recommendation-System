@@ -86,7 +86,7 @@ async def register_post(
     ldap.modify(dn, changes={"userPassword": [(MODIFY_REPLACE, password)]})
 
 
-@router.post("/signin", response_class=HTMLResponse)
+@router.post("/signin")
 async def signin_post(
     request: Request, username: str = Form(...), password: str = Form(...)
 ):
@@ -97,5 +97,12 @@ async def signin_post(
         realm_name="backend",
     )
 
-    token = keycloak_openid.token(username, password)
-    return HTMLResponse(token.__str__())
+    try:
+        keycloak_openid.token(username, password)
+    except:
+        return templates.TemplateResponse(
+            "signin.html", {"request": request, "error": "wrong password or username"}
+        )
+    response = RedirectResponse("/personal", status_code=303)
+    response.set_cookie("username", username)
+    return response

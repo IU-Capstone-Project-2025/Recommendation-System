@@ -31,6 +31,10 @@
                 <div class="tag-box">
                     <input class="tag" type="password" name="password">
                 </div>
+                {% if error %}
+                    <br>
+                    <div class="error">{{error}}</div>
+                {% endif %}
                 <br><br><br>
                 <div class="tag-box">
                     <input class="tag" type="submit" value="Log in">
