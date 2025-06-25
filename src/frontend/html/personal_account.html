@@ -1,48 +1,60 @@
 {% extends "base.html" %}
 {% block content %}
 <main class="book-catalog">
-    <h2 class="section-title">User lists</h2>
 
-    <div class="side-nav-rating">
+    <button id="toggleButton" class="mobile-only"></button>
+	<div id="hiddenContent" class="desktop-content">
+        <div class="side-nav-rating">
 
 
-        <div class="progress-bars">
-            <h3 class="progress-title">Given rating</h3>
-            <div class="progress-item">
-                <span class="progress-label">5</span>
-                <div class="progress-bar">
-                    <div class="progress-fill" style="width: 90%;"></div>
+            <div class="progress-bars">
+                <h3 class="progress-title">Given rating</h3>
+                <div class="progress-item">
+                    <span class="progress-label">5</span>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 90%;"></div>
+                    </div>
                 </div>
-            </div>
-            <div class="progress-item">
-                <span class="progress-label">4</span>
-                <div class="progress-bar">
-                    <div class="progress-fill" style="width: 75%;"></div>
+                <div class="progress-item">
+                    <span class="progress-label">4</span>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 75%;"></div>
+                    </div>
                 </div>
-            </div>
-            <div class="progress-item">
-                <span class="progress-label">3</span>
-                <div class="progress-bar">
-                    <div class="progress-fill" style="width: 60%;"></div>
+                <div class="progress-item">
+                    <span class="progress-label">3</span>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 60%;"></div>
+                    </div>
                 </div>
-            </div>
-            <div class="progress-item">
-                <span class="progress-label">2</span>
-                <div class="progress-bar">
-                    <div class="progress-fill" style="width: 60%;"></div>
+                <div class="progress-item">
+                    <span class="progress-label">2</span>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 60%;"></div>
+                    </div>
                 </div>
-            </div>
-            <div class="progress-item">
-                <span class="progress-label">1</span>
-                <div class="progress-bar">
-                    <div class="progress-fill" style="width: 60%;"></div>
+                <div class="progress-item">
+                    <span class="progress-label">1</span>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 60%;"></div>
+                    </div>
                 </div>
-            </div>
 
+            </div>
         </div>
 
 
-
     </div>
+    <section class="book-list-section" style="margin-bottom: 2rem;">
+        <h3>Planned to Read</h3>
+        <ul id="plannedList" class="book-list"></ul>
+    </section>
+
+    <section class="book-list-section" style="margin-bottom: 2rem;">
+        <h3>Currently Reading</h3>
+        <ul id="currentList" class="book-list"></ul>
+    </section>
+
+
 </main>
 {% endblock %}

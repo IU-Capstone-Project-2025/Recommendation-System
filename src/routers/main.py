@@ -34,6 +34,10 @@ async def account(request: Request):
 async def signin_get(request: Request):
     return templates.TemplateResponse("signin.html", {"request": request})
 
+@router.get("/registration", response_class=HTMLResponse)
+async def register(request: Request):
+    return templates.TemplateResponse("registration.html", {"request": request})
+
 
 @router.post("/signin", response_class=RedirectResponse)
 async def signin_post(

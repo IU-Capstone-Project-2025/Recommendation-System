@@ -12,6 +12,7 @@ CREATE TABLE Book (
     author VARCHAR(100),
     year INT,
     score FLOAT,
+    votes INT,
     imgurl VARCHAR(1000),
     description TEXT,
     updatets TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
