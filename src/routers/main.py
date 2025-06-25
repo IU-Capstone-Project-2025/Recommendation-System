@@ -1,8 +1,17 @@
+from os import environ
 import fastapi
 from fastapi import APIRouter, Form, Request
 from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
+from ldap3 import ALL, MODIFY_ADD, Connection, Server
+from dotenv import load_dotenv
+from keycloak import KeycloakOpenID
+
+load_dotenv()
+
+lldap_port = environ.get("LLDAP_HTTPS_CONN")
+assert lldap_port != None
 
 # from fastapi.templates import Jinja2Templates
 router = APIRouter()
@@ -44,6 +53,7 @@ async def register(request: Request):
 async def register_post(
     request: Request,
     username: str = Form(...),
+    email: str = Form(...),
     password: str = Form(...),
     password_confirm: str = Form(...),
 ):
@@ -51,12 +61,39 @@ async def register_post(
         return templates.TemplateResponse(
             "registration.html", {"request": request, "error": "passwords don't match"}
         )
+    attributes = {
+        "objectClass": ["inetOrgPerson", "person", "top"],
+        "uid": username,
+        "cn": username,
+        "sn": username,
+        "mail": email,
+    }
+    dn = f"uid={username},ou=people,dc=example,dc=com"
+    ldap = Connection(
+        Server(
+            "localhost",
+            port=int(lldap_port),  # pyright: ignore type
+            use_ssl=False,
+            get_info=ALL,
+        ),
+        user="uid=admin,ou=people,dc=example,dc=com",
+        password=environ.get("LLDAP_LDAP_USER_PASS"),
+    )
+
+    ldap.add(dn, attributes=attributes)
+    ldap.modify(dn, changes={"userPassword": [MODIFY_ADD, password]})
 
 
-@router.post("/signin", response_class=RedirectResponse)
+@router.post("/signin", response_class=HTMLResponse)
 async def signin_post(
     request: Request, username: str = Form(...), password: str = Form(...)
 ):
-    response = RedirectResponse("/personal", status_code=303)
-    response.set_cookie("username", username)
-    return response
+    keycloak_openid = KeycloakOpenID(
+        server_url="http://localhost:8081",
+        client_id="backend-service",
+        client_secret_key="xXoz8ICLOfQcvtiC6yYdmKmJmrykT9uU",
+        realm_name="backend",
+    )
+
+    token = keycloak_openid.token(username, password)
+    return HTMLResponse(token.__str__())
