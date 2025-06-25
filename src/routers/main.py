@@ -34,9 +34,23 @@ async def account(request: Request):
 async def signin_get(request: Request):
     return templates.TemplateResponse("signin.html", {"request": request})
 
+
 @router.get("/registration", response_class=HTMLResponse)
 async def register(request: Request):
     return templates.TemplateResponse("registration.html", {"request": request})
+
+
+@router.post("/registration", response_class=HTMLResponse)
+async def register_post(
+    request: Request,
+    username: str = Form(...),
+    password: str = Form(...),
+    password_confirm: str = Form(...),
+):
+    if password != password_confirm:
+        return templates.TemplateResponse(
+            "registration.html", {"request": request, "error": "passwords don't match"}
+        )
 
 
 @router.post("/signin", response_class=RedirectResponse)
