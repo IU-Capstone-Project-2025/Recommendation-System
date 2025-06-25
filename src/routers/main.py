@@ -85,6 +85,8 @@ async def register_post(
     ldap.add(dn, attributes=attributes)
     ldap.modify(dn, changes={"userPassword": [(MODIFY_REPLACE, password)]})
 
+    return await signin_post(request, username, password)
+
 
 @router.post("/signin")
 async def signin_post(
