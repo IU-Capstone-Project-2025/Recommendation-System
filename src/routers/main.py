@@ -4,7 +4,7 @@ from fastapi import APIRouter, Form, Request
 from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
-from ldap3 import ALL, MODIFY_ADD, Connection, Server
+from ldap3 import ALL, MODIFY_ADD, MODIFY_REPLACE, Connection, Server
 from dotenv import load_dotenv
 from keycloak import KeycloakOpenID
 
@@ -67,6 +67,7 @@ async def register_post(
         "cn": username,
         "sn": username,
         "mail": email,
+        "userPassword": password,
     }
     dn = f"uid={username},ou=people,dc=example,dc=com"
     ldap = Connection(
@@ -79,9 +80,10 @@ async def register_post(
         user="uid=admin,ou=people,dc=example,dc=com",
         password=environ.get("LLDAP_LDAP_USER_PASS"),
     )
+    ldap.bind()
 
     ldap.add(dn, attributes=attributes)
-    ldap.modify(dn, changes={"userPassword": [MODIFY_ADD, password]})
+    ldap.modify(dn, changes={"userPassword": [(MODIFY_REPLACE, password)]})
 
 
 @router.post("/signin", response_class=HTMLResponse)
