@@ -21,22 +21,34 @@ templates = Jinja2Templates(directory="src/frontend/html")
 
 @router.get("/", response_class=HTMLResponse)
 async def root(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
+    username = request.cookies["username"] if "username" in request.cookies else None
+    return templates.TemplateResponse(
+        "index.html", {"request": request, "username": username}
+    )
 
 
 @router.get("/catalog", response_class=HTMLResponse)
 async def catalog(request: Request):
-    return templates.TemplateResponse("catalog.html", {"request": request})
+    username = request.cookies["username"] if "username" in request.cookies else None
+    return templates.TemplateResponse(
+        "catalog.html", {"request": request, "username": username}
+    )
 
 
 @router.get("/personal", response_class=HTMLResponse)
 async def personal(request: Request):
-    return templates.TemplateResponse("personal_account.html", {"request": request})
+    username = request.cookies["username"] if "username" in request.cookies else None
+    return templates.TemplateResponse(
+        "personal_account.html", {"request": request, "username": username}
+    )
 
 
 @router.get("/book", response_class=HTMLResponse)
 async def account(request: Request):
-    return templates.TemplateResponse("book_info.html", {"request": request})
+    username = request.cookies["username"] if "username" in request.cookies else None
+    return templates.TemplateResponse(
+        "book_info.html", {"request": request, "username": username}
+    )
 
 
 @router.get("/signin", response_class=HTMLResponse)
