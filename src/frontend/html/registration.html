@@ -21,10 +21,15 @@
             <div class="content">
             <h2 style=" color: white;">REGISTER</h2>
             <br>
-            <form action="/signin" method="post">
+            <form action="/registration" method="post">
                 <div class="input-title">Username:</div>
                 <div class="tag-box">
                     <input class="tag" type="text" name="username">
+                </div>
+                <br>
+                <div class="input-title">Email:</div>
+                <div class="tag-box">
+                    <input class="tag" type="email" name="email">
                 </div>
                 <br>
                 <div class="input-title">Password:</div>
@@ -34,8 +39,12 @@
                 <br>
                 <div class="input-title">Confirm password:</div>
                 <div class="tag-box">
-                    <input class="tag" type="password" name="password">
+                    <input class="tag" type="password" name="password_confirm">
                 </div>
+                {% if error != "" %}
+                    <br>
+                    <div class="error">{{error}}</div>
+                {% endif %}
                 <br><br><br>
                 <div class="tag-box">
                     <input class="tag" type="submit" value="Sign up">
