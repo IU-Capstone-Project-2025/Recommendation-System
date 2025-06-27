@@ -8,6 +8,8 @@ from ldap3 import ALL, MODIFY_ADD, MODIFY_REPLACE, Connection, Server
 from dotenv import load_dotenv
 from keycloak import KeycloakOpenID
 
+from src.scripts.check_auth import get_auth_data
+
 load_dotenv()
 
 lldap_port = environ.get("LLDAP_HTTPS_CONN")
@@ -104,21 +106,23 @@ async def register_post(
 async def signin_post(
     request: Request, username: str = Form(...), password: str = Form(...)
 ):
-    keycloak_openid = KeycloakOpenID(
-        server_url="http://keycloak:8080",
-        client_id="backend-service",
-        client_secret_key="xXoz8ICLOfQcvtiC6yYdmKmJmrykT9uU",
-        realm_name="backend",
-    )
+    # keycloak_openid = KeycloakOpenID(
+    #     server_url=environ.get("KEYCLOAK_ORIGIN"),
+    #     client_id=environ.get("KEYCLOAK_CLIENT_ID"),
+    #     client_secret_key=environ.get("KEYCLOAK_CLIENT_SECRET_KEY"),
+    #     realm_name="backend",
+    # )
 
-    try:
-        token = keycloak_openid.token(username, password)
-        access_token = token["access_token"]
-        refresh_token = token["refresh_token"]
-    except:
-        return templates.TemplateResponse(
-            "signin.html", {"request": request, "error": "wrong password or username"}
-        )
+    # try:
+    #     token = keycloak_openid.token(username, password)
+    #     access_token = token["access_token"]
+    #     refresh_token = token["refresh_token"]
+    # except:
+    #     return templates.TemplateResponse(
+    #         "signin.html", {"request": request, "error": "wrong password or username"}
+    #     )
+    get_auth_data(username=username, password=password)
+
     response = RedirectResponse("/personal", status_code=303)
     response.set_cookie("username", username)
     return response

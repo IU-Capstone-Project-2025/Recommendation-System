@@ -5,7 +5,7 @@ class Score:
         self._username: str = username
         self._bookId = bookId
         self._score = score
-        self._userid = self.get_userid(username)
+        self._userid = self.get_userid()
         self.db = PgConnectionBuilder.pg_conn("POSTGRES_DEFAULT")
     
     def get_userid(self) -> str:

@@ -6,7 +6,7 @@ import fastapi
 from starlette.staticfiles import StaticFiles
 
 from src.routers.main import router
-from src.routers.scoring import router as score_router
+from src.routers.feedback import router as score_router
 
 #fastapi application
 app = fastapi.FastAPI()
