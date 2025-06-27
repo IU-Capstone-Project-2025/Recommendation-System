@@ -23,11 +23,11 @@ log = logging.getLogger(__name__)
 
 
 @dag(
-    schedule_interval='0 * * * *',
+    schedule_interval='*/3 * * * *',
     start_date=datetime(2025, 6, 11),
     catchup=False,
     tags=['stg', 'postgres', 'clickhouse'],
-    is_paused_upon_creation=True
+    is_paused_upon_creation=False
 )
 def stg_dag():
     origin_pg_connect = PgConnectionBuilder.pg_conn("POSTGRES_DEFAULT")
