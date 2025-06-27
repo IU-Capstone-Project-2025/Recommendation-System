@@ -10,7 +10,7 @@ x-airflow-common: &airflow-common
     AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW_FERNET_KEY}
     AIRFLOW__WEBSERVER__SECRET_KEY: ${AIRFLOW_SECRET_KEY}
     AIRFLOW_CONN_POSTGRES_DEFAULT: ${AIRFLOW_CONN_POSTGRES_DEFAULT}
-    AIRFLOW_CONN_GREENPLUM_DEFAULT: ${AIRFLOW_CONN_GREENPLUM_DEFAULT}
+    AIRFLOW_CONN_CLICKHOUSE_DEFAULT: ${AIRFLOW_CONN_CLICKHOUSE_DEFAULT}
   volumes:
     - ./airflow/dags:/opt/airflow/dags
     - ./parse/books.csv:/opt/airflow/data/books.csv
@@ -28,7 +28,7 @@ services:
       - "${BACKEND_PORT}:8000"
     depends_on:
       - postgres
-      - greenplum
+      - clickhouse
     networks:
       - backend_network
 
@@ -111,24 +111,20 @@ services:
       - backend_network
       - airflow_network
 
-  greenplum:
-    image: datagrip/greenplum:6.8
+  clickhouse:
+    image: clickhouse:latest
     env_file: .env
     environment:
-      GP_PORT: 5432
-      GP_USER: ${GREENPLUM_USER}
-      GP_PASSWORD: ${GREENPLUM_PASSWORD}
-      GP_DB: ${GREENPLUM_DB}
+      CLICKHOUSE_DB: ${CLICKHOUSE_DB}
+      CLICKHOUSE_USER: ${CLICKHOUSE_USER}
+      CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASSWORD}
+      CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: 1
     ports:
-      - "${GREENPLUM_PORT}:5432"
+      - "${CLICKHOUSE_PORT}:8123"
+      - "${CLICKHOUSE_NATIVE_PORT}:9000"
     volumes:
-      - greenplum_data:/data
-      - ./init-greenplum.sql:/opt/init.sql
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${GREENPLUM_USER} -p 5432"]
-      interval: 10s
-      timeout: 5s
-      retries: 10
+      - clickhouse_data:/var/lib/clickhouse
+      - ./init-clickhouse.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - backend_network
       - airflow_network
@@ -169,7 +165,7 @@ services:
 volumes:
   airflow_db_data:
   postgres_data:
-  greenplum_data:
+  clickhouse_data:
 
 networks:
   backend_network:

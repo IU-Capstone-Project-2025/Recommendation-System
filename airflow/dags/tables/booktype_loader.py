@@ -2,9 +2,9 @@ from logging import Logger
 from typing import List, Tuple, Any, Optional
 
 from lib.pg_connect import PgConnect
+from lib.ch_connect import CHConnect
 from datetime import datetime
-from psycopg2.extensions import connection
-from psycopg2.extras import execute_values
+from clickhouse_driver import Client as ClickhouseClient
 from pydantic import BaseModel
 
 
@@ -48,53 +48,40 @@ class BooktypeOriginRepository:
 
 
 class BooktypeDestRepository:
-    def insert_batch(self, conn: connection, booktype: List[BooktypeObj]) -> None:
-        if not booktype:
+    def insert_batch(self, conn: ClickhouseClient, booktypes: List[BooktypeObj]) -> None:
+        if not booktypes:
             return
 
-        with conn.cursor() as cur:
-            cur.execute("""
-                CREATE TEMP TABLE temp_booktype
-                (LIKE booktype INCLUDING DEFAULTS) ON COMMIT DROP
-            """)
-            
-            execute_values(
-                cur,
-                "INSERT INTO temp_booktype (bookid, typeid, updatets) VALUES %s",
-                [(t.bookid, t.typeid, t.updatets) for t in booktype]
-            )
-            
-            cur.execute("""
-                UPDATE booktype u SET
-                    updatets = t.updatets
-                FROM temp_booktype t
-                WHERE u.bookid = t.bookid AND u.typeid = t.typeid
-            """)
-            
-            cur.execute("""
-                INSERT INTO booktype (bookid, typeid, updatets)
-                SELECT t.bookid, t.typeid, t.updatets
-                FROM temp_booktype t
-                LEFT JOIN booktype u ON t.bookid = u.bookid AND t.typeid = u.typeid
-                WHERE u.bookid IS NULL AND u.typeid IS NULL
-            """)
+        data = [
+            [
+                booktype.bookid,
+                booktype.typeid,
+                booktype.updatets
+            ]
+            for booktype in booktypes
+        ]
+        
+        conn.execute(
+            """
+            INSERT INTO BookType (bookid, typeid, updatets) VALUES
+            """,
+            data
+        )
 
 
 class BooktypeLoader:
     BATCH_SIZE = 10000
     
-    def __init__(self, pg_origin: PgConnect, pg_dest: PgConnect, log: Logger) -> None:
-        self.pg_dest = pg_dest
+    def __init__(self, pg_origin: PgConnect, ch_dest: CHConnect, log: Logger) -> None:
+        self.ch_dest = ch_dest
         self.origin = BooktypeOriginRepository(pg_origin)
         self.stg = BooktypeDestRepository()
         self.log = log
 
     def load_booktype(self):
-        with self.pg_dest.connection() as conn:
+        with self.ch_dest.connection() as conn:
 
-            with conn.cursor() as cursor:
-                cursor.execute("SELECT MAX(updatets) FROM booktype")
-                last_loaded_date = cursor.fetchone()[0]
+            last_loaded_date = conn.execute("SELECT MAX(updatets) FROM BookType")[0][0]
             if not last_loaded_date:
                 last_loaded_date = datetime(1970, 1, 1)
 

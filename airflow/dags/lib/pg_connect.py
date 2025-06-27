@@ -47,7 +47,7 @@ class PgConnect:
             conn.close()
 
 
-class ConnectionBuilder:
+class PgConnectionBuilder:
 
     @staticmethod
     def pg_conn(conn_id: str) -> PgConnect:
