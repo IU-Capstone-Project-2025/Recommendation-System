@@ -84,7 +84,7 @@ async def register_post(
     dn = f"uid={username},ou=people,dc=example,dc=com"
     ldap = Connection(
         Server(
-            "localhost",
+            "lldap",
             port=int(lldap_port),  # pyright: ignore type
             use_ssl=False,
             get_info=ALL,
@@ -105,7 +105,7 @@ async def signin_post(
     request: Request, username: str = Form(...), password: str = Form(...)
 ):
     keycloak_openid = KeycloakOpenID(
-        server_url="http://localhost:8081",
+        server_url="http://keycloak:8080",
         client_id="backend-service",
         client_secret_key="xXoz8ICLOfQcvtiC6yYdmKmJmrykT9uU",
         realm_name="backend",
