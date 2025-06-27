@@ -1,10 +1,10 @@
 from logging import Logger
-from typing import List, Tuple, Any
+from typing import List, Tuple, Any, Optional
 
 from lib.pg_connect import PgConnect
+from lib.ch_connect import CHConnect
 from datetime import datetime
-from psycopg2.extensions import connection
-from psycopg2.extras import execute_values
+from clickhouse_driver import Client as ClickhouseClient
 from pydantic import BaseModel
 
 
@@ -49,55 +49,41 @@ class UserOriginRepository:
         return [UserObj.from_dict(row) for row in rows]
 
 class UserDestRepository:
-    def insert_batch(self, conn: connection, user: List[UserObj]) -> None:
-        if not user:
+    def insert_batch(self, conn: ClickhouseClient, users: List[UserObj]) -> None:
+        if not users:
             return
 
-        with conn.cursor() as cur:
-            cur.execute("""
-                CREATE TEMP TABLE temp_user
-                (LIKE "User" INCLUDING DEFAULTS) ON COMMIT DROP
-            """)
-            
-            execute_values(
-                cur,
-                "INSERT INTO temp_user (id, username, codedpass, updatets) VALUES %s",
-                [(t.id, t.username, t.codedpass, t.updatets) for t in user]
-            )
-            
-            cur.execute("""
-                UPDATE "User" u SET
-                    username = t.username,
-                    codedpass = t.codedpass,
-                    updatets = t.updatets
-                FROM temp_user t
-                WHERE u.id = t.id
-            """)
-            
-            cur.execute("""
-                INSERT INTO "User" (id, username, codedpass, updatets)
-                SELECT t.id, t.username, t.codedpass, t.updatets
-                FROM temp_user t
-                LEFT JOIN "User" u ON t.id = u.id
-                WHERE u.id IS NULL
-            """)
+        data = [
+            [
+                user.id,
+                user.username,
+                user.codedpass,
+                user.updatets
+            ]
+            for user in users
+        ]
+        
+        conn.execute(
+            """
+            INSERT INTO User (id, username, codedpass, updatets) VALUES
+            """,
+            data
+        )
 
 
 class UserLoader:
     BATCH_SIZE = 10000
     
-    def __init__(self, pg_origin: PgConnect, pg_dest: PgConnect, log: Logger) -> None:
-        self.pg_dest = pg_dest
+    def __init__(self, pg_origin: PgConnect, ch_dest: CHConnect, log: Logger) -> None:
+        self.ch_dest = ch_dest
         self.origin = UserOriginRepository(pg_origin)
         self.stg = UserDestRepository()
         self.log = log
 
     def load_user(self):
-        with self.pg_dest.connection() as conn:
+        with self.ch_dest.connection() as conn:
 
-            with conn.cursor() as cursor:
-                cursor.execute("SELECT MAX(updatets) FROM \"User\"")
-                last_loaded_date = cursor.fetchone()[0]
+            last_loaded_date = conn.execute("SELECT MAX(updatets) FROM User")[0][0]
             if not last_loaded_date:
                 last_loaded_date = datetime(1970, 1, 1)
 

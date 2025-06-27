@@ -3,7 +3,7 @@ from datetime import datetime
 
 from airflow.decorators import dag, task
 
-from lib.pg_connect import ConnectionBuilder
+from lib.pg_connect import PgConnectionBuilder
 from lib.csv_book_loader import CSVBookLoader
 
 log = logging.getLogger(__name__)
@@ -17,7 +17,7 @@ log = logging.getLogger(__name__)
     is_paused_upon_creation=True
 )
 def book_to_origin_dag():
-    origin_pg_connect = ConnectionBuilder.pg_conn("POSTGRES_DEFAULT")
+    origin_pg_connect = PgConnectionBuilder.pg_conn("POSTGRES_DEFAULT")
 
     @task(task_id="books_load")
     def load_book():

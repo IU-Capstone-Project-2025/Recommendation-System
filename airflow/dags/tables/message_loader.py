@@ -2,9 +2,9 @@ from logging import Logger
 from typing import List, Tuple, Any, Optional
 
 from lib.pg_connect import PgConnect
+from lib.ch_connect import CHConnect
 from datetime import datetime
-from psycopg2.extensions import connection
-from psycopg2.extras import execute_values
+from clickhouse_driver import Client as ClickhouseClient
 from pydantic import BaseModel
 
 
@@ -54,57 +54,43 @@ class MessageOriginRepository:
 
 
 class MessageDestRepository:
-    def insert_batch(self, conn: connection, message: List[MessageObj]) -> None:
-        if not message:
+    def insert_batch(self, conn: ClickhouseClient, messages: List[MessageObj]) -> None:
+        if not messages:
             return
 
-        with conn.cursor() as cur:
-            cur.execute("""
-                CREATE TEMP TABLE temp_message
-                (LIKE message INCLUDING DEFAULTS) ON COMMIT DROP
-            """)
-            
-            execute_values(
-                cur,
-                "INSERT INTO temp_message (id, userid, bookid, message, isactual, updatets) VALUES %s",
-                [(t.id, t.userid, t.bookid, t.message, t.isactual, t.updatets) for t in message]
-            )
-            
-            cur.execute("""
-                UPDATE message u SET
-                    userid = t.userid,
-                    bookid = t.bookid,
-                    message = t.message,
-                    isactual = t.isactual,
-                    updatets = t.updatets
-                FROM temp_message t
-                WHERE u.id = t.id
-            """)
-            
-            cur.execute("""
-                INSERT INTO message (id, userid, bookid, message, isactual, updatets)
-                SELECT t.id, t.userid, t.bookid, t.message, t.isactual, t.updatets
-                FROM temp_message t
-                LEFT JOIN message u ON t.id = u.id
-                WHERE u.id IS NULL
-            """)
+        data = [
+            [
+                message.id,
+                message.userid,
+                message.bookid,
+                message.message,
+                message.isactual,
+                message.updatets
+            ]
+            for message in messages
+        ]
+        
+        conn.execute(
+            """
+            INSERT INTO Message (id, userid, bookid, message, isactual, updatets) VALUES
+            """,
+            data
+        )
 
 
 class MessageLoader:
     BATCH_SIZE = 10000
     
-    def __init__(self, pg_origin: PgConnect, pg_dest: PgConnect, log: Logger) -> None:
-        self.pg_dest = pg_dest
+    def __init__(self, pg_origin: PgConnect, ch_dest: CHConnect, log: Logger) -> None:
+        self.ch_dest = ch_dest
         self.origin = MessageOriginRepository(pg_origin)
         self.stg = MessageDestRepository()
         self.log = log
 
     def load_message(self):
-        with self.pg_dest.connection() as conn:
+        with self.ch_dest.connection() as conn:
 
-            with conn.cursor() as cursor:
-                cursor.execute("SELECT MAX(updatets) FROM message")
-                last_loaded_date = cursor.fetchone()[0]
+            last_loaded_date = conn.execute("SELECT MAX(updatets) FROM Message")[0][0]
             if not last_loaded_date:
                 last_loaded_date = datetime(1970, 1, 1)
 

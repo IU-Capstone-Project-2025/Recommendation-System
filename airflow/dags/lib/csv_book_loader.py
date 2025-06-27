@@ -21,7 +21,7 @@ class CSVBookLoader:
                         # Insert or get Type
                         type_name = row['Type'].strip()
                         cur.execute(
-                            "INSERT INTO Type (name) VALUES (%s) RETURNING ID",
+                            "INSERT INTO Type (name) VALUES (%s) ON CONFLICT (name) DO UPDATE SET name = EXCLUDED.name RETURNING ID",
                             (type_name,)
                         )
                         type_id = cur.fetchone()[0]
@@ -47,7 +47,7 @@ class CSVBookLoader:
                     with conn.cursor() as cur:
                         for genre_name in genres:
                             cur.execute(
-                                "INSERT INTO Genre (name) VALUES (%s) RETURNING ID",
+                                "INSERT INTO Genre (name) VALUES (%s) ON CONFLICT (name) DO UPDATE SET name = EXCLUDED.name RETURNING ID",
                                 (genre_name,)
                             )
                             genre_id = cur.fetchone()[0]
@@ -62,7 +62,7 @@ class CSVBookLoader:
                     with conn.cursor() as cur:
                         for tag_name in tags:
                             cur.execute(
-                                "INSERT INTO Tag (name) VALUES (%s) RETURNING ID",
+                                "INSERT INTO Tag (name) VALUES (%s) ON CONFLICT (name) DO UPDATE SET name = EXCLUDED.name RETURNING ID",
                                 (tag_name,)
                             )
                             tag_id = cur.fetchone()[0]
