@@ -1,7 +1,6 @@
 CREATE TABLE IF NOT EXISTS User (
     id UInt32,
     username String,
-    codedpass String,
     updatets DateTime DEFAULT now(),
     PRIMARY KEY (id)
 ) ENGINE = ReplacingMergeTree()
@@ -12,8 +11,6 @@ CREATE TABLE IF NOT EXISTS Book (
     title String,
     author String,
     year Nullable(Int32),
-    score Nullable(Float32),
-    votes Nullable(Int32),
     imgurl Nullable(String),
     description Nullable(String),
     updatets DateTime DEFAULT now(),

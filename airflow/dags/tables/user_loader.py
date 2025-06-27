@@ -11,7 +11,6 @@ from pydantic import BaseModel
 class UserObj(BaseModel):
     id: int
     username: str
-    codedpass: str
     updatets: datetime
     
     @classmethod
@@ -19,8 +18,7 @@ class UserObj(BaseModel):
         return cls(
             id=data[0],
             username=data[1],
-            codedpass=data[2],
-            updatets=data[3]
+            updatets=data[2]
         )
 
 
@@ -32,7 +30,7 @@ class UserOriginRepository:
         with self._db.client().cursor() as cur:
             cur.execute(
                 """
-                    SELECT id, username, codedpass, updatets
+                    SELECT id, username, updatets
                     FROM "User"
                     WHERE updatets > %(threshold)s
                     ORDER BY updatets ASC, id ASC
@@ -57,7 +55,6 @@ class UserDestRepository:
             [
                 user.id,
                 user.username,
-                user.codedpass,
                 user.updatets
             ]
             for user in users
@@ -65,7 +62,7 @@ class UserDestRepository:
         
         conn.execute(
             """
-            INSERT INTO User (id, username, codedpass, updatets) VALUES
+            INSERT INTO User (id, username, updatets) VALUES
             """,
             data
         )

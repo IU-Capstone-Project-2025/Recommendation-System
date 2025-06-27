@@ -13,8 +13,6 @@ class BookObj(BaseModel):
     title: str
     author: Optional[str]
     year: Optional[int]
-    score: Optional[float]
-    votes: Optional[int]
     imgurl: Optional[str]
     description: Optional[str]
     updatets: datetime
@@ -26,11 +24,9 @@ class BookObj(BaseModel):
             title=data[1],
             author=data[2],
             year=data[3],
-            score=data[4],
-            votes=data[5],
-            imgurl=data[6],
-            description=data[7],
-            updatets=data[8]
+            imgurl=data[4],
+            description=data[5],
+            updatets=data[6]
         )
 
 
@@ -42,7 +38,7 @@ class BookOriginRepository:
         with self._db.client().cursor() as cur:
             cur.execute(
                 """
-                    SELECT id, title, author, year, score, votes, imgurl, description, updatets
+                    SELECT id, title, author, year, imgurl, description, updatets
                     FROM book
                     WHERE updatets > %(threshold)s
                     ORDER BY updatets ASC, id ASC
@@ -70,8 +66,6 @@ class BookDestRepository:
                 book.title,
                 book.author,
                 book.year,
-                book.score,
-                book.votes,
                 book.imgurl,
                 book.description,
                 book.updatets
@@ -81,7 +75,7 @@ class BookDestRepository:
         
         conn.execute(
             """
-            INSERT INTO Book (id, title, author, year, score, votes, imgurl, description, updatets) VALUES
+            INSERT INTO Book (id, title, author, year, imgurl, description, updatets) VALUES
             """,
             data
         )
