@@ -112,7 +112,9 @@ async def signin_post(
     )
 
     try:
-        keycloak_openid.token(username, password)
+        token = keycloak_openid.token(username, password)
+        access_token = token["access_token"]
+        refresh_token = token["refresh_token"]
     except:
         return templates.TemplateResponse(
             "signin.html", {"request": request, "error": "wrong password or username"}
