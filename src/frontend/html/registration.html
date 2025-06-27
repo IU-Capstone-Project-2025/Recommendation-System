@@ -15,6 +15,11 @@
     <div class="container">
         <header>
             <h1 class="logo"><a href="/" style="text-decoration: none; color: inherit;">Recomendation System</a></h1>
+            <div class="user-box">
+                <div style="display: flex; gap: 10px;">
+                    <a href="/signin" class="btn-signing" style="text-decoration: none; color: black;">LOG IN</a>
+                </div>
+            </div>
         </header>
 
         <main>
@@ -41,7 +46,7 @@
                 <div class="tag-box">
                     <input class="tag" type="password" name="password_confirm">
                 </div>
-                {% if error != "" %}
+                {% if error %}
                     <br>
                     <div class="error">{{error}}</div>
                 {% endif %}

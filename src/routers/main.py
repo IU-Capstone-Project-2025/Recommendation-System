@@ -4,7 +4,7 @@ from fastapi import APIRouter, Form, Request
 from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
-from ldap3 import ALL, MODIFY_ADD, Connection, Server
+from ldap3 import ALL, MODIFY_ADD, MODIFY_REPLACE, Connection, Server
 from dotenv import load_dotenv
 from keycloak import KeycloakOpenID
 
@@ -21,22 +21,34 @@ templates = Jinja2Templates(directory="src/frontend/html")
 
 @router.get("/", response_class=HTMLResponse)
 async def root(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
+    username = request.cookies["username"] if "username" in request.cookies else None
+    return templates.TemplateResponse(
+        "index.html", {"request": request, "username": username}
+    )
 
 
 @router.get("/catalog", response_class=HTMLResponse)
 async def catalog(request: Request):
-    return templates.TemplateResponse("catalog.html", {"request": request})
+    username = request.cookies["username"] if "username" in request.cookies else None
+    return templates.TemplateResponse(
+        "catalog.html", {"request": request, "username": username}
+    )
 
 
 @router.get("/personal", response_class=HTMLResponse)
 async def personal(request: Request):
-    return templates.TemplateResponse("personal_account.html", {"request": request})
+    username = request.cookies["username"] if "username" in request.cookies else None
+    return templates.TemplateResponse(
+        "personal_account.html", {"request": request, "username": username}
+    )
 
 
 @router.get("/book", response_class=HTMLResponse)
 async def account(request: Request):
-    return templates.TemplateResponse("book_info.html", {"request": request})
+    username = request.cookies["username"] if "username" in request.cookies else None
+    return templates.TemplateResponse(
+        "book_info.html", {"request": request, "username": username}
+    )
 
 
 @router.get("/signin", response_class=HTMLResponse)
@@ -67,6 +79,7 @@ async def register_post(
         "cn": username,
         "sn": username,
         "mail": email,
+        "userPassword": password,
     }
     dn = f"uid={username},ou=people,dc=example,dc=com"
     ldap = Connection(
@@ -79,12 +92,15 @@ async def register_post(
         user="uid=admin,ou=people,dc=example,dc=com",
         password=environ.get("LLDAP_LDAP_USER_PASS"),
     )
+    ldap.bind()
 
     ldap.add(dn, attributes=attributes)
-    ldap.modify(dn, changes={"userPassword": [MODIFY_ADD, password]})
+    ldap.modify(dn, changes={"userPassword": [(MODIFY_REPLACE, password)]})
+
+    return await signin_post(request, username, password)
 
 
-@router.post("/signin", response_class=HTMLResponse)
+@router.post("/signin")
 async def signin_post(
     request: Request, username: str = Form(...), password: str = Form(...)
 ):
@@ -95,5 +111,12 @@ async def signin_post(
         realm_name="backend",
     )
 
-    token = keycloak_openid.token(username, password)
-    return HTMLResponse(token.__str__())
+    try:
+        keycloak_openid.token(username, password)
+    except:
+        return templates.TemplateResponse(
+            "signin.html", {"request": request, "error": "wrong password or username"}
+        )
+    response = RedirectResponse("/personal", status_code=303)
+    response.set_cookie("username", username)
+    return response
