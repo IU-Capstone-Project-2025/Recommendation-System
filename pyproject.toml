@@ -6,11 +6,14 @@ authors = [
     {name = "Abraham14711",email = "pet_zed@rambler.ru"}
 ]
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.13,<4.0" 
 dependencies = [
     "uvicorn (>=0.34.3,<0.35.0)",
     "fastapi (>=0.115.12,<0.116.0)",
-    "jinja2 (>=3.1.6,<4.0.0)"
+    "jinja2 (>=3.1.6,<4.0.0)",
+    "ldap3 (>=2.9.1)",
+    "python-dotenv (>=1.1.1)",
+    "python-keycloak (>=5.6.0,<6.0.0) ; python_version < '4.0'",
 ]
 
 
