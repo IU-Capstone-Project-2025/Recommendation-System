@@ -1,68 +1,83 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recomendation System</title>
-    <link rel="stylesheet" href="/css/style.css">
-    <link href='/css/style.css' rel='stylesheet'>
-</head>
-<body>
-    <img class="image-gradient" src="gradient.png" alt="gradient">
-    <div class="layer-blur"></div>
-    <div class="container">
-        <header>
-            <h1 class="logo"><a href="/" style="text-decoration: none; color: inherit;">Recomendation System</a></h1>
+{% extends "base.html" %}
+{% block content %}
+<main class="book-catalog">
 
 
-            <div class="user-box">
-                <div class="avatar-circle"></div>
-                <span class="username"><a href="/personal" style="text-decoration: none; color: inherit;">Username</a></span>
-            </div>
-        </header>
+    <div class="book-header">
+  <div class="book-info">
+    <div class="book-cover anim-border">
+      <img src="/img/book_cover.jpg" alt="Фото">
+      <span></span>
+      <span></span>
     </div>
-        <main class="book-catalog">
-            <h2 class="section-title">Some Book info + Comments</h2>
+    <div class="book-details">
+      <h2 class="book-title">Book Title Goes Here</h2>
+      <p class="book-author">by Author Name</p>
 
-            <div class="side-nav-prog">
+      <div class="book-rating">
+        <span class="star">&#9733;</span>
+        <span class="star">&#9733;</span>
+        <span class="star">&#9733;</span>
+        <span class="star">&#9733;</span>
+        <span class="star">&#9734;</span>
+        <span class="rating-value">4.0 / 5</span>
+      </div>
 
+      <p class="book-description">
+        This is a placeholder description of the book. It gives an overview of the story.
+      </p>
+    </div>
+  </div>
+</div>
+    <button id="toggleButton" class="mobile-only"></button>
+    <div id="hiddenContent" class="desktop-content">
+      <div class="side-nav-prog">
+          <div class="progress-bars">
+              <h3 class="progress-title">On user lists:</h3>
+              <div class="progress-item">
+                  <span class="progress-label">Planned</span>
+                  <div class="progress-bar">
+                      <div class="progress-fill" style="width: 90%;"></div>
+                  </div>
+              </div>
+              <div class="progress-item">
+                  <span class="progress-label">Already read</span>
+                  <div class="progress-bar">
+                      <div class="progress-fill" style="width: 75%;"></div>
+                  </div>
+              </div>
+              <div class="progress-item">
+                  <span class="progress-label">In progress</span>
+                  <div class="progress-bar">
+                      <div class="progress-fill" style="width: 60%;"></div>
+                  </div>
+              </div>
+              <div class="progress-item">
+                  <span class="progress-label">Recommended</span>
+                  <div class="progress-bar">
+                      <div class="progress-fill" style="width: 82%;"></div>
+                  </div>
+              </div>
+          </div>
+      </div>
+    </div>
+    <div class="comments-section">
+    <h3>Comments</h3>
+    <div class="comment-list">
+      <div class="comment">
+        <p class="comment-author"><strong>John Doe</strong></p>
+        <p class="comment-text">This book was truly amazing! Highly recommend it.</p>
+      </div>
+      <div class="comment">
+        <p class="comment-author"><strong>Jane Smith</strong></p>
+        <p class="comment-text">A bit slow in the middle, but the ending was powerful.</p>
+      </div>
+    </div>
+    <form class="comment-form">
+      <textarea placeholder="Leave a comment..." rows="4" required></textarea>
+      <button type="submit">Post Comment</button>
+    </form>
 
-                <div class="progress-bars">
-                    <h3 class="progress-title">On user lists:</h3>
-                    <div class="progress-item">
-                        <span class="progress-label">Planned</span>
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width: 90%;"></div>
-                        </div>
-                    </div>
-                    <div class="progress-item">
-                        <span class="progress-label">Already read</span>
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width: 75%;"></div>
-                        </div>
-                    </div>
-                    <div class="progress-item">
-                        <span class="progress-label">In progress</span>
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width: 60%;"></div>
-                        </div>
-                    </div>
-                    <div class="progress-item">
-                        <span class="progress-label">Recommended</span>
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width: 82%;"></div>
-                        </div>
-                    </div>
-                </div>
-
-
-
-            </div>
-        </main>
-
-
-        <script src="/js/books.js"></script>
-        <script src="/js/main.js"></script>
-
-</body>
-</html>
+  </div>
+</main>
+{% endblock %}

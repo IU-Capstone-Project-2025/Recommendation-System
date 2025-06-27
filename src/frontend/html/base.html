@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recomendation System</title>
+    <link href='/css/style.css' rel='stylesheet'>
+    <link href="/css/mobile.css" rel="stylesheet">
+</head>
+<body>
+    <img class="image-gradient" src="img/gradient.png" alt="gradient">
+    <div class="layer-blur"></div>
+    <div class="container">
+        <header>
+            <h1 class="logo"><a href="/" style="text-decoration: none; color: inherit;">Recomendation System</a></h1>
+
+
+            <div class="user-box">
+                <div class="avatar-circle"></div>
+                {% if username %}
+                <span class="username"><a href="/personal" style="text-decoration: none; color: inherit;">{{username}}</a></span>
+                {% else %}
+                <div style="display: flex; gap: 10px;">
+                    <a href="/signin" class="btn-signing" style="text-decoration: none; color: black;">LOG IN</a>
+                    <a href="/registration" class="btn-signing" style="text-decoration: none; color: black;">SIGN UP</a>
+                </div>
+                {% endif %}
+            </div>
+        </header>
+    </div>
+
+    {% block content %}{% endblock %}
+
+    <script src="/js/books.js"></script>
+    <script src="/js/main.js"></script>
+    <script src="/js/generateLinks.js"></script>
+    <script src="/js/navbut.js"></script>
+
+</body>
+</html>
