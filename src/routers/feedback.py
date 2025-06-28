@@ -1,6 +1,6 @@
-from json import jsonable_encoder
+from fastapi.encoders import jsonable_encoder
 import fastapi
-from fastapi import APIRouter,Request, Form, Depends
+from fastapi import APIRouter, Request, Form, Depends
 from fastapi.responses import HTMLResponse
 
 from src.scripts.score import Score
@@ -9,6 +9,7 @@ from src.scripts.message import Message
 from src.constants import COMPLETED
 
 router = APIRouter()
+
 
 @router.post("/set_score")
 async def set_score(request: Request):
@@ -20,13 +21,14 @@ async def set_score(request: Request):
     user_score = data["score"]
 
     if status == COMPLETED:
-        score = Score(username = username, bookId = bookId, user_score = user_score)
+        score = Score(username=username, bookId=bookId, user_score=user_score)
         score.set_score()
 
-    status = Status(username = username, bookId = bookId, status = status) 
+    status = Status(username=username, bookId=bookId, status=status)
     status.set_status()
 
     return HTMLResponse(content="OK", status_code=200)
+
 
 @router.post("/send_comment")
 async def send_comment(request: Request):
@@ -36,7 +38,8 @@ async def send_comment(request: Request):
     bookId = data["bookId"]
     comment = data["comment"]
 
-    messager = Message(username = username, bookId = bookId, comment = comment)
+    messager = Message(username=username, bookId=bookId, comment=comment)
     messager.set_message()
 
     return HTMLResponse(content="OK", status_code=200)
+
