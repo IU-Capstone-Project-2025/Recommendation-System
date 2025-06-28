@@ -1,12 +1,6 @@
-from os import environ
-
-from dotenv import load_dotenv
 from keycloak import KeycloakOpenID
 
 from src import config
-
-
-load_dotenv()
 
 
 def get_auth_data(username: str, password: str) -> dict:
@@ -25,4 +19,3 @@ def get_auth_data(username: str, password: str) -> dict:
         return token
     except:
         return {"error": "wrong password or username"}
-

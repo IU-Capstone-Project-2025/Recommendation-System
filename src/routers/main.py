@@ -1,17 +1,12 @@
-from os import environ
-import fastapi
 from fastapi import APIRouter, Form, Request
-from fastapi.responses import JSONResponse, RedirectResponse
+from fastapi.responses import RedirectResponse
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
-from ldap3 import ALL, MODIFY_ADD, MODIFY_REPLACE, Connection, Server
+from ldap3 import ALL, MODIFY_REPLACE, Connection, Server
 from dotenv import load_dotenv
-from keycloak import KeycloakOpenID
 
 from src import config
 from src.scripts.check_auth import get_auth_data
-
-load_dotenv()
 
 # from fastapi.templates import Jinja2Templates
 router = APIRouter()

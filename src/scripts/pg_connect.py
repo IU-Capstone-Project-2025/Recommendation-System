@@ -1,13 +1,20 @@
 from contextlib import contextmanager
 from typing import Generator
-import os
 import psycopg2
-from dotenv import load_dotenv
 
-load_dotenv()
+from src import config
+
 
 class PgConnect:
-    def __init__(self, host: str, port: str, db_name: str, user: str, pw: str, sslmode: str = "disable") -> None:
+    def __init__(
+        self,
+        host: str,
+        port: str,
+        db_name: str,
+        user: str,
+        pw: str,
+        sslmode: str = "disable",
+    ) -> None:
         self.host = host
         self.port = int(port)
         self.db_name = db_name
@@ -30,7 +37,8 @@ class PgConnect:
             db_name=self.db_name,
             user=self.user,
             pw=self.pw,
-            sslmode=self.sslmode)
+            sslmode=self.sslmode,
+        )
 
     def client(self):
         return psycopg2.connect(self.url())
@@ -53,9 +61,9 @@ class PgConnectionBuilder:
     @staticmethod
     def pg_conn() -> PgConnect:
         return PgConnect(
-                host="postgres",
-                port=os.getenv("POSTGRES_PORT"),
-                db_name=os.getenv("POSTGRES_DB"),
-                user=os.getenv("POSTGRES_USER"),
-                pw=os.getenv("POSTGRES_PASSWORD")
-            )
+            host="postgres",
+            port=config.POSTGRES_PORT,
+            db_name=config.POSTGRES_DB,
+            user=config.POSTGRES_USER,
+            pw=config.POSTGRES_PASSWORD,
+        )
