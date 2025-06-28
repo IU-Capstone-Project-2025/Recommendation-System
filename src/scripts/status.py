@@ -28,14 +28,14 @@ class Status:
         with self._db.client().cursor() as cur:
             cur.execute(
                 """
-                            SELECT
-                                CASE
-                                    WHEN EXISTS (SELECT 1 FROM completed WHERE userid = %(userid)s AND bookid = %(bookid)s AND isactual = true) THEN 'completed'
-                                    WHEN EXISTS (SELECT 1 FROM reading WHERE userid = %(userid)s AND bookid = %(bookid)s AND isactual = true) THEN 'reading'
-                                    WHEN EXISTS (SELECT 1 FROM planned WHERE userid = %(userid)s AND bookid = %(bookid)s AND isactual = true) THEN 'planned'
-                                    ELSE NULL
-                                END AS status
-                        """,
+                    SELECT
+                        CASE
+                            WHEN EXISTS (SELECT 1 FROM completed WHERE userid = %(userid)s AND bookid = %(bookid)s AND isactual = true) THEN 'completed'
+                            WHEN EXISTS (SELECT 1 FROM reading WHERE userid = %(userid)s AND bookid = %(bookid)s AND isactual = true) THEN 'reading'
+                            WHEN EXISTS (SELECT 1 FROM planned WHERE userid = %(userid)s AND bookid = %(bookid)s AND isactual = true) THEN 'planned'
+                            ELSE NULL
+                        END AS status
+                """,
                 {"userid": self._userid, "bookid": self._bookId},
             )
 
@@ -50,9 +50,9 @@ class Status:
             with self._db.client().cursor() as cur:
                 cur.execute(
                     """
-                                SELECT isactual
-                                FROM %(status)s WHERE userid = %(userid)s AND bookid = %(bookid)s
-                            """,
+                        SELECT isactual
+                        FROM %(status)s WHERE userid = %(userid)s AND bookid = %(bookid)s
+                    """,
                     {
                         "status": self._newstatus,
                         "userid": self._userid,
@@ -74,13 +74,13 @@ class Status:
             with self._db.client().cursor() as cur:
                 cur.execute(
                     """
-                                UPDATE
-                                    %(status)s
-                                SET
-                                    isactual = true
-                                WHERE
-                                    userid = %(userid)s AND bookid = %(bookid)s;
-                            """,
+                        UPDATE
+                            %(status)s
+                        SET
+                            isactual = true
+                        WHERE
+                            userid = %(userid)s AND bookid = %(bookid)s;
+                    """,
                     {
                         "status": self._newstatus,
                         "userid": self._userid,
@@ -89,13 +89,13 @@ class Status:
                 )
                 cur.execute(
                     """
-                                UPDATE
-                                    %(status)s
-                                SET
-                                    isactual = false
-                                WHERE
-                                    userid = %(userid)s AND bookid = %(bookid)s;
-                            """,
+                        UPDATE
+                            %(status)s
+                        SET
+                            isactual = false
+                        WHERE
+                            userid = %(userid)s AND bookid = %(bookid)s;
+                    """,
                     {
                         "status": self._status,
                         "userid": self._userid,
@@ -106,11 +106,11 @@ class Status:
             with self._db.client().cursor() as cur:
                 cur.execute(
                     """
-                                INSERT INTO
-                                    %(status)s (userid, bookid, isactual)
-                                VALUES
-                                    (%(userid)s, %(bookid)s, true);
-                            """,
+                        INSERT INTO
+                            %(status)s (userid, bookid, isactual)
+                        VALUES
+                            (%(userid)s, %(bookid)s, true);
+                    """,
                     {
                         "status": self._newstatus,
                         "userid": self._userid,
@@ -120,13 +120,13 @@ class Status:
                 if self._status is not None:
                     cur.execute(
                         """
-                                    UPDATE
-                                        %(status)s
-                                    SET
-                                        isactual = false
-                                    WHERE
-                                        userid = %(userid)s AND bookid = %(bookid)s;
-                                """,
+                            UPDATE
+                                %(status)s
+                            SET
+                                isactual = false
+                            WHERE
+                                userid = %(userid)s AND bookid = %(bookid)s;
+                        """,
                         {
                             "status": self._status,
                             "userid": self._userid,
