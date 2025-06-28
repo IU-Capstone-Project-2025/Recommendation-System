@@ -2,9 +2,9 @@ from logging import Logger
 from typing import List, Tuple, Any, Optional
 
 from lib.pg_connect import PgConnect
+from lib.ch_connect import CHConnect
 from datetime import datetime
-from psycopg2.extensions import connection
-from psycopg2.extras import execute_values
+from clickhouse_driver import Client as ClickhouseClient
 from pydantic import BaseModel
 
 
@@ -60,60 +60,46 @@ class BookOriginRepository:
 
 
 class BookDestRepository:
-    def insert_batch(self, conn: connection, book: List[BookObj]) -> None:
-        if not book:
+    def insert_batch(self, conn: ClickhouseClient, books: List[BookObj]) -> None:
+        if not books:
             return
 
-        with conn.cursor() as cur:
-            cur.execute("""
-                CREATE TEMP TABLE temp_book
-                (LIKE book INCLUDING DEFAULTS) ON COMMIT DROP
-            """)
-            
-            execute_values(
-                cur,
-                "INSERT INTO temp_book (id, title, author, year, score, votes, imgurl, description, updatets) VALUES %s",
-                [(t.id, t.title, t.author, t.year, t.score, t.votes, t.imgurl, t.description, t.updatets) for t in book]
-            )
-            
-            cur.execute("""
-                UPDATE book u SET
-                    title = t.title,
-                    author = t.author,
-                    year = t.year,
-                    score = t.score,
-                    votes = t.votes,
-                    imgurl = t.imgurl,
-                    description = t.description,
-                    updatets = t.updatets
-                FROM temp_book t
-                WHERE u.id = t.id
-            """)
-            
-            cur.execute("""
-                INSERT INTO book (id, title, author, year, score, votes, imgurl, description, updatets)
-                SELECT t.id, t.title, t.author, t.year, t.score, t.votes, t.imgurl, t.description, t.updatets
-                FROM temp_book t
-                LEFT JOIN book u ON t.id = u.id
-                WHERE u.id IS NULL
-            """)
+        data = [
+            [
+                book.id,
+                book.title,
+                book.author,
+                book.year,
+                book.score,
+                book.votes,
+                book.imgurl,
+                book.description,
+                book.updatets
+            ]
+            for book in books
+        ]
+        
+        conn.execute(
+            """
+            INSERT INTO Book (id, title, author, year, score, votes, imgurl, description, updatets) VALUES
+            """,
+            data
+        )
 
 
 class BookLoader:
     BATCH_SIZE = 10000
     
-    def __init__(self, pg_origin: PgConnect, pg_dest: PgConnect, log: Logger) -> None:
-        self.pg_dest = pg_dest
+    def __init__(self, pg_origin: PgConnect, ch_dest: CHConnect, log: Logger) -> None:
+        self.ch_dest = ch_dest
         self.origin = BookOriginRepository(pg_origin)
         self.stg = BookDestRepository()
         self.log = log
 
     def load_book(self):
-        with self.pg_dest.connection() as conn:
+        with self.ch_dest.connection() as conn:
 
-            with conn.cursor() as cursor:
-                cursor.execute("SELECT MAX(updatets) FROM book")
-                last_loaded_date = cursor.fetchone()[0]
+            last_loaded_date = conn.execute("SELECT MAX(updatets) FROM Book")[0][0]
             if not last_loaded_date:
                 last_loaded_date = datetime(1970, 1, 1)
 

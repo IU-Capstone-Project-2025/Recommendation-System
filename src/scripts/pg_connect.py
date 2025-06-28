@@ -1,12 +1,20 @@
 from contextlib import contextmanager
 from typing import Generator
-
 import psycopg2
-from airflow.hooks.base import BaseHook
+
+from src import config
 
 
 class PgConnect:
-    def __init__(self, host: str, port: str, db_name: str, user: str, pw: str, sslmode: str) -> None:
+    def __init__(
+        self,
+        host: str,
+        port: str,
+        db_name: str,
+        user: str,
+        pw: str,
+        sslmode: str = "disable",
+    ) -> None:
         self.host = host
         self.port = int(port)
         self.db_name = db_name
@@ -29,7 +37,8 @@ class PgConnect:
             db_name=self.db_name,
             user=self.user,
             pw=self.pw,
-            sslmode=self.sslmode)
+            sslmode=self.sslmode,
+        )
 
     def client(self):
         return psycopg2.connect(self.url())
@@ -50,18 +59,11 @@ class PgConnect:
 class PgConnectionBuilder:
 
     @staticmethod
-    def pg_conn(conn_id: str) -> PgConnect:
-        conn = BaseHook.get_connection(conn_id)
-
-        sslmode = "disable"
-        if "sslmode" in conn.extra_dejson:
-            sslmode = conn.extra_dejson["sslmode"]
-
-        pg = PgConnect(str(conn.host),
-                       str(conn.port),
-                       str(conn.schema),
-                       str(conn.login),
-                       str(conn.password),
-                       sslmode)
-
-        return pg
+    def pg_conn() -> PgConnect:
+        return PgConnect(
+            host="postgres",
+            port=config.POSTGRES_PORT,
+            db_name=config.POSTGRES_DB,
+            user=config.POSTGRES_USER,
+            pw=config.POSTGRES_PASSWORD,
+        )

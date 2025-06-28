@@ -9,6 +9,7 @@ COPY . /app
 
 WORKDIR /app
 
+RUN poetry lock
 RUN poetry install --no-root
 RUN poetry add python-multipart
 
