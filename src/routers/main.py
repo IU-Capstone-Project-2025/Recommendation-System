@@ -8,12 +8,10 @@ from ldap3 import ALL, MODIFY_ADD, MODIFY_REPLACE, Connection, Server
 from dotenv import load_dotenv
 from keycloak import KeycloakOpenID
 
+from src import config
 from src.scripts.check_auth import get_auth_data
 
 load_dotenv()
-
-lldap_port = environ.get("LLDAP_HTTPS_CONN")
-assert lldap_port != None
 
 # from fastapi.templates import Jinja2Templates
 router = APIRouter()
@@ -87,12 +85,12 @@ async def register_post(
     ldap = Connection(
         Server(
             "lldap",
-            port=int(lldap_port),  # pyright: ignore type
+            port=int(config.LLDAP_PORT),  # pyright: ignore type
             use_ssl=False,
             get_info=ALL,
         ),
         user="uid=admin,ou=people,dc=example,dc=com",
-        password=environ.get("LLDAP_LDAP_USER_PASS"),
+        password=config.LLDA_LDAP_USER_PASS,
     )
     ldap.bind()
 
@@ -106,21 +104,6 @@ async def register_post(
 async def signin_post(
     request: Request, username: str = Form(...), password: str = Form(...)
 ):
-    # keycloak_openid = KeycloakOpenID(
-    #     server_url=environ.get("KEYCLOAK_ORIGIN"),
-    #     client_id=environ.get("KEYCLOAK_CLIENT_ID"),
-    #     client_secret_key=environ.get("KEYCLOAK_CLIENT_SECRET_KEY"),
-    #     realm_name="backend",
-    # )
-
-    # try:
-    #     token = keycloak_openid.token(username, password)
-    #     access_token = token["access_token"]
-    #     refresh_token = token["refresh_token"]
-    # except:
-    #     return templates.TemplateResponse(
-    #         "signin.html", {"request": request, "error": "wrong password or username"}
-    #     )
     get_auth_data(username=username, password=password)
 
     response = RedirectResponse("/personal", status_code=303)
