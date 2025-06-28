@@ -2,7 +2,7 @@ from keycloak import KeycloakOpenID
 from ldap3 import ALL, MODIFY_REPLACE, Connection, Server
 
 from src import config
-from src.scripts.exceptions import UsernameNotUnique, EmailNotUnique
+from src.scripts.exceptions import UsernameNotUnique
 
 
 def create_user(username: str, password: str, email: str):
