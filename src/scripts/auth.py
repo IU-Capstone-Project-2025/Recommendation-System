@@ -23,7 +23,7 @@ def create_user(username: str, password: str, email: str):
             get_info=ALL,
         ),
         user="uid=admin,ou=people,dc=example,dc=com",
-        password=config.LLDA_LDAP_USER_PASS,
+        password=config.LLDAP_LDAP_USER_PASS,
     )
     ldap.bind()
 
