@@ -10,6 +10,7 @@ from src.constants import COMPLETED
 
 router = APIRouter()
 
+
 @router.post("/set_score")
 async def set_score(request: Request):
     data = await request.form()
@@ -21,12 +22,14 @@ async def set_score(request: Request):
 
     if status == COMPLETED:
         score = Score(username = username, bookId = bookId, score = user_score)
+
         score.set_score()
 
-    status = Status(username = username, bookId = bookId, status = status) 
+    status = Status(username=username, bookId=bookId, status=status)
     status.set_status()
 
     return HTMLResponse(content="OK", status_code=200)
+
 
 @router.post("/send_comment")
 async def send_comment(request: Request):
@@ -36,7 +39,8 @@ async def send_comment(request: Request):
     bookId = data["bookId"]
     comment = data["comment"]
 
-    messager = Message(username = username, bookId = bookId, comment = comment)
+    messager = Message(username=username, bookId=bookId, comment=comment)
     messager.set_message()
 
     return HTMLResponse(content="OK", status_code=200)
+
