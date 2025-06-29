@@ -7,13 +7,13 @@ class Score:
         self._username: str = username
         self._bookId = bookId
         self._score = score
-        self._userid = self.get_userid()
         self._db = PgConnectionBuilder.pg_conn()
+        self._userid = self.get_userid()
 
     def get_userid(self) -> str:
         with self._db.client().cursor() as cur:
             cur.execute(
-                "SELECT id FROM user WHERE username = %(username)s",
+                "SELECT id FROM \"User\" WHERE username = %(username)s",
                 {"username": self._username},
             )
 
@@ -31,9 +31,9 @@ class Score:
             )
 
             res = cur.fetchone()
-            if not res:
-                raise ObjectNotFound
-
+            if not res: 
+                return None
+            
             return res[0]
 
     def set_score(self):
