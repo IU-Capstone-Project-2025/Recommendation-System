@@ -36,7 +36,7 @@ class Status:
                             ELSE NULL
                         END AS status
                 """,
-                {"userid": self._userid, "bookid": self._bookId},
+                {"userid": self.get_userid(self._username), "bookid": self._bookId},
             )
 
             res = cur.fetchone()
