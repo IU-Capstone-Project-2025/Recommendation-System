@@ -6,6 +6,7 @@ import fastapi
 from starlette.staticfiles import StaticFiles
 
 from src.routers.main import router
+from src.routers.feedback import router as score_router
 
 #fastapi application
 app = fastapi.FastAPI()
@@ -13,6 +14,7 @@ app = fastapi.FastAPI()
 
 #include routers
 app.include_router(router, tags=["Main"])
+app.include_router(score_router, tags=["Score"])
 
 #mounting static data
 

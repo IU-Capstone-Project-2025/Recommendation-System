@@ -28,11 +28,11 @@ class CSVBookLoader:
                         
                         # Insert Book
                         cur.execute(
-                            """INSERT INTO Book (title, author, year, imgurl, description, score, votes)
-                            VALUES (%s, %s, %s, %s, %s, %s, %s)
+                            """INSERT INTO Book (title, author, year, imgurl, description)
+                            VALUES (%s, %s, %s, %s, %s)
                             RETURNING ID""",
                             (row['Title'], row['Authors'], int(row['Published Date']), 
-                            row['Image'], row['Description'], 0.0, 0)
+                            row['Image'], row['Description'])
                         )
                         book_id = cur.fetchone()[0]
                         
