@@ -1,6 +1,6 @@
-from fastapi.encoders import jsonable_encoder
 import fastapi
-from fastapi import APIRouter, Request, Form, Depends
+from fastapi.encoders import jsonable_encoder
+from fastapi import APIRouter,Request, Form, Depends
 from fastapi.responses import HTMLResponse
 
 from src.scripts.score import Score
@@ -21,7 +21,8 @@ async def set_score(request: Request):
     user_score = data["score"]
 
     if status == COMPLETED:
-        score = Score(username=username, bookId=bookId, user_score=user_score)
+        score = Score(username = username, bookId = bookId, score = user_score)
+
         score.set_score()
 
     status = Status(username=username, bookId=bookId, status=status)
