@@ -27,6 +27,10 @@ jobs:
           sudo chmod +x /usr/local/bin/docker-compose
           docker-compose --version
 
+      -name: Prepare backend container
+        run: |
+          docker build -t recommendation-system-backend:latest .
+
 
       - name: Prepare environment file
         run: |
