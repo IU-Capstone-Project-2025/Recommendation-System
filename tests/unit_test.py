@@ -1,6 +1,6 @@
 import pytest
 import requests
-
+from time import sleep
 from src.config import TEST_BACKEND_LOGIN, TEST_BACKEND_PASSWORD
 
 def test_backend_healthy():
@@ -13,7 +13,8 @@ def test_backend_auth():
     assert response.status_code == 200
 
 def test_airflow_healthy():
-    response = requests.get("http://airflow:8080/health")
+    sleep(15)
+    response = requests.get("http://airflow-webserver:8080/health")
     assert response.status_code == 200
 
 
@@ -22,6 +23,6 @@ def test_postgres():
 
     connection = PgConnectionBuilder.pg_conn()
 
-    with connection.connection as conn:
+    with connection.connection() as conn:
         assert conn
 

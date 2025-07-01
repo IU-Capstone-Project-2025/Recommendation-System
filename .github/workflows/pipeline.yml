@@ -1,0 +1,23 @@
+name: CI/CD yml for backend airflow and postgres
+
+on:
+  push:
+    branches:
+      - main
+      - feature/DevOps
+  pull_request:
+    branches:
+      - main
+      - feature/DevOps
+
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Prepare environment file
+        run: |
+          cp .env.example .env
+          cat .env 

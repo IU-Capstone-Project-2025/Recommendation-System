@@ -34,10 +34,12 @@ services:
 
   # Unit tests tester
   tester:
+    env_file: .env
     build: 
       context: .
       dockerfile: tests.Dockerfile
     depends_on:
+      - airflow-scheduler
       - backend
       - postgres
     networks:
