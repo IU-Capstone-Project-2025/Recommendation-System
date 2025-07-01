@@ -29,7 +29,7 @@ jobs:
 
       - name: Prepare backend container
         run: |
-          docker build -t recommendation-system-backend:latest .
+          docker build -t recommendation-system-backend:latest backend.Dockerfile
 
 
       - name: Prepare environment file
