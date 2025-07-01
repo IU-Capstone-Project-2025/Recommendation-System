@@ -2,9 +2,9 @@ from logging import Logger
 from typing import List, Tuple, Any, Optional
 
 from lib.pg_connect import PgConnect
+from lib.ch_connect import CHConnect
 from datetime import datetime
-from psycopg2.extensions import connection
-from psycopg2.extras import execute_values
+from clickhouse_driver import Client as ClickhouseClient
 from pydantic import BaseModel
 
 
@@ -50,54 +50,41 @@ class ReadingOriginRepository:
 
 
 class ReadingDestRepository:
-    def insert_batch(self, conn: connection, reading: List[ReadingObj]) -> None:
-        if not reading:
+    def insert_batch(self, conn: ClickhouseClient, readings: List[ReadingObj]) -> None:
+        if not readings:
             return
 
-        with conn.cursor() as cur:
-            cur.execute("""
-                CREATE TEMP TABLE temp_reading
-                (LIKE reading INCLUDING DEFAULTS) ON COMMIT DROP
-            """)
-            
-            execute_values(
-                cur,
-                "INSERT INTO temp_reading (userid, bookid, isactual, updatets) VALUES %s",
-                [(t.userid, t.bookid, t.isactual, t.updatets) for t in reading]
-            )
-            
-            cur.execute("""
-                UPDATE reading u SET
-                    isactual = t.isactual,
-                    updatets = t.updatets
-                FROM temp_reading t
-                WHERE u.userid = t.userid AND u.bookid = t.bookid
-            """)
-            
-            cur.execute("""
-                INSERT INTO reading (userid, bookid, isactual, updatets)
-                SELECT t.userid, t.bookid, t.isactual, t.updatets
-                FROM temp_reading t
-                LEFT JOIN reading u ON t.userid = u.userid AND t.bookid = u.bookid
-                WHERE u.userid IS NULL AND u.bookid IS NULL
-            """)
+        data = [
+            [
+                reading.userid,
+                reading.bookid,
+                reading.isactual,
+                reading.updatets
+            ]
+            for reading in readings
+        ]
+        
+        conn.execute(
+            """
+            INSERT INTO Reading (userid, bookid, isactual, updatets) VALUES
+            """,
+            data
+        )
 
 
 class ReadingLoader:
     BATCH_SIZE = 10000
     
-    def __init__(self, pg_origin: PgConnect, pg_dest: PgConnect, log: Logger) -> None:
-        self.pg_dest = pg_dest
+    def __init__(self, pg_origin: PgConnect, ch_dest: CHConnect, log: Logger) -> None:
+        self.ch_dest = ch_dest
         self.origin = ReadingOriginRepository(pg_origin)
         self.stg = ReadingDestRepository()
         self.log = log
 
     def load_reading(self):
-        with self.pg_dest.connection() as conn:
+        with self.ch_dest.connection() as conn:
 
-            with conn.cursor() as cursor:
-                cursor.execute("SELECT MAX(updatets) FROM reading")
-                last_loaded_date = cursor.fetchone()[0]
+            last_loaded_date = conn.execute("SELECT MAX(updatets) FROM Reading")[0][0]
             if not last_loaded_date:
                 last_loaded_date = datetime(1970, 1, 1)
 

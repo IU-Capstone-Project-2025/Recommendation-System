@@ -2,9 +2,9 @@ from logging import Logger
 from typing import List, Tuple, Any, Optional
 
 from lib.pg_connect import PgConnect
+from lib.ch_connect import CHConnect
 from datetime import datetime
-from psycopg2.extensions import connection
-from psycopg2.extras import execute_values
+from clickhouse_driver import Client as ClickhouseClient
 from pydantic import BaseModel
 
 
@@ -50,54 +50,41 @@ class PlannedOriginRepository:
 
 
 class PlannedDestRepository:
-    def insert_batch(self, conn: connection, planned: List[PlannedObj]) -> None:
-        if not planned:
+    def insert_batch(self, conn: ClickhouseClient, planneds: List[PlannedObj]) -> None:
+        if not planneds:
             return
 
-        with conn.cursor() as cur:
-            cur.execute("""
-                CREATE TEMP TABLE temp_planned
-                (LIKE planned INCLUDING DEFAULTS) ON COMMIT DROP
-            """)
-            
-            execute_values(
-                cur,
-                "INSERT INTO temp_planned (userid, bookid, isactual, updatets) VALUES %s",
-                [(t.userid, t.bookid, t.isactual, t.updatets) for t in planned]
-            )
-            
-            cur.execute("""
-                UPDATE planned u SET
-                    isactual = t.isactual,
-                    updatets = t.updatets
-                FROM temp_planned t
-                WHERE u.userid = t.userid AND u.bookid = t.bookid
-            """)
-            
-            cur.execute("""
-                INSERT INTO planned (userid, bookid, isactual, updatets)
-                SELECT t.userid, t.bookid, t.isactual, t.updatets
-                FROM temp_planned t
-                LEFT JOIN planned u ON t.userid = u.userid AND t.bookid = u.bookid
-                WHERE u.userid IS NULL AND u.bookid IS NULL
-            """)
+        data = [
+            [
+                planned.userid,
+                planned.bookid,
+                planned.isactual,
+                planned.updatets
+            ]
+            for planned in planneds
+        ]
+        
+        conn.execute(
+            """
+            INSERT INTO Planned (userid, bookid, isactual, updatets) VALUES
+            """,
+            data
+        )
 
 
 class PlannedLoader:
     BATCH_SIZE = 10000
     
-    def __init__(self, pg_origin: PgConnect, pg_dest: PgConnect, log: Logger) -> None:
-        self.pg_dest = pg_dest
+    def __init__(self, pg_origin: PgConnect, ch_dest: CHConnect, log: Logger) -> None:
+        self.ch_dest = ch_dest
         self.origin = PlannedOriginRepository(pg_origin)
         self.stg = PlannedDestRepository()
         self.log = log
 
     def load_planned(self):
-        with self.pg_dest.connection() as conn:
+        with self.ch_dest.connection() as conn:
 
-            with conn.cursor() as cursor:
-                cursor.execute("SELECT MAX(updatets) FROM planned")
-                last_loaded_date = cursor.fetchone()[0]
+            last_loaded_date = conn.execute("SELECT MAX(updatets) FROM Planned")[0][0]
             if not last_loaded_date:
                 last_loaded_date = datetime(1970, 1, 1)
 

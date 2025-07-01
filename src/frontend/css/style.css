@@ -617,3 +617,9 @@ input.tag {
   text-shadow: 0 0 4px rgba(255,255,255,0.3);
 }
 
+.error {
+    border: 1px solid;
+    color: #d92626;
+    padding: 5px 15px;
+    border-radius: 50px;
+}

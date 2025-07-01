@@ -1,8 +1,11 @@
-import fastapi
 from fastapi import APIRouter, Form, Request
-from fastapi.responses import JSONResponse, RedirectResponse
+from fastapi.responses import RedirectResponse
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
+
+from src import config
+from src.scripts import auth
+from src.scripts.exceptions import UsernameNotUnique
 
 # from fastapi.templates import Jinja2Templates
 router = APIRouter()
@@ -12,37 +15,79 @@ templates = Jinja2Templates(directory="src/frontend/html")
 
 @router.get("/", response_class=HTMLResponse)
 async def root(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
+    username = request.cookies["username"] if "username" in request.cookies else None
+    return templates.TemplateResponse(
+        "index.html", {"request": request, "username": username}
+    )
 
 
 @router.get("/catalog", response_class=HTMLResponse)
 async def catalog(request: Request):
-    return templates.TemplateResponse("catalog.html", {"request": request})
+    username = request.cookies["username"] if "username" in request.cookies else None
+    return templates.TemplateResponse(
+        "catalog.html", {"request": request, "username": username}
+    )
 
 
 @router.get("/personal", response_class=HTMLResponse)
 async def personal(request: Request):
-    return templates.TemplateResponse("personal_account.html", {"request": request})
+    username = request.cookies["username"] if "username" in request.cookies else None
+    return templates.TemplateResponse(
+        "personal_account.html", {"request": request, "username": username}
+    )
 
 
 @router.get("/book", response_class=HTMLResponse)
 async def account(request: Request):
-    return templates.TemplateResponse("book_info.html", {"request": request})
+    username = request.cookies["username"] if "username" in request.cookies else None
+    return templates.TemplateResponse(
+        "book_info.html", {"request": request, "username": username}
+    )
 
 
 @router.get("/signin", response_class=HTMLResponse)
 async def signin_get(request: Request):
     return templates.TemplateResponse("signin.html", {"request": request})
 
+
 @router.get("/registration", response_class=HTMLResponse)
 async def register(request: Request):
     return templates.TemplateResponse("registration.html", {"request": request})
 
 
-@router.post("/signin", response_class=RedirectResponse)
+@router.post("/registration", response_class=HTMLResponse)
+async def register_post(
+    request: Request,
+    username: str = Form(...),
+    email: str = Form(...),
+    password: str = Form(...),
+    password_confirm: str = Form(...),
+):
+    if password != password_confirm:
+        return templates.TemplateResponse(
+            "registration.html", {"request": request, "error": "passwords don't match"}
+        )
+
+    try:
+        auth.create_user(username, password, email)
+    except UsernameNotUnique:
+        return templates.TemplateResponse(
+            "registration.html",
+            {
+                "request": request,
+                "error": "This username is already taken, try another one",
+            },
+        )
+
+    return await signin_post(request, username, password)
+
+
+@router.post("/signin")
 async def signin_post(
     request: Request, username: str = Form(...), password: str = Form(...)
 ):
+    auth.get_auth_data(username=username, password=password)
+
     response = RedirectResponse("/personal", status_code=303)
     response.set_cookie("username", username)
     return response

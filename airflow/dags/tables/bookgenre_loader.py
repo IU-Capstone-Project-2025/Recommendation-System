@@ -2,9 +2,9 @@ from logging import Logger
 from typing import List, Tuple, Any, Optional
 
 from lib.pg_connect import PgConnect
+from lib.ch_connect import CHConnect
 from datetime import datetime
-from psycopg2.extensions import connection
-from psycopg2.extras import execute_values
+from clickhouse_driver import Client as ClickhouseClient
 from pydantic import BaseModel
 
 
@@ -48,53 +48,40 @@ class BookgenreOriginRepository:
 
 
 class BookgenreDestRepository:
-    def insert_batch(self, conn: connection, bookgenre: List[BookgenreObj]) -> None:
-        if not bookgenre:
+    def insert_batch(self, conn: ClickhouseClient, bookgenres: List[BookgenreObj]) -> None:
+        if not bookgenres:
             return
 
-        with conn.cursor() as cur:
-            cur.execute("""
-                CREATE TEMP TABLE temp_bookgenre
-                (LIKE bookgenre INCLUDING DEFAULTS) ON COMMIT DROP
-            """)
-            
-            execute_values(
-                cur,
-                "INSERT INTO temp_bookgenre (bookid, genreid, updatets) VALUES %s",
-                [(t.bookid, t.genreid, t.updatets) for t in bookgenre]
-            )
-            
-            cur.execute("""
-                UPDATE bookgenre u SET
-                    updatets = t.updatets
-                FROM temp_bookgenre t
-                WHERE u.bookid = t.bookid AND u.genreid = t.genreid
-            """)
-            
-            cur.execute("""
-                INSERT INTO bookgenre (bookid, genreid, updatets)
-                SELECT t.bookid, t.genreid, t.updatets
-                FROM temp_bookgenre t
-                LEFT JOIN bookgenre u ON t.bookid = u.bookid AND t.genreid = u.genreid
-                WHERE u.bookid IS NULL AND u.genreid IS NULL
-            """)
+        data = [
+            [
+                bookgenre.bookid,
+                bookgenre.genreid,
+                bookgenre.updatets
+            ]
+            for bookgenre in bookgenres
+        ]
+        
+        conn.execute(
+            """
+            INSERT INTO BookGenre (bookid, genreid, updatets) VALUES
+            """,
+            data
+        )
 
 
 class BookgenreLoader:
     BATCH_SIZE = 10000
     
-    def __init__(self, pg_origin: PgConnect, pg_dest: PgConnect, log: Logger) -> None:
-        self.pg_dest = pg_dest
+    def __init__(self, pg_origin: PgConnect, ch_dest: CHConnect, log: Logger) -> None:
+        self.ch_dest = ch_dest
         self.origin = BookgenreOriginRepository(pg_origin)
         self.stg = BookgenreDestRepository()
         self.log = log
 
     def load_bookgenre(self):
-        with self.pg_dest.connection() as conn:
+        with self.ch_dest.connection() as conn:
 
-            with conn.cursor() as cursor:
-                cursor.execute("SELECT MAX(updatets) FROM bookgenre")
-                last_loaded_date = cursor.fetchone()[0]
+            last_loaded_date = conn.execute("SELECT MAX(updatets) FROM BookGenre")[0][0]
             if not last_loaded_date:
                 last_loaded_date = datetime(1970, 1, 1)
 

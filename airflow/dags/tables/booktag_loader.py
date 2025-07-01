@@ -2,9 +2,9 @@ from logging import Logger
 from typing import List, Tuple, Any, Optional
 
 from lib.pg_connect import PgConnect
+from lib.ch_connect import CHConnect
 from datetime import datetime
-from psycopg2.extensions import connection
-from psycopg2.extras import execute_values
+from clickhouse_driver import Client as ClickhouseClient
 from pydantic import BaseModel
 
 
@@ -48,53 +48,40 @@ class BooktagOriginRepository:
 
 
 class BooktagDestRepository:
-    def insert_batch(self, conn: connection, booktag: List[BooktagObj]) -> None:
-        if not booktag:
+    def insert_batch(self, conn: ClickhouseClient, booktags: List[BooktagObj]) -> None:
+        if not booktags:
             return
 
-        with conn.cursor() as cur:
-            cur.execute("""
-                CREATE TEMP TABLE temp_booktag
-                (LIKE booktag INCLUDING DEFAULTS) ON COMMIT DROP
-            """)
-            
-            execute_values(
-                cur,
-                "INSERT INTO temp_booktag (bookid, tagid, updatets) VALUES %s",
-                [(t.bookid, t.tagid, t.updatets) for t in booktag]
-            )
-            
-            cur.execute("""
-                UPDATE booktag u SET
-                    updatets = t.updatets
-                FROM temp_booktag t
-                WHERE u.bookid = t.bookid AND u.tagid = t.tagid
-            """)
-            
-            cur.execute("""
-                INSERT INTO booktag (bookid, tagid, updatets)
-                SELECT t.bookid, t.tagid, t.updatets
-                FROM temp_booktag t
-                LEFT JOIN booktag u ON t.bookid = u.bookid AND t.tagid = u.tagid
-                WHERE u.bookid IS NULL AND u.tagid IS NULL
-            """)
+        data = [
+            [
+                booktag.bookid,
+                booktag.tagid,
+                booktag.updatets
+            ]
+            for booktag in booktags
+        ]
+        
+        conn.execute(
+            """
+            INSERT INTO BookTag (bookid, tagid, updatets) VALUES
+            """,
+            data
+        )
 
 
 class BooktagLoader:
     BATCH_SIZE = 10000
     
-    def __init__(self, pg_origin: PgConnect, pg_dest: PgConnect, log: Logger) -> None:
-        self.pg_dest = pg_dest
+    def __init__(self, pg_origin: PgConnect, ch_dest: CHConnect, log: Logger) -> None:
+        self.ch_dest = ch_dest
         self.origin = BooktagOriginRepository(pg_origin)
         self.stg = BooktagDestRepository()
         self.log = log
 
     def load_booktag(self):
-        with self.pg_dest.connection() as conn:
+        with self.ch_dest.connection() as conn:
 
-            with conn.cursor() as cursor:
-                cursor.execute("SELECT MAX(updatets) FROM booktag")
-                last_loaded_date = cursor.fetchone()[0]
+            last_loaded_date = conn.execute("SELECT MAX(updatets) FROM BookTag")[0][0]
             if not last_loaded_date:
                 last_loaded_date = datetime(1970, 1, 1)
 
