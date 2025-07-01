@@ -1,0 +1,8 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.13.3, pytest-8.4.1, pluggy-1.6.0 -- /Users/abraham_barrett/Documents/Code/Recommendation-System/venv/bin/python3.13
+cachedir: .pytest_cache
+rootdir: /Users/abraham_barrett/Documents/Code/Recommendation-System
+configfile: pyproject.toml
+collecting ... collected 0 items
+
+============================ no tests ran in 0.00s =============================

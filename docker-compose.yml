@@ -32,6 +32,20 @@ services:
     networks:
       - backend_network
 
+  # Unit tests tester
+  tester:
+    env_file: .env
+    build: 
+      context: .
+      dockerfile: tests.Dockerfile
+    depends_on:
+      - airflow-scheduler
+      - backend
+      - postgres
+    networks:
+      - backend_network
+      - airflow_network
+
   # Keycloak
   keycloak:
     image: quay.io/keycloak/keycloak:latest

@@ -24,7 +24,7 @@ app.mount("/img", StaticFiles(directory="src/frontend/img"), name="img")
 
 @app.get('/api/healthchecker')
 def root():
-    return {'message': 'Hello World'}
+    return {'message': 'Healthy'}
 
 def start():
     uvicorn.run(
