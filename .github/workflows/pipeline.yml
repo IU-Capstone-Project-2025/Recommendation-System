@@ -31,10 +31,13 @@ jobs:
         run: |
           docker build -t recommendation-system-backend:latest -f backend.Dockerfile .
 
-      - name: Prepare airflow container
+      - name: Prepare airflow web container
         run: |
           docker build -t recommendation-system-airflow-webserver:latest -f airflow.Dockerfile .
 
+      - name: Prepare airflow scheduler container
+        run: |
+          docker build -t recommendation-system-airflow-scheduler:latest -f airflow.Dockerfile .
 
       - name: Prepare environment file
         run: |
