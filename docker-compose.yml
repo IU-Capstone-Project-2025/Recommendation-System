@@ -32,6 +32,18 @@ services:
     networks:
       - backend_network
 
+  # Unit tests tester
+  tester:
+    build: 
+      context: .
+      dockerfile: tests.Dockerfile
+    depends_on:
+      - backend
+      - postgres
+    networks:
+      - backend_network
+      - airflow_network
+
   # Keycloak
   keycloak:
     image: quay.io/keycloak/keycloak:latest
