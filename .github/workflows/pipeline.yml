@@ -21,3 +21,12 @@ jobs:
         run: |
           cp .env.example .env
           cat .env 
+
+      # 2. Поднимаем инфраструктуру
+      - name: Start containers
+        run: |
+          docker-compose up -d --build tester
+
+      - name: Run tests
+        run: |
+          docker-compose logs --follow tester > test.log && cat test.log
