@@ -469,6 +469,7 @@ input.tag {
 }
 .book-details {
   flex: 1;
+  max-width: 600px;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -527,6 +528,93 @@ input.tag {
 
 .comment-text {
   margin: 5px 0 0 0;
+}
+
+.rating {
+  direction: rtl;
+  unicode-bidi: bidi-override;
+  font-size: 2rem;
+  user-select: none;
+  display: inline-flex;
+  gap: 0.01em;
+  margin-left: -2%;
+  margin-right: auto;
+}
+
+.rating input {
+  display: none;
+}
+
+.rating label {
+  cursor: pointer;
+  color: #ccc;
+  position: relative;
+  width: 1.3em;
+  height: 1.5em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rating label::before {
+  content: "☆";
+  font-size: 2rem;
+  line-height: 1;
+  color: #ccc;
+  background: linear-gradient(
+    to right,
+    #656565,
+    #7f42a7,
+    #6600c5,
+    #5300a0,
+    #757575,
+    #656565
+  );
+  background-size: 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: animationGradient 2.5s linear infinite;
+}
+
+.rating input:checked ~ label::before,
+.rating label:hover,
+.rating label:hover ~ label {
+  content: "★";
+  background: linear-gradient(
+    to right,
+    #656565,
+    #7f42a7,
+    #6600c5,
+    #5300a0,
+    #757575,
+    #656565
+  );
+  background-size: 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+
+  animation: animationGradient 2.5s linear infinite;
+}
+
+
+.rating input:checked ~ label {
+  color: white;
+  background: none;
+}
+
+.rating-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.rating-score {
+  font-size: 1.2rem;
+  color: #ccc;
+  min-width: 3rem;
+  text-align: left;
+  font-weight: bold;
+  text-shadow: 0 0 4px rgba(255,255,255,0.3);
 }
 
 .error {

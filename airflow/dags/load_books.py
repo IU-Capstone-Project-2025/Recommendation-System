@@ -10,11 +10,11 @@ log = logging.getLogger(__name__)
 
 
 @dag(
-    schedule_interval='0 * * * *',
+    schedule_interval='@once',
     start_date=datetime(2025, 6, 11),
     catchup=False,
     tags=['books', 'postgres', 'csv'],
-    is_paused_upon_creation=True
+    is_paused_upon_creation=False
 )
 def book_to_origin_dag():
     origin_pg_connect = PgConnectionBuilder.pg_conn("POSTGRES_DEFAULT")

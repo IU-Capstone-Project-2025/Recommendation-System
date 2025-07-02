@@ -13,7 +13,7 @@ x-airflow-common: &airflow-common
     AIRFLOW_CONN_CLICKHOUSE_DEFAULT: ${AIRFLOW_CONN_CLICKHOUSE_DEFAULT}
   volumes:
     - ./airflow/dags:/opt/airflow/dags
-    - ./parse/books.csv:/opt/airflow/data/books.csv
+    - ./scraper/books.csv:/opt/airflow/data/books.csv
   networks:
     - airflow_network
 
@@ -21,6 +21,7 @@ services:
 
   #Backend
   backend:
+    env_file: .env
     build:
       context: .
       dockerfile: backend.Dockerfile
@@ -31,6 +32,20 @@ services:
       - clickhouse
     networks:
       - backend_network
+
+  # Unit tests tester
+  tester:
+    env_file: .env
+    build: 
+      context: .
+      dockerfile: tests.Dockerfile
+    depends_on:
+      - airflow-scheduler
+      - backend
+      - postgres
+    networks:
+      - backend_network
+      - airflow_network
 
   # Keycloak
   keycloak:

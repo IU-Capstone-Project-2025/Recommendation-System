@@ -6,6 +6,7 @@ import fastapi
 from starlette.staticfiles import StaticFiles
 
 from src.routers.main import router
+from src.routers.feedback import router as score_router
 
 #fastapi application
 app = fastapi.FastAPI()
@@ -13,6 +14,7 @@ app = fastapi.FastAPI()
 
 #include routers
 app.include_router(router, tags=["Main"])
+app.include_router(score_router, tags=["Score"])
 
 #mounting static data
 
@@ -22,7 +24,7 @@ app.mount("/img", StaticFiles(directory="src/frontend/img"), name="img")
 
 @app.get('/api/healthchecker')
 def root():
-    return {'message': 'Hello World'}
+    return {'message': 'Healthy'}
 
 def start():
     uvicorn.run(
