@@ -61,7 +61,7 @@ class PgConnectionBuilder:
     @staticmethod
     def pg_conn() -> PgConnect:
         return PgConnect(
-            host="postgres",
+            host=config.POSTGRES_HOST,
             port=config.INTERNAL_POSTGRES_PORT,
             db_name=config.POSTGRES_DB,
             user=config.POSTGRES_USER,
