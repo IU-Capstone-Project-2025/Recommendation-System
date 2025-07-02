@@ -13,7 +13,7 @@ x-airflow-common: &airflow-common
     AIRFLOW_CONN_CLICKHOUSE_DEFAULT: ${AIRFLOW_CONN_CLICKHOUSE_DEFAULT}
   volumes:
     - ./airflow/dags:/opt/airflow/dags
-    - ./parse/books.csv:/opt/airflow/data/books.csv
+    - ./scraper/books.csv:/opt/airflow/data/books.csv
   networks:
     - airflow_network
 
