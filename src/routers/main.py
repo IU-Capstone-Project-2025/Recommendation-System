@@ -5,7 +5,7 @@ from fastapi.templating import Jinja2Templates
 
 from src import config
 from src.scripts import auth
-from src.scripts.exceptions import UsernameNotUnique
+from src.scripts.exceptions import BadCredentials, UsernameNotUnique
 
 # from fastapi.templates import Jinja2Templates
 router = APIRouter()
@@ -15,26 +15,17 @@ templates = Jinja2Templates(directory="src/frontend/html")
 
 @router.get("/", response_class=HTMLResponse)
 async def root(request: Request):
-    username = request.cookies["username"] if "username" in request.cookies else None
-    return templates.TemplateResponse(
-        "index.html", {"request": request, "username": username}
-    )
+    return templates.TemplateResponse("index.html", {"request": request})
 
 
 @router.get("/catalog", response_class=HTMLResponse)
 async def catalog(request: Request):
-    username = request.cookies["username"] if "username" in request.cookies else None
-    return templates.TemplateResponse(
-        "catalog.html", {"request": request, "username": username}
-    )
+    return templates.TemplateResponse("catalog.html", {"request": request})
 
 
 @router.get("/personal", response_class=HTMLResponse)
 async def personal(request: Request):
-    username = request.cookies["username"] if "username" in request.cookies else None
-    return templates.TemplateResponse(
-        "personal_account.html", {"request": request, "username": username}
-    )
+    return templates.TemplateResponse("personal_account.html", {"request": request})
 
 
 @router.get("/book", response_class=HTMLResponse)
@@ -86,8 +77,14 @@ async def register_post(
 async def signin_post(
     request: Request, username: str = Form(...), password: str = Form(...)
 ):
-    auth.get_auth_data(username=username, password=password)
+    try:
+        access, refresh = auth.authenticate(username=username, password=password)
+    except BadCredentials:
+        return templates.TemplateResponse(
+            "signin.html", {"request": request, "error": "wrong password or username"}
+        )
 
     response = RedirectResponse("/personal", status_code=303)
-    response.set_cookie("username", username)
+    response.set_cookie("access", access)
+    response.set_cookie("refresh", refresh)
     return response
