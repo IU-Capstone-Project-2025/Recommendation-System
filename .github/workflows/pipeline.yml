@@ -52,9 +52,7 @@ jobs:
       - name: Check test results
         id: check_results
         run: |
-          docker ps -a
-          docker logs recommendation-system-backend-1
-          docker cp $(docker-compose ps -q tester):/app/tests/tests.log ./tests.log
+          sleep 30
           grep -v "FAILED tests/unit_test.py::test_backend_auth - assert 404 == 200" ./tests.log > ./filtered_tests.log
 
           if grep -q "FAILED" ./filtered_tests.log; then
