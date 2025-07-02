@@ -51,6 +51,7 @@ jobs:
       - name: Check test results
         id: check_results
         run: |
+          sleep 30
           docker ps -a
           docker cp $(docker-compose ps -q tester):/app/tests/tests.log ./tests.log
           grep -v "FAILED tests/unit_test.py::test_backend_auth - assert 404 == 200" ./tests.log > ./filtered_tests.log
@@ -63,3 +64,14 @@ jobs:
             echo "All critical tests passed (ignoring known issue)"
             echo "HAS_FAILED=false" >> $GITHUB_OUTPUT
           fi
+
+      - name: Install SSH key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          known_hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
+
+      - name: Run deploy script
+        if: ${{ steps.check_results.outputs.HAS_FAILED == 'false' }}
+        run: |
+          ssh -o StrictHostKeyChecking=no -i id_rsa -p 22 ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "bash -s" < deploy.sh
