@@ -17,8 +17,8 @@
 
             <div class="user-box">
                 <div class="avatar-circle"></div>
-                {% if username %}
-                <span class="username"><a href="/personal" style="text-decoration: none; color: inherit;">{{username}}</a></span>
+                {% if user_data.preferred_username %}
+                <span class="username"><a href="/personal" style="text-decoration: none; color: inherit;">{{user_data.preferred_username}}</a></span>
                 {% else %}
                 <div style="display: flex; gap: 10px;">
                     <a href="/signin" class="btn-signing" style="text-decoration: none; color: black;">LOG IN</a>
