@@ -57,6 +57,7 @@ jobs:
           grep -v "FAILED tests/unit_test.py::test_backend_auth - assert 404 == 200" ./tests.log > ./filtered_tests.log
 
           if grep -q "FAILED" ./filtered_tests.log; then
+            cat ./filtered_tests.log
             echo "::error::Critical tests failed! Check test logs"
             echo "HAS_FAILED=true" >> $GITHUB_OUTPUT
             exit 1
