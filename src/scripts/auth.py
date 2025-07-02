@@ -50,7 +50,7 @@ def authenticate(username: str, password: str) -> Tuple[str, str]:
 
     try:
         token = keycloak_openid.token(username, password, scope="openid profile email")
-    except Exception as e:
+    except:
         raise BadCredentials
     access_token = token["access_token"]
     refresh_token = token["refresh_token"]
