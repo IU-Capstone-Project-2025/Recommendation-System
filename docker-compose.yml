@@ -21,6 +21,7 @@ services:
 
   #Backend
   backend:
+    env_file: .env
     build:
       context: .
       dockerfile: backend.Dockerfile

@@ -8,6 +8,22 @@ def test_backend_healthy():
     assert response.status_code == 200
     assert response.json()["message"] == "Healthy"
 
+def test_root_endpoint():
+    response = requests.get("http://backend:8000")
+    assert response.status_code == 200
+
+def test_catalog_endpoint():
+    response = requests.get("http://backend:8000/catalog")
+    assert response.status_code == 200
+
+def test_book_endpoint():
+    response = requests.get("http://backend:8000/book")
+    assert response.status_code == 200
+
+def test_registration_endpoint():
+    response = requests.get("http://backend:8000/registration")
+    assert response.status_code == 200
+
 def test_backend_auth():
     response = requests.post("http://backend:8000/api/signin", json={"username": TEST_BACKEND_LOGIN, "password": TEST_BACKEND_PASSWORD})
     assert response.status_code == 200
