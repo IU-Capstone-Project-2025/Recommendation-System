@@ -47,7 +47,7 @@ jobs:
       - name: Start containers
         run: |
           cp .env.example .env
-          docker compose up -d --build tester
+          docker compose --env-file .env up -d --build tester
 
       - name: Check test results
         id: check_results
