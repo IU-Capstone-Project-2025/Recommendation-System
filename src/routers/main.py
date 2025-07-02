@@ -7,6 +7,8 @@ from src import config
 from src.scripts import auth
 from src.scripts.exceptions import BadCredentials, UsernameNotUnique
 
+from src.scripts.book import get_books
+
 # from fastapi.templates import Jinja2Templates
 router = APIRouter()
 
@@ -25,8 +27,10 @@ async def root(request: Request):
 @router.get("/catalog", response_class=HTMLResponse)
 async def catalog(request: Request):
     user_data = auth.get_user_data(request)
+    print(get_books(1))
     return templates.TemplateResponse(
-        "catalog.html", {"request": request, "user_data": user_data}
+        "catalog.html",
+        {"request": request, "user_data": user_data, "books": get_books(0)},
     )
 
 
