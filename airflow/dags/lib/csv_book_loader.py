@@ -12,10 +12,10 @@ class CSVBookLoader:
 
     def load_book(self):
         with self.pg_dest.connection() as conn:
-            
+
             with open(self.csv_file, 'r', encoding='utf-8') as f:
                 reader = csv.DictReader(f)
-                
+
                 for row in reader:
                     with conn.cursor() as cur:
                         # Insert or get Type
@@ -25,23 +25,33 @@ class CSVBookLoader:
                             (type_name,)
                         )
                         type_id = cur.fetchone()[0]
-                        
+
                         # Insert Book
                         cur.execute(
                             """INSERT INTO Book (title, author, year, imgurl, description)
                             VALUES (%s, %s, %s, %s, %s)
+                            ON CONFLICT (title) DO UPDATE SET 
+                                author = EXCLUDED.author,
+                                year = EXCLUDED.year,
+                                imgurl = EXCLUDED.imgurl,
+                                description = EXCLUDED.description
                             RETURNING ID""",
-                            (row['Title'], row['Authors'], int(row['Published Date']), 
-                            row['Image'], row['Description'])
+                            (
+                                row["Title"],
+                                row["Authors"],
+                                int(row["Published Date"]),
+                                row["Image"],
+                                row["Description"],
+                            ),
                         )
                         book_id = cur.fetchone()[0]
-                        
+
                         # Link Book to Type
                         cur.execute(
-                            "INSERT INTO BookType (bookID, typeID) VALUES (%s, %s)",
-                            (book_id, type_id)
+                            "INSERT INTO BookType (bookID, typeID) VALUES (%s, %s) ON CONFLICT (bookID, typeID) DO NOTHING",
+                            (book_id, type_id),
                         )
-                        
+
                     # Process Genre Categories
                     genres = [g.strip() for g in row['Genre Categories'].split(',')]
                     with conn.cursor() as cur:
@@ -51,12 +61,12 @@ class CSVBookLoader:
                                 (genre_name,)
                             )
                             genre_id = cur.fetchone()[0]
-                            
+
                             cur.execute(
-                                "INSERT INTO BookGenre (bookID, genreID) VALUES (%s, %s)",
-                                (book_id, genre_id)
+                                "INSERT INTO BookGenre (bookID, genreID) VALUES (%s, %s) ON CONFLICT (bookID, genreID) DO NOTHING",
+                                (book_id, genre_id),
                             )
-                        
+
                     # Process Subject Categories (as Tags)
                     tags = [t.strip() for t in row['Subject Categories'].split(',')]
                     with conn.cursor() as cur:
@@ -66,12 +76,12 @@ class CSVBookLoader:
                                 (tag_name,)
                             )
                             tag_id = cur.fetchone()[0]
-                            
+
                             cur.execute(
-                                "INSERT INTO BookTag (bookID, tagID) VALUES (%s, %s)",
-                                (book_id, tag_id)
+                                "INSERT INTO BookTag (bookID, tagID) VALUES (%s, %s) ON CONFLICT (bookID, tagID) DO NOTHING",
+                                (book_id, tag_id),
                             )
-            
+
             # Commit the transaction
             conn.commit()
             self.log.info("Data loaded successfully!")
