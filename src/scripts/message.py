@@ -3,16 +3,16 @@ from src.scripts.pg_connect import PgConnectionBuilder
 
 
 class Message:
-    def __init__(self, username, bookId, message):
+    def __init__(self, username: str, bookId: int, message: str):
         self.username = username
         self.bookId = bookId
-        self.db = PgConnectionBuilder.pg_conn()
+        self._db = PgConnectionBuilder.pg_conn()
         self.message = message
         self.userid = self.get_userid()
 
 
-    def get_userid(self) -> str:
-        with self.db.client().cursor() as cur:
+    def get_userid(self) -> int:
+        with self._db.client().cursor() as cur:
             cur.execute(
                 "SELECT id FROM \"User\" WHERE username = %(username)s",
                 {"username": self.username},
@@ -23,3 +23,12 @@ class Message:
                 raise ObjectNotFound
 
             return res[0]
+        
+    def set_message(self) -> None:
+        with self._db.client().cursor() as cur:
+            cur.execute("""
+                        INSERT INTO message (userid, bookid, message)
+                        VALUES (%(userid)s, %(bookid)s, %(message)s)
+                        """,
+                        {"userid": self.userid, "bookid": self.bookId, "message": self.message}
+                        )
