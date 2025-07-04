@@ -7,7 +7,7 @@ CREATE TABLE "User" (
 
 CREATE TABLE Book (
     ID SERIAL PRIMARY KEY,
-    title VARCHAR(100) NOT NULL,
+    title VARCHAR(100) UNIQUE NOT NULL,
     author VARCHAR(100),
     year INT,
     imgurl VARCHAR(1000),

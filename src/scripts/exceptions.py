@@ -8,3 +8,6 @@ class UsernameNotUnique(Exception):
 
 class BadCredentials(Exception):
     pass
+
+class WrongListType(Exception):
+    pass

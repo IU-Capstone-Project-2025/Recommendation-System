@@ -1,21 +1,28 @@
 from src.scripts.pg_connect import PgConnectionBuilder
 from src.scripts.exceptions import ObjectNotFound
+from src.constants import COMPLETED, READING, PLANNED
 
 
 class Status:
-    def __init__(self, username: str, bookId: int, status: str):
-        self._username: str = username
-        self._bookId = bookId
-        self._newstatus = status
+    username: str
+    bookId: int
+    newstatus: str | None
+    status: str | None
+    userid: int
+    
+    def __init__(self, username: str, bookId: int, status: str | None):
+        self.username = username
+        self.bookId = bookId
+        self.newstatus = status
         self._db = PgConnectionBuilder.pg_conn()
-        self._status = self.get_status()
-        self._userid = self.get_userid(username)
+        self.status = self.get_status()
+        self.userid = self.get_userid()
 
-    def get_userid(self, username: str | None = None) -> str:
+    def get_userid(self) -> int:
         with self._db.client().cursor() as cur:
             cur.execute(
                 "SELECT id FROM \"User\" WHERE username = %(username)s",
-                {"username": username if username else self._username},
+                {"username": self.username},
             )
 
             res = cur.fetchone()
@@ -24,7 +31,7 @@ class Status:
 
             return res[0]
 
-    def get_status(self):
+    def get_status(self) -> str | None:
         with self._db.client().cursor() as cur:
             cur.execute(
                 """
@@ -36,7 +43,7 @@ class Status:
                             ELSE NULL
                         END AS status
                 """,
-                {"userid": self.get_userid(self._username), "bookid": self._bookId},
+                {"userid": self.get_userid(self.username), "bookid": self.bookId},
             )
 
             res = cur.fetchone()
@@ -45,27 +52,27 @@ class Status:
 
             return res[0]
 
-    def get_actuality(self):
-        if self._newstatus in ["completed", "reading", "planned"]:
+    def get_actuality(self) -> bool | None:
+        if self.newstatus in [COMPLETED, READING, PLANNED]:
             with self._db.client().cursor() as cur:
                 cur.execute(
                     f"""
                         SELECT isactual
-                        FROM {self._newstatus} WHERE userid = %(userid)s AND bookid = %(bookid)s
+                        FROM {self.newstatus} WHERE userid = %(userid)s AND bookid = %(bookid)s
                     """,
                     {
-                        "userid": self._userid,
-                        "bookid": self._bookId,
+                        "userid": self.userid,
+                        "bookid": self.bookId,
                     },
                 )
 
                 res = cur.fetchone()
                 if not res: 
                     return None
-                
+
                 return res[0]
 
-    def set_status(self):
+    def set_status(self) -> None:
         actuality = self.get_actuality()
         if actuality == True:
             return
@@ -74,58 +81,65 @@ class Status:
                 cur.execute(
                     f"""
                         UPDATE
-                            {self._newstatus}
+                            {self.newstatus}
                         SET
                             isactual = true
                         WHERE
                             userid = %(userid)s AND bookid = %(bookid)s;
                     """,
                     {
-                        "userid": self._userid,
-                        "bookid": self._bookId,
+                        "userid": self.userid,
+                        "bookid": self.bookId,
                     },
                 )
                 cur.execute(
                     f"""
                         UPDATE
-                            {self._status}
+                            {self.status}
                         SET
                             isactual = false
                         WHERE
                             userid = %(userid)s AND bookid = %(bookid)s;
                     """,
                     {
-                        "userid": self._userid,
-                        "bookid": self._bookId,
+                        "userid": self.userid,
+                        "bookid": self.bookId,
                     },
                 )
-        if actuality is None and self._newstatus in ["completed", "reading", "planned"]:
+        if actuality is None and self.newstatus in [COMPLETED, READING, PLANNED]:
             with self._db.client().cursor() as cur:
                 cur.execute(
                     f"""
                         INSERT INTO
-                            {self._newstatus} (userid, bookid, isactual)
+                            {self.newstatus} (userid, bookid, isactual)
                         VALUES
                             (%(userid)s, %(bookid)s, true);
                     """,
                     {
-                        "userid": self._userid,
-                        "bookid": self._bookId,
+                        "userid": self.userid,
+                        "bookid": self.bookId,
                     },
                 )
-                if self._status is not None:
+                if self.status is not None:
                     cur.execute(
                         f"""
                             UPDATE
-                                {self._status}
+                                {self.status}
                             SET
                                 isactual = false
                             WHERE
                                 userid = %(userid)s AND bookid = %(bookid)s;
                         """,
                         {
-                            "userid": self._userid,
-                            "bookid": self._bookId,
+                            "userid": self.userid,
+                            "bookid": self.bookId,
                         },
                     )
 
+    def drop_status(self) -> None:
+        if self.status in [COMPLETED, READING, PLANNED]:
+            with self._db.client().cursor() as cur:
+                cur.execute(
+                    f"UPDATE {self.status} SET isactual = false WHERE userid = %(userid)s AND bookid = %(bookid)s",
+                    {"userid": self.userid, "bookid": self.bookId},
+                )
