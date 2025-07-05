@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+<link rel="stylesheet" href="src/frontend/css/error.css">
+
+<div class="error-page">
+  <div class="error-illustration">
+    <img src="/img/First_4.svg" alt="4" class="digit jump">
+    <img src="/img/Zero.svg" alt="0" class="digit jump delay">
+    <img src="/img/First_4.svg" alt="4" class="digit jump">
+  </div>
+  <h1>Oops, you've lost in space.</h1>
+  <br><br>
+  <div class="tag-box-centered">
+    <div class="tag">
+      <a href="/" style="text-decoration: none; color: inherit;">Go Home</a>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
