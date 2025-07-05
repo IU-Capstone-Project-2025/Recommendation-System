@@ -26,9 +26,8 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   function checkAndShowSave() {
-    if (ratingChanged && statusChanged) {
+    if (ratingChanged || statusChanged) {
       saveButton.style.display = 'inline-block';
-
     } else {
       saveButton.style.display = 'none';
     }
@@ -38,11 +37,22 @@ document.addEventListener('DOMContentLoaded', () => {
     event.preventDefault();
     const rating = hiddenRating.value;
     const status = statusSelect.value;
+
+    let messageParts = [];
+
+    if (rating !== "0" && rating !== "") {
+      messageParts.push(Rating: ${rating});
+    }
+    if (status !== "") {
+      messageParts.push(Status: ${status});
+    }
+
+    const message = messageParts.length > 0 ? Saved! ${messageParts.join(', ')} : 'Nothing to save.';
+
     ratingChanged = false;
     statusChanged = false;
     saveButton.style.display = 'none';
-    showNotification(`Saved! Rating: ${rating}, Status: ${status}`);
-
+    showNotification(message);
   });
 
   function showNotification(message) {
