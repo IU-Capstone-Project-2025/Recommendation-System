@@ -41,13 +41,13 @@ document.addEventListener('DOMContentLoaded', () => {
     let messageParts = [];
 
     if (rating !== "0" && rating !== "") {
-      messageParts.push(Rating: ${rating});
+      messageParts.push(`Rating: ${rating}`);
     }
     if (status !== "") {
-      messageParts.push(Status: ${status});
+      messageParts.push(`Status: ${status}`);
     }
 
-    const message = messageParts.length > 0 ? Saved! ${messageParts.join(', ')} : 'Nothing to save.';
+    const message = messageParts.length > 0 ? `Saved! ${messageParts.join(', ')}` : 'Nothing to save.';
 
     ratingChanged = false;
     statusChanged = false;
