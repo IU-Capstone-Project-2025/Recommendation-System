@@ -6,13 +6,13 @@
     <div class="book-header">
   <div class="book-info">
     <div class="book-cover anim-border">
-      <img src="/img/book_cover.jpg" alt="Фото">
+        <img src="{{book.cover}}" alt="{{book.title}}">
       <span></span>
       <span></span>
     </div>
     <div class="book-details">
-      <h2 class="book-title">Book Title Goes Here</h2>
-      <p class="book-author">by Author Name</p>
+        <h2 class="book-title">{{book.title}}</h2>
+      <p class="book-author">{{book.author}}</p>
       <form id="bookForm" method="POST">
             <div class="rating-wrapper">
               <div class="rating">
@@ -37,7 +37,7 @@
 
 
       <p class="book-description">
-        This is a placeholder description of the book. It gives an overview of the story. This is a placeholder description of the book. It gives an overview of the story. This is a placeholder description of the book. It gives an overview of the story. This is a placeholder description of the book. It gives an overview of the story. This is a placeholder description of the book. It gives an overview of the story. This is a placeholder description of the book. It gives an overview of the story.
+        {{book.description}}
       </p>
           <br>
           <div class="status-save-wrapper">

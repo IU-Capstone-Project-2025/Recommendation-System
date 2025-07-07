@@ -4,7 +4,7 @@
     <h2 class="section-title">Top</h2>
     <div class="book-grid" id="bookGrid">
         {% for book in books %}
-        <div class="book-card" onclick="window.location=`/book/{{book.id}}`">
+        <div class="book-card" onclick="window.location=`/book?id={{book.id}}`">
                 <img src="{{book.cover}}" alt="{{book.title}}">
                 <h3 class="book-title">{{book.title}}</h3>
                 <p class="book-author">{{book.author}}</p>

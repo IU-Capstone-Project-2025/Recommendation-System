@@ -5,7 +5,8 @@ from fastapi.templating import Jinja2Templates
 
 from src import config
 from src.scripts import auth
-from src.scripts.exceptions import BadCredentials, UsernameNotUnique
+from src.scripts.book import Book
+from src.scripts.exceptions import BadCredentials, ObjectNotFound, UsernameNotUnique
 from src.constants import TOP_LIST
 
 from src.scripts.book_list import BookList
@@ -31,7 +32,11 @@ async def catalog(request: Request):
     book_list = BookList(None, TOP_LIST)
     return templates.TemplateResponse(
         "catalog.html",
-        {"request": request, "user_data": user_data, "books": book_list.get_book_list(0)},
+        {
+            "request": request,
+            "user_data": user_data,
+            "books": book_list.get_book_list(0),
+        },
     )
 
 
@@ -44,10 +49,15 @@ async def personal(request: Request):
 
 
 @router.get("/book", response_class=HTMLResponse)
-async def account(request: Request):
+async def book(request: Request, id: int):
     user_data = auth.get_user_data(request)
+    try:
+        book = Book(id)
+    except ObjectNotFound:
+        return templates.TemplateResponse("404.html")
+
     return templates.TemplateResponse(
-        "book_info.html", {"request": request, "user_data": user_data}
+        "book_info.html", {"request": request, "user_data": user_data, "book": book}
     )
 
 
