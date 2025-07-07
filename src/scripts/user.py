@@ -1,7 +1,7 @@
 from src.scripts.pg_connect import PgConnectionBuilder
 
 
-class UserStats:
+class User:
     username: str
 
     def __init__(self, username: str):
