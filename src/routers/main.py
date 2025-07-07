@@ -56,6 +56,11 @@ async def signin_get(request: Request):
     return templates.TemplateResponse("signin.html", {"request": request})
 
 
+@router.get("/lost", response_class=HTMLResponse)
+async def lost(request: Request):
+    return templates.TemplateResponse("not_found.html", {"request": request})
+
+
 @router.get("/registration", response_class=HTMLResponse)
 async def register(request: Request):
     return templates.TemplateResponse("registration.html", {"request": request})
