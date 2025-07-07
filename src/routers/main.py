@@ -54,7 +54,7 @@ async def book(request: Request, id: int):
     try:
         book = Book(id)
     except ObjectNotFound:
-        return templates.TemplateResponse("404.html")
+        return templates.TemplateResponse("404.html", {"request": request})
 
     return templates.TemplateResponse(
         "book_info.html", {"request": request, "user_data": user_data, "book": book}
