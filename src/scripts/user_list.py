@@ -23,7 +23,7 @@ class UserList:
             return res[0]
 
     def get_completed_list(self) -> list[Book]:
-        with self._db.client() as cur:
+        with self._db.client().cursor() as cur:
             cur.execute(
                 f"SELECT bookid FROM completed WHERE userid = %(userid)s ORDER BY rank ASC",
                 {"userid": self.userid},
@@ -32,9 +32,9 @@ class UserList:
             res = cur.fetchall()
 
             return [Book(row[0]) for row in res]
-        
+
     def get_planned_list(self) -> list[Book]:
-        with self._db.client() as cur:
+        with self._db.client().cursor() as cur:
             cur.execute(
                 f"SELECT bookid FROM planned WHERE userid = %(userid)s ORDER BY rank ASC",
                 {"userid": self.userid},
@@ -43,9 +43,9 @@ class UserList:
             res = cur.fetchall()
 
             return [Book(row[0]) for row in res]
-        
+
     def get_reading_list(self) -> list[Book]:
-        with self._db.client() as cur:
+        with self._db.client().cursor() as cur:
             cur.execute(
                 f"SELECT bookid FROM reading WHERE userid = %(userid)s ORDER BY rank ASC",
                 {"userid": self.userid},
