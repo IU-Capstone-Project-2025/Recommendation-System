@@ -49,13 +49,18 @@ async def personal(request: Request):
 @router.get("/book", response_class=HTMLResponse)
 async def book(request: Request, id: int):
     user_data = auth.get_user_data(request)
-    try:
-        book = Book(id)
-    except ObjectNotFound:
-        return templates.TemplateResponse("404.html", {"request": request})
+    # try:
+    #     book = Book(id)
+    # except ObjectNotFound:
+    #     return templates.TemplateResponse("404.html", {"request": request})
 
     return templates.TemplateResponse(
-        "book_info.html", {"request": request, "user_data": user_data, "book": book}
+        "book_info.html",
+        {
+            "request": request,
+            "user_data": user_data,
+            "book": {"title": "title", "description": "description", "cover": ""},
+        },
     )
 
 

@@ -42,13 +42,10 @@
           <br>
           <div class="status-save-wrapper">
               <div class="book-status">
-                <label for="status">Status:</label>
-                <select id="status" name="status">
-                  <option value="">— Select —</option>
-                  <option value="read">Already read</option>
-                  <option value="reading">In process</option>
-                  <option value="planned">Planned</option>
-                </select>
+                <div class="select-btn">Already read</div>
+                <div class="select-btn active">In progress</div>
+                <div class="select-btn">Planned</div>
+                <div class="select-btn">Untracked</div>
               </div>
 
               <input type="hidden" name="rating" id="hiddenRating" value="0">
