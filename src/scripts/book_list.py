@@ -31,7 +31,7 @@ class BookList:
             if self.list_type in [TOP_LIST, WEEKLY_TOP_LIST]:
                 offset = page * 9
                 res = cur.execute(
-                    f"SELECT bookid FROM {self.list_type} ORDER BY rank ASC LIMIT %(offset)s, 9",
+                    f"SELECT bookid FROM {self.list_type} FINAL ORDER BY rank ASC LIMIT %(offset)s, 9",
                     {"offset": offset},
                 )
 
@@ -47,7 +47,7 @@ class BookList:
             if self.list_type in [RECOMMEND_LIST]:
                 offset = page * 9
                 res = cur.execute(
-                    f"SELECT bookid FROM {self.list_type} WHERE userid = %(userid)s ORDER BY rank ASC LIMIT %(offset)s, 9",
+                    f"SELECT bookid FROM {self.list_type} FINAL WHERE userid = %(userid)s ORDER BY rank ASC LIMIT %(offset)s, 9",
                     {"userid": self.userid, "offset": offset},
                 )
 
