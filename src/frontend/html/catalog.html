@@ -1,38 +1,37 @@
 {% extends "base.html" %}
+
+{% block search %}
+<div class="search-box">
+    <input type="search" placeholder="Search..." class="search-input">
+</div>
+{% endblock %}
+
 {% block content %}
 <main class="book-catalog">
-    <h2 class="section-title">Top</h2>
-    <div class="book-grid" id="bookGrid">
-        {% for book in books %}
-        <div class="book-card" onclick="window.location=`/book/{{book.id}}`">
-                <img src="{{book.cover}}" alt="{{book.title}}">
-                <h3 class="book-title">{{book.title}}</h3>
-                <p class="book-author">{{book.author}}</p>
-            </div>
-        {% endfor %}
-    </div>
+
+    <h2 id="section-title" class="section-title">Top</h2>
+    <div class="book-grid" id="bookGrid"></div>
     <button id="toggleButton" class="mobile-only"></button>
     <div id="hiddenContent" class="desktop-content">
     <div class="side-nav">
         <div class="catalog-sidebar">
             <h3 class="filter-title">Filter by:</h3>
             <div class="filter-options">
+              <div class="filter-options">
               <div class="radio-option">
-                <input type="radio" id="filter-top" name="filter" checked>
+                <input type="radio" id="filter-top" name="filter" value="top" checked>
                 <label for="filter-top">Top</label>
               </div>
               <div class="radio-option">
-                <input type="radio" id="filter-popular" name="filter">
-                <label for="filter-popular">Popular</label>
-              </div>
-              <div class="radio-option">
-                <input type="radio" id="filter-week" name="filter">
+                <input type="radio" id="filter-week" name="filter" value="weekly">
                 <label for="filter-week">Popular per week</label>
               </div>
               <div class="radio-option">
-                <input type="radio" id="filter-recommend" name="filter">
+                <input type="radio" id="filter-recommend" name="filter" value="recommend">
                 <label for="filter-recommend">Recommendations</label>
               </div>
+            </div>
+
             </div>
           </div>
         </div>
