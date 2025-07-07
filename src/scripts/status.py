@@ -9,7 +9,7 @@ class Status:
     newstatus: str | None
     status: str | None
     userid: int
-    
+
     def __init__(self, username: str, bookId: int, status: str | None):
         self.username = username
         self.bookId = bookId
@@ -21,7 +21,7 @@ class Status:
     def get_userid(self) -> int:
         with self._db.client().cursor() as cur:
             cur.execute(
-                "SELECT id FROM \"User\" WHERE username = %(username)s",
+                'SELECT id FROM "User" WHERE username = %(username)s',
                 {"username": self.username},
             )
 
@@ -43,7 +43,7 @@ class Status:
                             ELSE NULL
                         END AS status
                 """,
-                {"userid": self.get_userid(self.username), "bookid": self.bookId},
+                {"userid": self.get_userid(), "bookid": self.bookId},
             )
 
             res = cur.fetchone()
@@ -67,7 +67,7 @@ class Status:
                 )
 
                 res = cur.fetchone()
-                if not res: 
+                if not res:
                     return None
 
                 return res[0]

@@ -3,7 +3,6 @@ from fastapi.responses import RedirectResponse
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
-from src import config
 from src.scripts import auth
 from src.scripts.book import Book
 from src.scripts.exceptions import BadCredentials, ObjectNotFound, UsernameNotUnique
@@ -20,7 +19,6 @@ templates = Jinja2Templates(directory="src/frontend/html")
 @router.get("/", response_class=HTMLResponse)
 async def root(request: Request):
     user_data = auth.get_user_data(request)
-    print(user_data)
     return templates.TemplateResponse(
         "index.html", {"request": request, "user_data": user_data}
     )
