@@ -3,7 +3,7 @@ from src.scripts.pg_connect import PgConnectionBuilder
 
 class BookStats:
     bookId: int
-    scores: tuple[int, int, int, int, int, int]
+    scores: list[int]
     statuses: tuple[int, int, int, int]
 
     def __init__(self, bookId: int):
@@ -12,7 +12,7 @@ class BookStats:
         self.scores = self.get_scores()
         self.statuses = self.get_statuses()
 
-    def get_scores(self) -> tuple[int, int, int, int, int, int]:
+    def get_scores(self) -> list[int]:
         with self._db.client().cursor() as cur:
             cur.execute(
                 """
@@ -29,9 +29,13 @@ class BookStats:
                 {"bookid": self.bookId},
             )
 
-            res = cur.fetchone()
+            res: tuple[int, int, int, int, int, int] = (
+                cur.fetchone()
+            )  # pyright: ignore type
 
-            return res
+            scores = [int(res[i] / res[0] * 100) if res[0] else 0 for i in range(6)]
+
+            return scores
 
     def get_statuses(self) -> tuple[int, int, int, int]:
         with self._db.client().cursor() as cur:
@@ -63,6 +67,6 @@ class BookStats:
                 {"bookid": self.bookId},
             )
 
-            res = cur.fetchone()
+            res: tuple[int, int, int, int] = cur.fetchone()  # pyright: ignore type
 
             return res

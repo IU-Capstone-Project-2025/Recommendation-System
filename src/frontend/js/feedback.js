@@ -4,7 +4,6 @@ const planned = "planned";
 const untracked = "untracked";
 
 function set_score(bookId, score) {
-	console.log(score);
 	if (score < 1 || score > 5) {
 		return;
 	}

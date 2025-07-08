@@ -5,7 +5,7 @@ from src.scripts.exceptions import ObjectNotFound
 class UserStats:
     username: str
     userid: int
-    scores: tuple[int, int, int, int, int]
+    scores: list[int]
     statuses: tuple[int, int, int, int]
 
     def __init__(self, username: str):
@@ -28,7 +28,7 @@ class UserStats:
 
             return res[0]
 
-    def get_scores(self) -> tuple[int, int, int, int, int]:
+    def get_scores(self) -> list[int]:
         with self._db.client().cursor() as cur:
             cur.execute(
                 """
@@ -45,8 +45,8 @@ class UserStats:
                 {"userid": self.userid},
             )
 
-            res = cur.fetchone()
-            scores = [int(res[i]/res[0] * 100) if res[0] else 0 for i in range(1, 6)]
+            res: tuple[int, int, int, int, int] = cur.fetchone()  # pyright: ignore type
+            scores = [int(res[i] / res[0] * 100) if res[0] else 0 for i in range(1, 6)]
             return scores
 
     def get_statuses(self) -> tuple[int, int, int, int]:
@@ -79,6 +79,6 @@ class UserStats:
                 {"userid": self.userid},
             )
 
-            res = cur.fetchone()
+            res: tuple[int, int, int, int] = cur.fetchone()  # pyright: ignore type
 
             return res
