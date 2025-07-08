@@ -14,6 +14,7 @@ from src.scripts.search import Search
 from src.scripts.user_list import UserList
 from src.scripts.user_stats import UserStats
 from src.scripts.status import Status
+from src.scripts.score import Score
 
 # from fastapi.templates import Jinja2Templates
 router = APIRouter()
@@ -54,7 +55,13 @@ async def personal(request: Request):
     planned = user_lists.get_planned_list()
     user_stats = UserStats(user_data["preferred_username"])
     return templates.TemplateResponse(
-        "personal_account.html", {"request": request, "user_data": user_data, "user_lists": [completed, reading, planned], "user_stats": user_stats}
+        "personal_account.html",
+        {
+            "request": request,
+            "user_data": user_data,
+            "user_lists": [completed, reading, planned],
+            "user_stats": user_stats,
+        },
     )
 
 
@@ -76,31 +83,42 @@ async def book(request: Request, id: int):
     if not status:
         status = "untracked"
 
+    score = Score(user_data["preferred_username"], id).score
+    if not score:
+        score = 0
+
     return templates.TemplateResponse(
         "book_info.html",
-        {"request": request, "user_data": user_data, "book": book, "status": status},
+        {
+            "request": request,
+            "user_data": user_data,
+            "book": book,
+            "status": status,
+            "score": score,
+        },
     )
+
 
 @router.post("/search", response_class=HTMLResponse)
 async def search(request: Request, search_string: str = Form(...)):
-    
+
     import subprocess
 
-    result= subprocess.Popen(
-            ["./levenshtein_length"],  
-            stdin=subprocess.PIPE,     
-            stdout=subprocess.PIPE,    
-            stderr=subprocess.PIPE,
-            text=True,
-            cwd="src/scripts/searching_mechanism"           
+    result = subprocess.Popen(
+        ["./levenshtein_length"],
+        stdin=subprocess.PIPE,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+        cwd="src/scripts/searching_mechanism",
     )
 
     output_data, stderr_data = result.communicate(input=search_string + "\n")
     output_lines = output_data.splitlines()
 
     cleaned_lines = [
-        line.strip() 
-        for line in output_lines 
+        line.strip()
+        for line in output_lines
         if line.strip() and not line.startswith("----")
     ]
 
@@ -111,7 +129,12 @@ async def search(request: Request, search_string: str = Form(...)):
 
     return templates.TemplateResponse(
         "search_results.html",
-        {"request": request, "user_data": user_data, "books": books, "query": search_string},
+        {
+            "request": request,
+            "user_data": user_data,
+            "books": books,
+            "query": search_string,
+        },
     )
 
 
@@ -176,6 +199,7 @@ async def signin_post(
     response.set_cookie("refresh", refresh)
     return response
 
+
 @router.post("/search", response_class=HTMLResponse)
 async def search_post(request: Request, search_string: str = Form(...)):
     search_results = [
@@ -184,5 +208,6 @@ async def search_post(request: Request, search_string: str = Form(...)):
 
     return templates.TemplateResponse(
         "search_results.html",
-        {"request": request, "results": search_results, "query": search_string}
+        {"request": request, "results": search_results, "query": search_string},
     )
+
