@@ -10,11 +10,10 @@ class Message:
         self.message = message
         self.userid = self.get_userid()
 
-
     def get_userid(self) -> int:
         with self._db.client().cursor() as cur:
             cur.execute(
-                "SELECT id FROM \"User\" WHERE username = %(username)s",
+                'SELECT id FROM "User" WHERE username = %(username)s',
                 {"username": self.username},
             )
 
@@ -23,12 +22,15 @@ class Message:
                 raise ObjectNotFound
 
             return res[0]
-        
+
     def set_message(self) -> None:
-        with self._db.client().cursor() as cur:
-            cur.execute("""
+        client = self._db.client()
+        with client.cursor() as cur:
+            cur.execute(
+                """
                         INSERT INTO message (userid, bookid, message)
                         VALUES (%(userid)s, %(bookid)s, %(message)s)
                         """,
-                        {"userid": self.userid, "bookid": self.bookId, "message": self.message}
-                        )
+                {"userid": self.userid, "bookid": self.bookId, "message": self.message},
+            )
+            client.commit()
