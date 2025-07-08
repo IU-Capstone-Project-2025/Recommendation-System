@@ -63,8 +63,6 @@ async def account(request: Request):
 @router.post("/search", response_class=HTMLResponse)
 async def search(request: Request):
     
-    import os
-
     data = await request.form()
     data = jsonable_encoder(data)
     search_string = data[search_string]
@@ -72,15 +70,17 @@ async def search(request: Request):
     
     import subprocess
 
-    result = subprocess.run(
-        ["./src/scripts/searching_mechanism/levenshtein_length", search_string],
-        capture_output=True,
-        text=True,
-        check=True,
+    result= subprocess.Popen(
+            ["./levenshtein_length"],  
+            stdin=subprocess.PIPE,     
+            stdout=subprocess.PIPE,    
+            stderr=subprocess.PIPE,
+            text=True,
+            cwd="src/scripts/searching_mechanism"           
     )
 
-    output_lines = result.stdout.splitlines()
-
+    output_data, stderr_data = result.communicate(input=search_string + "\n")
+    output_lines = output_data.splitlines()
 
     cleaned_lines = [
         line.strip() 
