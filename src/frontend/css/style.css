@@ -432,6 +432,15 @@ input[type="radio"]:checked::before {
   margin-bottom: 1rem;
 }
 
+.progress-item.small {
+  display: flex;
+  grid-template-columns: 1fr 5fr;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 0;
+  width: 75%;
+}
+
 .progress-label {
   display: block;
   color: var(--white);
@@ -447,6 +456,10 @@ input[type="radio"]:checked::before {
   overflow: hidden;
 }
 
+.progress-item.small .progress-bar {
+  height: 8px;
+}
+
 .progress-fill {
   height: 100%;
   background-color: var(--purple);
@@ -457,7 +470,6 @@ input[type="radio"]:checked::before {
 .side-nav-prog {
   font-weight: 500;
   width: 250px;
-  height: 40%;
   background: transparent;
   border: 2px solid var(--white);
   position: fixed;

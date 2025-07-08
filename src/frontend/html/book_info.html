@@ -54,25 +54,50 @@
               <div class="progress-item">
                   <span class="progress-label">Planned</span>
                   <div class="progress-bar">
-                      <div class="progress-fill" style="width: 90%;"></div>
+                      <div class="progress-fill" style="width: {{book_stats.statuses.0}}%;"></div>
                   </div>
               </div>
               <div class="progress-item">
                   <span class="progress-label">Already read</span>
                   <div class="progress-bar">
-                      <div class="progress-fill" style="width: 75%;"></div>
+                      <div class="progress-fill" style="width: {{book_stats.statuses.1}}%;"></div>
                   </div>
               </div>
               <div class="progress-item">
                   <span class="progress-label">In progress</span>
                   <div class="progress-bar">
-                      <div class="progress-fill" style="width: 60%;"></div>
+                      <div class="progress-fill" style="width: {{book_stats.statuses.2}}%;"></div>
                   </div>
               </div>
-              <div class="progress-item">
-                  <span class="progress-label">Recommended</span>
+              Average score: {{book_stats.scores.5}}
+              <div class="progress-item small">
+                  <span class="progress-label">5☆</span>
                   <div class="progress-bar">
-                      <div class="progress-fill" style="width: 82%;"></div>
+                      <div class="progress-fill" style="width: {{book_stats.scores.4}}%;"></div>
+                  </div>
+              </div>
+              <div class="progress-item small">
+                  <span class="progress-label">4☆</span>
+                  <div class="progress-bar">
+                      <div class="progress-fill" style="width: {{book_stats.scores.3}}%;"></div>
+                  </div>
+              </div>
+              <div class="progress-item small">
+                  <span class="progress-label">3☆</span>
+                  <div class="progress-bar">
+                      <div class="progress-fill" style="width: {{book_stats.scores.2}}%;"></div>
+                  </div>
+              </div>
+              <div class="progress-item small">
+                  <span class="progress-label">2☆</span>
+                  <div class="progress-bar">
+                      <div class="progress-fill" style="width: {{book_stats.scores.1}}%;"></div>
+                  </div>
+              </div>
+              <div class="progress-item small">
+                  <span class="progress-label">1☆</span>
+                  <div class="progress-bar">
+                      <div class="progress-fill" style="width: {{book_stats.scores.0}}%;"></div>
                   </div>
               </div>
           </div>

@@ -6,6 +6,7 @@ from fastapi.encoders import jsonable_encoder
 
 from src.scripts import auth
 from src.scripts.book import Book
+from src.scripts.book_stats import BookStats
 from src.scripts.exceptions import BadCredentials, ObjectNotFound, UsernameNotUnique
 from src.constants import TOP_LIST
 
@@ -70,11 +71,19 @@ async def book(request: Request, id: int):
     except ObjectNotFound:
         return templates.TemplateResponse("404.html", {"request": request})
 
+    book_stats = BookStats(id)
+
     user_data = auth.get_user_data(request)
     if not user_data:
         return templates.TemplateResponse(
             "book_info.html",
-            {"request": request, "user_data": {}, "book": book, "status": None},
+            {
+                "request": request,
+                "user_data": {},
+                "book": book,
+                "status": None,
+                "book_stats": book_stats,
+            },
         )
 
     status = Status(user_data["preferred_username"], id).status
@@ -93,6 +102,7 @@ async def book(request: Request, id: int):
             "book": book,
             "status": status,
             "score": score,
+            "book_stats": book_stats,
         },
     )
 
@@ -208,4 +218,3 @@ async def search_post(request: Request, search_string: str = Form(...)):
         "search_results.html",
         {"request": request, "results": search_results, "query": search_string},
     )
-
