@@ -9,6 +9,7 @@ from src.scripts.exceptions import BadCredentials, ObjectNotFound, UsernameNotUn
 from src.constants import TOP_LIST
 
 from src.scripts.book_list import BookList
+from src.scripts.status import Status
 
 # from fastapi.templates import Jinja2Templates
 router = APIRouter()
@@ -48,15 +49,25 @@ async def personal(request: Request):
 
 @router.get("/book", response_class=HTMLResponse)
 async def book(request: Request, id: int):
-    user_data = auth.get_user_data(request)
     try:
         book = Book(id)
     except ObjectNotFound:
         return templates.TemplateResponse("404.html", {"request": request})
 
+    user_data = auth.get_user_data(request)
+    if not user_data:
+        return templates.TemplateResponse(
+            "book_info.html",
+            {"request": request, "user_data": {}, "book": book, "status": None},
+        )
+
+    status = Status(user_data["preferred_username"], id).status
+    if not status:
+        status = "untracked"
+
     return templates.TemplateResponse(
         "book_info.html",
-        {"request": request, "user_data": user_data, "book": book},
+        {"request": request, "user_data": user_data, "book": book, "status": status},
     )
 
 

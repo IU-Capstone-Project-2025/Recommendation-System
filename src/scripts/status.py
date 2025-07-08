@@ -10,7 +10,7 @@ class Status:
     status: str | None
     userid: int
 
-    def __init__(self, username: str, bookId: int, status: str | None):
+    def __init__(self, username: str, bookId: int, status: str | None = None):
         self.username = username
         self.bookId = bookId
         self.newstatus = status
@@ -77,7 +77,8 @@ class Status:
         if actuality == True:
             return
         if actuality == False:
-            with self._db.client().cursor() as cur:
+            client = self._db.client()
+            with client.cursor() as cur:
                 cur.execute(
                     f"""
                         UPDATE
@@ -106,8 +107,10 @@ class Status:
                         "bookid": self.bookId,
                     },
                 )
+                client.commit()
         if actuality is None and self.newstatus in [COMPLETED, READING, PLANNED]:
-            with self._db.client().cursor() as cur:
+            client = self._db.client()
+            with client.cursor() as cur:
                 cur.execute(
                     f"""
                         INSERT INTO
@@ -135,6 +138,7 @@ class Status:
                             "bookid": self.bookId,
                         },
                     )
+                client.commit()
 
     def drop_status(self) -> None:
         if self.status in [COMPLETED, READING, PLANNED]:

@@ -1,8 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 <main class="book-catalog">
-
-
+    <script src="js/feedback.js"></script>
     <div class="book-header">
   <div class="book-info">
     <div class="book-cover anim-border">
@@ -40,18 +39,20 @@
         {{book.description}}
       </p>
           <br>
+          {%if status != None%}
           <div class="status-save-wrapper">
               <div class="book-status">
-                <div class="select-btn">Already read</div>
-                <div class="select-btn active">In progress</div>
-                <div class="select-btn">Planned</div>
-                <div class="select-btn">Untracked</div>
+                <div id="status-completed" onclick="set_status({{book.id}}, completed)" class="select-btn {%if status == 'completed'%}active{%endif%}">Already read</div>
+                <div id="status-reading"   onclick="set_status({{book.id}}, reading)"   class="select-btn {%if status == 'reading'%}active{%endif%}">  In progress </div>
+                <div id="status-planned"   onclick="set_status({{book.id}}, planned)"   class="select-btn {%if status == 'planned'%}active{%endif%}">  Planned     </div>
+                <div id="status-untracked" onclick="set_status({{book.id}}, untracked)" class="select-btn {%if status == 'untracked'%}active{%endif%}">Untracked   </div>
               </div>
 
               <input type="hidden" name="rating" id="hiddenRating" value="0">
 
               <button type="submit" id="saveButton" style="display: none;">Save</button>
           </div>
+          {%endif%}
         </form>
     </div>
 
