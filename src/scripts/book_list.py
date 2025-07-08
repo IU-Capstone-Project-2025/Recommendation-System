@@ -6,7 +6,7 @@ from src.constants import TOP_LIST, WEEKLY_TOP_LIST, RECOMMEND_LIST
 
 
 class BookList:
-    def __init__(self, username: str | None, list_type: str):
+    def __init__(self, list_type: str, username: str | None = None):
         self.username = username
         self.list_type = list_type
         self.db = PgConnectionBuilder.pg_conn()
