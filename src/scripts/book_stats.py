@@ -36,7 +36,7 @@ class BookStats:
 
             scores = [
                 int(res[i] / res[0] * 100) if res[0] else 0 for i in range(1, 6)
-            ] + [round(res[6], 1)]
+            ] + [round(res[6] if res[6] else 0, 1)]
 
             return scores
 

@@ -968,3 +968,29 @@ input.tag {
   font-weight: bold;
   transition: ease-in-out 0.5s;
 }
+
+.pagination-wrapper {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  justify-content: center;
+}
+
+.pagination-link {
+  width: fit-content;
+  padding: 5px 15px;
+  border-style: solid;
+  border-width: 2px 2px 2px 0;
+  color: var(--purple);
+  border-color: var(--purple);
+  text-decoration: none;
+}
+
+.pagination-link:first-child {
+  border-radius: 10px 0 0 10px;
+  border-width: 2px;
+}
+.pagination-link:last-child {
+  border-radius: 0 10px 10px 0;
+  border-width: 2px 2px 2px 0;
+}

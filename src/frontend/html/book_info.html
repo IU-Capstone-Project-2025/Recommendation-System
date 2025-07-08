@@ -106,22 +106,33 @@
       </div>
     </div>
     <div class="comments-section">
-    <h3>Comments</h3>
-    {% if comments_allowed %}
-    <form class="comment-form">
-      <textarea placeholder="Leave a comment..." rows="4" required></textarea>
-      <button type="submit">Post Comment</button>
-    </form>
-    {% endif %}
-    <div class="comment-list">
-      <div class="comment">
-        <p class="comment-author"><strong>John Doe</strong></p>
-        <p class="comment-text">This book was truly amazing! Highly recommend it.</p>
-      </div>
-      <div class="comment">
-        <p class="comment-author"><strong>Jane Smith</strong></p>
-        <p class="comment-text">A bit slow in the middle, but the ending was powerful.</p>
-      </div>
+        <h3>Comments</h3>
+        {% if comments_allowed %}
+        <form method="post" class="comment-form">
+          <textarea name="comment" placeholder="Leave a comment..." rows="4" required></textarea>
+          <button type="submit">Post Comment</button>
+        </form>
+        {% endif %}
+
+        <div class="comment-list">
+        {% for comment in comments.0 %}
+          <div class="comment">
+              <p class="comment-author"><strong>{{comment.0}}</strong></p>
+              <p class="comment-text">{{comment.1}}</p>
+          </div>
+        {% endfor %}
+
+        <div class="pagination-wrapper">
+            {% if current_page != 0 %}
+                <a class="pagination-link" href="?page={{current_page - 1}}&id={{book.id}}"><</a>
+            {% endif %}
+            {% for page in range(comments.1) %}
+                <a class="pagination-link" href="?page={{page}}&id={{book.id}}" {% if page == current_page %}style="color: white;"{% endif %}>{{page + 1}}</a>
+            {% endfor %}
+            {% if current_page + 1 != comments.1 %}
+                <a class="pagination-link" href="?page={{current_page + 1}}&id={{book.id}}">></a>
+            {% endif %}
+        </div>
     </div>
 
 
