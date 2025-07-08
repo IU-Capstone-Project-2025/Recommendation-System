@@ -632,15 +632,23 @@ input.tag {
 }
 
 .tag-box .tag {
-	padding: 0.8rem 1.2rem;
-	font-size: 1.2rem;
-	color: #ffffff;
-	background-color: rgba(20, 20, 20, 0.7);
+	position: absolute;
+	inset: 3px;
+	background-color: black;
 	border-radius: 50px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+
+	font-size: 1.3rem; /* увеличенный шрифт */
+	padding: 0.8rem 1.5rem; /* добавленные внутренние отступы */
 }
 
 .tag-box .tag::placeholder {
+	font-size: 1.3rem; /* сделать плейсхолдер того же размера */
 	color: #bbbbbb;
+	opacity: 0.8;
 }
 
 .tag-box .tag:focus {
@@ -662,6 +670,6 @@ input.tag {
 	height: 86%;
 }
 
-.tag-box .tag[type='submit']:hover {
-	background: #3f007a;
+.tag-box .tag:hover {
+	color: white !important; /* сохраняем белый текст при наведении */
 }
