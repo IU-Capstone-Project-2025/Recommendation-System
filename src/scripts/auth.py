@@ -5,6 +5,7 @@ from ldap3 import ALL, MODIFY_REPLACE, Connection, Server
 
 from src import config
 from src.scripts.exceptions import BadCredentials, UsernameNotUnique
+from src.scripts.user import User
 
 
 keycloak_openid = KeycloakOpenID(
@@ -42,6 +43,8 @@ def create_user(username: str, password: str, email: str):
     res = ldap.result.__str__()
     if "code: 1555" in res:
         raise UsernameNotUnique
+
+    User(username).insert()
 
     ldap.modify(dn, changes={"userPassword": [(MODIFY_REPLACE, password)]})
 
