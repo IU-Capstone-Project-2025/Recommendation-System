@@ -38,10 +38,10 @@ async def catalog(request: Request, filter: str = "Top", page: int = 0):
     user_data = auth.get_user_data(request)
     if filter == "Recommendations":
         book_lists = BookList(filter, user_data["preferred_username"])
-        book_list = book_lists.get_recommendation_book_list(page)
+        book_list, pages = book_lists.get_recommendation_book_list(page)
     else:
         book_lists = BookList(filter)
-        book_list = book_lists.get_book_list(page)
+        book_list, pages = book_lists.get_book_list(page)
     return templates.TemplateResponse(
         "catalog.html",
         {
@@ -49,7 +49,9 @@ async def catalog(request: Request, filter: str = "Top", page: int = 0):
             "user_data": user_data,
             "books": book_list,
             "current_filter": filter,
-            "page": page,
+            "current_page": page,
+            "pages": pages,
+            "filter": filter,
         },
     )
 

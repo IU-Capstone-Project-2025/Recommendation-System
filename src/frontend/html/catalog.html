@@ -20,6 +20,19 @@
             </div>
         {% endfor %}
     </div>
+    <div class="pagination-wrapper" style="max-width: 960px">
+        <a class="pagination-link" href="?page=0&filter={{filter}}">First</a>
+        {% if current_page != 0 %}
+            <a class="pagination-link" href="?page={{current_page - 1}}&filter={{filter}}"><</a>
+        {% endif %}
+        {% for page in range([0, current_page - 2]|max, [pages, current_page + 3]|min) %}
+            <a class="pagination-link" href="?page={{page}}&filter={{filter}}" {% if page == current_page %}style="color: white;"{% endif %}>{{page + 1}}</a>
+        {% endfor %}
+        {% if current_page + 1 != pages %}
+            <a class="pagination-link" href="?page={{current_page + 1}}&filter={{filter}}">></a>
+        {% endif %}
+        <a class="pagination-link" href="?page={{pages - 1}}&filter={{filter}}">Last</a>
+    </div>
     <button id="toggleButton" class="mobile-only"></button>
     <div id="hiddenContent" class="desktop-content">
     <div class="side-nav">

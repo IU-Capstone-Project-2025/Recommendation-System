@@ -122,17 +122,21 @@
           </div>
         {% endfor %}
 
-        <div class="pagination-wrapper">
-            {% if current_page != 0 %}
-                <a class="pagination-link" href="?page={{current_page - 1}}&id={{book.id}}"><</a>
-            {% endif %}
-            {% for page in range(comments.1) %}
-                <a class="pagination-link" href="?page={{page}}&id={{book.id}}" {% if page == current_page %}style="color: white;"{% endif %}>{{page + 1}}</a>
-            {% endfor %}
-            {% if current_page + 1 != comments.1 %}
-                <a class="pagination-link" href="?page={{current_page + 1}}&id={{book.id}}">></a>
-            {% endif %}
-        </div>
+        {% if comments.1 > 0 %}
+            <div class="pagination-wrapper">
+                <a class="pagination-link" href="?page=0&id={{book.id}}">First</a>
+                {% if current_page != 0 %}
+                    <a class="pagination-link" href="?page={{current_page - 1}}&id={{book.id}}"><</a>
+                {% endif %}
+                {% for page in range([0, current_page - 2]|max, [current_page + 3, comments.1]|min) %}
+                    <a class="pagination-link" href="?page={{page}}&id={{book.id}}" {% if page == current_page %}style="color: white;"{% endif %}>{{page + 1}}</a>
+                {% endfor %}
+                {% if current_page + 1 != comments.1 %}
+                    <a class="pagination-link" href="?page={{current_page + 1}}&id={{book.id}}">></a>
+                {% endif %}
+                <a class="pagination-link" href="?page={{comments.1 - 1}}&id={{book.id}}">Last</a>
+            </div>
+        {% endif %}
     </div>
 
 
