@@ -2,12 +2,18 @@ from fastapi import APIRouter, Form, Request
 from fastapi.responses import RedirectResponse
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
+from fastapi.encoders import jsonable_encoder
 
 from src import config
 from src.scripts import auth
 from src.scripts.exceptions import BadCredentials, UsernameNotUnique
+from src.constants import TOP_LIST
 
-from src.scripts.book import get_books
+from src.scripts.book_list import BookList
+from src.scripts.search import Search
+from src.scripts.user_list import UserList
+from src.scripts.user_stats import UserStats
+
 
 # from fastapi.templates import Jinja2Templates
 router = APIRouter()
@@ -27,18 +33,23 @@ async def root(request: Request):
 @router.get("/catalog", response_class=HTMLResponse)
 async def catalog(request: Request):
     user_data = auth.get_user_data(request)
-    print(get_books(1))
+    book_list = BookList(TOP_LIST)
     return templates.TemplateResponse(
         "catalog.html",
-        {"request": request, "user_data": user_data, "books": get_books(0)},
+        {"request": request, "user_data": user_data, "books": book_list.get_book_list(0)},
     )
 
 
 @router.get("/personal", response_class=HTMLResponse)
 async def personal(request: Request):
     user_data = auth.get_user_data(request)
+    user_lists = UserList(user_data["preferred_username"])
+    completed = user_lists.get_completed_list()
+    reading = user_lists.get_reading_list()
+    planned = user_lists.get_planned_list()
+    user_stats = UserStats(user_data["preferred_username"])
     return templates.TemplateResponse(
-        "personal_account.html", {"request": request, "user_data": user_data}
+        "personal_account.html", {"request": request, "user_data": user_data, "user_lists": [completed, reading, planned], "user_stats": user_stats}
     )
 
 
@@ -49,10 +60,51 @@ async def account(request: Request):
         "book_info.html", {"request": request, "user_data": user_data}
     )
 
+@router.post("/search", response_class=HTMLResponse)
+async def search(request: Request, search_string: str = Form(...)):
+    
+    import subprocess
+
+    result= subprocess.Popen(
+            ["./levenshtein_length"],  
+            stdin=subprocess.PIPE,     
+            stdout=subprocess.PIPE,    
+            stderr=subprocess.PIPE,
+            text=True,
+            cwd="src/scripts/searching_mechanism"           
+    )
+
+    output_data, stderr_data = result.communicate(input=search_string + "\n")
+    output_lines = output_data.splitlines()
+
+    cleaned_lines = [
+        line.strip() 
+        for line in output_lines 
+        if line.strip() and not line.startswith("----")
+    ]
+
+    search_instance = Search(cleaned_lines)
+    books = search_instance.get_search_result()
+
+    user_data = auth.get_user_data(request)
+
+    return templates.TemplateResponse(
+        "search_results.html",
+        {"request": request, "user_data": user_data, "books": books, "query": search_string},
+    )
+
 
 @router.get("/signin", response_class=HTMLResponse)
 async def signin_get(request: Request):
     return templates.TemplateResponse("signin.html", {"request": request})
+
+
+@router.get("/lost", response_class=HTMLResponse)
+async def lost(request: Request):
+    user_data = auth.get_user_data(request)
+    return templates.TemplateResponse(
+        "not_found.html", {"request": request, "user_data": user_data}
+    )
 
 
 @router.get("/registration", response_class=HTMLResponse)
@@ -102,3 +154,14 @@ async def signin_post(
     response.set_cookie("access", access)
     response.set_cookie("refresh", refresh)
     return response
+
+@router.post("/search", response_class=HTMLResponse)
+async def search_post(request: Request, search_string: str = Form(...)):
+    search_results = [
+        {"title": "Found book", "author": "Author", "cover": "/img/book_cover.jpg"}
+    ]
+
+    return templates.TemplateResponse(
+        "search_results.html",
+        {"request": request, "results": search_results, "query": search_string}
+    )

@@ -3,18 +3,25 @@ from src.scripts.exceptions import ObjectNotFound
 
 
 class Score:
-    def __init__(self, username: str, bookId: int, score: int):
-        self._username: str = username
-        self._bookId = bookId
-        self._score = score
+    username: str
+    bookId: int
+    newscore: int | None
+    score: int | None
+    userid: int
+    
+    def __init__(self, username: str, bookId: int, score: int | None = None):
+        self.username = username
+        self.bookId = bookId
+        self.newscore = score
         self._db = PgConnectionBuilder.pg_conn()
-        self._userid = self.get_userid()
+        self.userid = self.get_userid()
+        self.score = self.get_score()
 
-    def get_userid(self) -> str:
+    def get_userid(self) -> int:
         with self._db.client().cursor() as cur:
             cur.execute(
                 "SELECT id FROM \"User\" WHERE username = %(username)s",
-                {"username": self._username},
+                {"username": self.username},
             )
 
             res = cur.fetchone()
@@ -23,11 +30,11 @@ class Score:
 
             return res[0]
 
-    def get_score(self):
+    def get_score(self) -> int | None:
         with self._db.client().cursor() as cur:
             cur.execute(
-                "SELECT score FROM score WHERE userid = %(userid)s AND bookid = %(bookid)s",
-                {"userid": self._userid, "bookid": self._bookId},
+                "SELECT score FROM score WHERE userid = %(userid)s AND bookid = %(bookid)s AND isactual = true",
+                {"userid": self.userid, "bookid": self.bookId},
             )
 
             res = cur.fetchone()
@@ -36,15 +43,15 @@ class Score:
             
             return res[0]
 
-    def set_score(self):
+    def set_score(self) -> None:
         if self.get_score():
             with self._db.client().cursor() as cur:
                 cur.execute(
                     "UPDATE score SET score = %(score)s, updatets = NOW() WHERE userid = %(userid)s AND bookid = %(bookid)s",
                     {
-                        "userid": self._userid,
-                        "bookid": self._bookId,
-                        "score": self._score,
+                        "userid": self.userid,
+                        "bookid": self.bookId,
+                        "score": self.newscore,
                     },
                 )
         else:
@@ -52,16 +59,16 @@ class Score:
                 cur.execute(
                     "INSERT INTO score (userid, bookid, score) VALUES (%(userid)s, %(bookid)s, %(score)s)",
                     {
-                        "userid": self._userid,
-                        "bookid": self._bookId,
-                        "score": self._score,
+                        "userid": self.userid,
+                        "bookid": self.bookId,
+                        "score": self.newscore,
                     },
                 )
 
-    def drop_score(self):
+    def drop_score(self) -> None:
         with self._db.client().cursor() as cur:
             cur.execute(
                 "UPDATE score SET isactual = false WHERE userid = %(userid)s AND bookid = %(bookid)s",
-                {"userid": self._userid, "bookid": self._bookId},
+                {"userid": self.userid, "bookid": self.bookId},
             )
 
