@@ -232,7 +232,7 @@ CREATE TABLE IF NOT EXISTS Top (
     compscore Float32,
     updatets DateTime DEFAULT now()
 ) ENGINE = ReplacingMergeTree(updatets)
-ORDER BY (bookid, rank);
+ORDER BY (bookid);
 
 CREATE MATERIALIZED VIEW IF NOT EXISTS Top_MV TO Top AS
 WITH scores AS (
@@ -264,7 +264,7 @@ CREATE TABLE IF NOT EXISTS WeeklyTop (
     compscore Float32,
     updatets DateTime DEFAULT now()
 ) ENGINE = ReplacingMergeTree(updatets)
-ORDER BY (bookid, rank);
+ORDER BY (bookid);
 
 CREATE MATERIALIZED VIEW IF NOT EXISTS WeeklyTop_MV TO WeeklyTop AS
 WITH weekscores AS (
