@@ -14,6 +14,7 @@
     <div class="book-details">
         <h2 class="book-title">{{book.title}}</h2>
       <p class="book-author">{{book.author}}</p>
+            {%if score != None%}
             <div class="rating-wrapper">
               <div class="rating">
                   <span onclick="set_score({{book.id}}, 5)" id="rating-5" class="rating-star">{% if score < 5 %}<i class="bi bi-star"></i>{% else %}<i class="bi bi-star-fill"></i>{%endif%}</span>
@@ -24,6 +25,7 @@
               </div>
               <div class="rating-score" id="ratingScore">{{score}}/5</div>
             </div>
+            {%endif%}
 
 
 
@@ -105,10 +107,12 @@
     </div>
     <div class="comments-section">
     <h3>Comments</h3>
+    {% if comments_allowed %}
     <form class="comment-form">
       <textarea placeholder="Leave a comment..." rows="4" required></textarea>
       <button type="submit">Post Comment</button>
     </form>
+    {% endif %}
     <div class="comment-list">
       <div class="comment">
         <p class="comment-author"><strong>John Doe</strong></p>

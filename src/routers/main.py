@@ -82,6 +82,8 @@ async def book(request: Request, id: int):
                 "user_data": {},
                 "book": book,
                 "status": None,
+                "score": None,
+                "comments_allowed": False,
                 "book_stats": book_stats,
             },
         )
@@ -102,6 +104,7 @@ async def book(request: Request, id: int):
             "book": book,
             "status": status,
             "score": score,
+            "comments_allowed": True,
             "book_stats": book_stats,
         },
     )
