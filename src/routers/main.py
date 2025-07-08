@@ -32,12 +32,14 @@ async def root(request: Request):
 @router.get("/catalog", response_class=HTMLResponse)
 async def catalog(request: Request):
     user_data = auth.get_user_data(request)
+    is_authenticated = user_data is not None
     book_list = BookList(TOP_LIST)
     return templates.TemplateResponse(
         "catalog.html",
         {
             "request": request,
             "user_data": user_data,
+            "is_authenticated": is_authenticated,
             "books": book_list.get_book_list(0),
         },
     )
