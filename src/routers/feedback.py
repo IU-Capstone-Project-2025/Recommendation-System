@@ -1,34 +1,49 @@
-import fastapi
 from fastapi.encoders import jsonable_encoder
-from fastapi import APIRouter,Request, Form, Depends
-from fastapi.responses import HTMLResponse
+from fastapi import APIRouter, Request
+from fastapi.responses import Response
 
+from src.scripts.book import Book
 from src.scripts.score import Score
 from src.scripts.status import Status
 from src.scripts.message import Message
-from src.constants import COMPLETED
+from src.constants import COMPLETED, READING, PLANNED
+from src.scripts import auth
+from src.scripts.exceptions import ObjectNotFound
 
 router = APIRouter()
 
 
-@router.post("/set_score")
+@router.post("/feedback")
 async def set_score(request: Request):
     data = await request.form()
     data = jsonable_encoder(data)
-    username = data["username"]
-    status = data["status"]
-    bookId = data["bookId"]
-    user_score = data["score"]
+    user_data = auth.get_user_data(request)
 
-    if status == COMPLETED:
-        score = Score(username = username, bookId = bookId, score = user_score)
+    try:
+        Book(data["book_id"])
+    except ObjectNotFound:
+        return Response(content="Book doesn't exist", status_code=404)
 
-        score.set_score()
+    if "status" in data.keys():
+        status = Status(
+            user_data["preferred_username"], data["book_id"], status=data["status"]
+        )
+        status.set_status()
 
-    status = Status(username=username, bookId=bookId, status=status)
-    status.set_status()
+    if "score" in data.keys():
+        try:
+            score = int(data["score"])
+            if score < 1 or score > 5:
+                return Response(
+                    content="score value should be integer from 1 to 5", status_code=400
+                )
+        except ValueError:
+            return Response(
+                content="score value should be integer from 1 to 5", status_code=400
+            )
+        Score(user_data["preferred_username"], data["book_id"], score).set_score()
 
-    return HTMLResponse(content="OK", status_code=200)
+    return Response(content="OK", status_code=200)
 
 
 @router.post("/send_comment")
@@ -42,5 +57,4 @@ async def send_comment(request: Request):
     messager = Message(username=username, bookId=bookId, comment=comment)
     messager.set_message()
 
-    return HTMLResponse(content="OK", status_code=200)
-
+    return Response(content="OK", status_code=200)

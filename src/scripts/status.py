@@ -9,7 +9,7 @@ class Status:
     newstatus: str | None
     status: str | None
     userid: int
-    
+
     def __init__(self, username: str, bookId: int, status: str | None = None):
         self.username = username
         self.bookId = bookId
@@ -21,7 +21,7 @@ class Status:
     def get_userid(self) -> int:
         with self._db.client().cursor() as cur:
             cur.execute(
-                "SELECT id FROM \"User\" WHERE username = %(username)s",
+                'SELECT id FROM "User" WHERE username = %(username)s',
                 {"username": self.username},
             )
 
@@ -43,7 +43,7 @@ class Status:
                             ELSE NULL
                         END AS status
                 """,
-                {"userid": self.get_userid(self.username), "bookid": self.bookId},
+                {"userid": self.get_userid(), "bookid": self.bookId},
             )
 
             res = cur.fetchone()
@@ -67,7 +67,7 @@ class Status:
                 )
 
                 res = cur.fetchone()
-                if not res: 
+                if not res:
                     return None
 
                 return res[0]
@@ -77,7 +77,8 @@ class Status:
         if actuality == True:
             return
         if actuality == False:
-            with self._db.client().cursor() as cur:
+            client = self._db.client()
+            with client.cursor() as cur:
                 cur.execute(
                     f"""
                         UPDATE
@@ -106,8 +107,10 @@ class Status:
                         "bookid": self.bookId,
                     },
                 )
+                client.commit()
         if actuality is None and self.newstatus in [COMPLETED, READING, PLANNED]:
-            with self._db.client().cursor() as cur:
+            client = self._db.client()
+            with client.cursor() as cur:
                 cur.execute(
                     f"""
                         INSERT INTO
@@ -135,6 +138,7 @@ class Status:
                             "bookid": self.bookId,
                         },
                     )
+                client.commit()
 
     def drop_status(self) -> None:
         if self.status in [COMPLETED, READING, PLANNED]:
