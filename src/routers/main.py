@@ -6,10 +6,13 @@ from fastapi.encoders import jsonable_encoder
 
 from src.scripts import auth
 from src.scripts.book import Book
+from src.scripts.book_messages import BookMessages
+from src.scripts.book_stats import BookStats
 from src.scripts.exceptions import BadCredentials, ObjectNotFound, UsernameNotUnique
 from src.constants import TOP_LIST
 
 from src.scripts.book_list import BookList
+from src.scripts.message import Message
 from src.scripts.search import Search
 from src.scripts.user_list import UserList
 from src.scripts.user_stats import UserStats
@@ -70,18 +73,48 @@ async def personal(request: Request):
     )
 
 
+@router.post("/book")
+async def book_post(request: Request, id: int, page: int = 0, comment: str = Form(...)):
+    try:
+        Book(id)
+    except ObjectNotFound:
+        return templates.TemplateResponse("404.html", {"request": request})
+
+    user_data = auth.get_user_data(request)
+
+    if user_data != {}:
+        username = user_data["preferred_username"]
+        Message(username, id, comment).set_message()
+
+    return await book(request, id, page)
+
+
 @router.get("/book", response_class=HTMLResponse)
-async def book(request: Request, id: int):
+async def book(request: Request, id: int, page: int = 0):
     try:
         book = Book(id)
     except ObjectNotFound:
         return templates.TemplateResponse("404.html", {"request": request})
 
+    book_stats = BookStats(id)
+    comments = BookMessages(id)
+    comments = (comments.get_book_comments(page), comments.get_pages_count())
+
     user_data = auth.get_user_data(request)
     if not user_data:
         return templates.TemplateResponse(
             "book_info.html",
-            {"request": request, "user_data": {}, "book": book, "status": None},
+            {
+                "request": request,
+                "user_data": {},
+                "book": book,
+                "status": None,
+                "score": None,
+                "comments_allowed": False,
+                "book_stats": book_stats,
+                "comments": comments,
+                "current_page": page,
+            },
         )
 
     status = Status(user_data["preferred_username"], id).status
@@ -100,6 +133,10 @@ async def book(request: Request, id: int):
             "book": book,
             "status": status,
             "score": score,
+            "comments_allowed": True,
+            "book_stats": book_stats,
+            "comments": comments,
+            "current_page": page,
         },
     )
 
