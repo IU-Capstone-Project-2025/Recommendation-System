@@ -31,15 +31,23 @@ async def root(request: Request):
 
 
 @router.get("/catalog", response_class=HTMLResponse)
-async def catalog(request: Request):
+async def catalog(request: Request, filter: str = "Top", page: int = 0):
     user_data = auth.get_user_data(request)
-    book_list = BookList(TOP_LIST)
+    if filter == "Recommendations":
+        book_lists = BookList(filter, user_data["preferred_username"])
+        book_list = book_lists.get_recommendation_book_list(page)
+    else:
+        book_lists = BookList(filter)
+        book_list = book_lists.get_book_list(page)
+    
     return templates.TemplateResponse(
         "catalog.html",
         {
             "request": request,
             "user_data": user_data,
-            "books": book_list.get_book_list(0),
+            "books": book_list,
+            "current_filter": filter,
+            "page": page,
         },
     )
 
@@ -208,4 +216,3 @@ async def search_post(request: Request, search_string: str = Form(...)):
         "search_results.html",
         {"request": request, "results": search_results, "query": search_string},
     )
-
