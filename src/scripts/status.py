@@ -10,7 +10,7 @@ class Status:
     status: str | None
     userid: int
     
-    def __init__(self, username: str, bookId: int, status: str | None):
+    def __init__(self, username: str, bookId: int, status: str | None = None):
         self.username = username
         self.bookId = bookId
         self.newstatus = status

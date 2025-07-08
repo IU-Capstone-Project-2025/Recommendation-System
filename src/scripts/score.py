@@ -9,13 +9,13 @@ class Score:
     score: int | None
     userid: int
     
-    def __init__(self, username: str, bookId: int, score: int | None):
+    def __init__(self, username: str, bookId: int, score: int | None = None):
         self.username = username
         self.bookId = bookId
         self.newscore = score
         self._db = PgConnectionBuilder.pg_conn()
-        self.score = self.get_score()
         self.userid = self.get_userid()
+        self.score = self.get_score()
 
     def get_userid(self) -> int:
         with self._db.client().cursor() as cur:
@@ -33,7 +33,7 @@ class Score:
     def get_score(self) -> int | None:
         with self._db.client().cursor() as cur:
             cur.execute(
-                "SELECT score FROM score WHERE userid = %(userid)s AND bookid = %(bookid)s",
+                "SELECT score FROM score WHERE userid = %(userid)s AND bookid = %(bookid)s AND isactual = true",
                 {"userid": self.userid, "bookid": self.bookId},
             )
 
