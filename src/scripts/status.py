@@ -15,8 +15,8 @@ class Status:
         self.bookId = bookId
         self.newstatus = status
         self._db = PgConnectionBuilder.pg_conn()
-        self.status = self.get_status()
         self.userid = self.get_userid()
+        self.status = self.get_status()
 
     def get_userid(self) -> int:
         with self._db.client().cursor() as cur:
@@ -43,7 +43,7 @@ class Status:
                             ELSE NULL
                         END AS status
                 """,
-                {"userid": self.get_userid(), "bookid": self.bookId},
+                {"userid": self.userid, "bookid": self.bookId},
             )
 
             res = cur.fetchone()
