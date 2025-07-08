@@ -26,6 +26,9 @@ function set_score(bookId, score) {
 							? "<i class='bi bi-star'></i>"
 							: "<i class='bi bi-star-fill'></i>";
 				}
+				showNotification("Book rating successfully saved!");
+			} else {
+				showNotification("Something went wrong :(");
 			}
 		});
 }
@@ -62,6 +65,9 @@ function set_status(bookId, status) {
 				document.getElementById(`status-${status}`).className =
 					"select-btn active";
 				document.getElementById(`status-${status}`).innerHTML = status;
+				showNotification("Book status successfully saved!");
+			} else {
+				showNotification("Something went wrong :(");
 			}
 		});
 }

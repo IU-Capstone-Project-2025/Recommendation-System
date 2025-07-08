@@ -907,44 +907,52 @@ input.tag {
   animation: animationGradient 2.5s linear infinite;
 }
 
-.loader::before,
-.loader::after {
+.loader {
+  width: 15px;
+  height: 15px;
+  display: inline-block;
+  position: relative;
+  color: var(--purple);
+}
+.loader::after,
+.loader::before {
   content: "";
   box-sizing: border-box;
-  position: absolute;
-  inset: 0px;
+  width: 15px;
+  height: 15px;
   border-radius: 50%;
-  border: 5px solid #fff;
-  animation: prixClipFix 2s linear infinite;
+  border: 2px solid var(--purple);
+  position: absolute;
+  left: 0;
+  top: 0;
+  animation: animloader 2s linear infinite;
 }
-
 .loader::after {
-  inset: 8px;
-  transform: rotate3d(90, 90, 0, 180deg);
-  border-color: #ff3d00;
+  animation-delay: 1s;
 }
 
-@keyframes rotate {
+@keyframes animloader {
   0% {
-    transform: rotate(0deg);
+    transform: scale(0);
+    opacity: 1;
   }
-
   100% {
-    transform: rotate(360deg);
+    transform: scale(1);
+    opacity: 0;
   }
 }
 
-@keyframes prixClipFix {
-  0% {
-    clip-path: polygon(50% 50%, 0 0, 0 0, 0 0, 0 0, 0 0);
-  }
-
-  50% {
-    clip-path: polygon(50% 50%, 0 0, 100% 0, 100% 0, 100% 0, 100% 0);
-  }
-
-  75%,
-  100% {
-    clip-path: polygon(50% 50%, 0 0, 100% 0, 100% 100%, 100% 100%, 100% 100%);
-  }
+#notification {
+  position: fixed;
+  top: -45px;
+  left: 0;
+  right: 0;
+  background: var(--purple);
+  color: white;
+  height: 35px;
+  padding: 5px;
+  text-align: center;
+  z-index: 1000;
+  font-weight: bold;
+  transition: ease-in-out 0.5s;
 }

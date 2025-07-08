@@ -14,6 +14,7 @@ from src.scripts.search import Search
 from src.scripts.user_list import UserList
 from src.scripts.user_stats import UserStats
 from src.scripts.status import Status
+from src.scripts.score import Score
 
 # from fastapi.templates import Jinja2Templates
 router = APIRouter()
