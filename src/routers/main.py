@@ -61,12 +61,7 @@ async def account(request: Request):
     )
 
 @router.post("/search", response_class=HTMLResponse)
-async def search(request: Request):
-    
-    data = await request.form()
-    data = jsonable_encoder(data)
-    search_string = data[search_string]
-
+async def search(request: Request, search_string: str = Form(...)):
     
     import subprocess
 
@@ -94,8 +89,8 @@ async def search(request: Request):
     user_data = auth.get_user_data(request)
 
     return templates.TemplateResponse(
-        "catalog.html",
-        {"request": request, "user_data": user_data, "books": books},
+        "search_results.html",
+        {"request": request, "user_data": user_data, "books": books, "query": search_string},
     )
 
 

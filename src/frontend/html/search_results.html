@@ -11,9 +11,9 @@
 <main class="book-catalog">
     <h2 id="section-title_search" class="section-title">Search Results for "{{ query }}"</h2>
 
-    {% if results %}
+    {% if books %}
       <div class="book-grid">
-        {% for book in results %}
+        {% for book in books %}
           <div class="book-card">
             <img src="{{ book.cover }}" alt="Book_cover">
             <h3>{{ book.title }}</h3>

@@ -11,7 +11,15 @@
 <main class="book-catalog">
 
     <h2 id="section-title" class="section-title">Top</h2>
-    <div class="book-grid" id="bookGrid"></div>
+    <div class="book-grid" id="bookGrid">
+      {% for book in books %}
+      <div class="book-card">
+        <img src="{{ book.cover }}" alt="Book_cover">
+        <h3>{{ book.title }}</h3>
+        <p>{{ book.author }}</p>
+      </div>
+      {% endfor %}
+    </div>
     <button id="toggleButton" class="mobile-only"></button>
     <div id="hiddenContent" class="desktop-content">
     <div class="side-nav">
