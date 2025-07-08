@@ -58,6 +58,6 @@ pytest --cov=src tests/
 |-------------------|---------------------------------------------------------|
 | Denis Troegubov   | Data Engineer, Team Lead                                |
 | Timur Garifullin  | Full-Stack Developer                                    |
-| Peter Zavadskii   | DevOps Engineer, Backend Developer, Algorithm Developer |
+| Peter Zavadskii   | DevOps Engineer, Algorithm Developer                    |
 | Adelina Karavaeva | Frontend Developer                                      |
 | Grigorii Belyaev  | Frontend Developer                                      |
