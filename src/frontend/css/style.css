@@ -641,12 +641,12 @@ input.tag {
 	justify-content: center;
 	cursor: pointer;
 
-	font-size: 1.3rem; /* увеличенный шрифт */
-	padding: 0.8rem 1.5rem; /* добавленные внутренние отступы */
+	font-size: 1.3rem;
+	padding: 0.8rem 1.5rem;
 }
 
 .tag-box .tag::placeholder {
-	font-size: 1.3rem; /* сделать плейсхолдер того же размера */
+	font-size: 1.3rem;
 	color: #bbbbbb;
 	opacity: 0.8;
 }
@@ -671,5 +671,5 @@ input.tag {
 }
 
 .tag-box .tag:hover {
-	color: white !important; /* сохраняем белый текст при наведении */
+	color: white !important;
 }
