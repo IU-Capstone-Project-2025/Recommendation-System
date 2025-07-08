@@ -85,7 +85,7 @@ async def search(request: Request):
     cleaned_lines = [
         line.strip() 
         for line in output_lines 
-        if line.strip()
+        if line.strip() and not line.startswith("----")
     ]
 
     search_instance = Search(cleaned_lines)
