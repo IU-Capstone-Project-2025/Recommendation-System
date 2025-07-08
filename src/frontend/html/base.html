@@ -13,11 +13,11 @@
     <div class="container">
         <header>
             <h1 class="logo"><a href="/" style="text-decoration: none; color: inherit;">Recomendation System</a></h1>
-
+             {% block search %}{% endblock %}
 
             <div class="user-box">
-                <div class="avatar-circle"></div>
                 {% if user_data.preferred_username %}
+                <div class="avatar-circle"></div>
                 <span class="username"><a href="/personal" style="text-decoration: none; color: inherit;">{{user_data.preferred_username}}</a></span>
                 {% else %}
                 <div style="display: flex; gap: 10px;">
@@ -37,6 +37,8 @@
     <script src="/js/navbut.js"></script>
     <script src="/js/count_stars.js"></script>
     <script src="/js/update_form.js"></script>
+    <script src="/js/catalogFilter.js"></script>
+    <script src="/js/search.js"></script>
 
 </body>
 </html>
