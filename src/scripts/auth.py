@@ -5,6 +5,7 @@ from ldap3 import ALL, MODIFY_REPLACE, Connection, Server
 
 from src import config
 from src.scripts.exceptions import BadCredentials, UsernameNotUnique
+from src.scripts.user import User
 
 
 keycloak_openid = KeycloakOpenID(
@@ -43,6 +44,8 @@ def create_user(username: str, password: str, email: str):
     if "code: 1555" in res:
         raise UsernameNotUnique
 
+    User(username).insert()
+
     ldap.modify(dn, changes={"userPassword": [(MODIFY_REPLACE, password)]})
 
 
@@ -50,7 +53,8 @@ def authenticate(username: str, password: str) -> Tuple[str, str]:
 
     try:
         token = keycloak_openid.token(username, password, scope="openid profile email")
-    except:
+    except Exception as e:
+        print(e)
         raise BadCredentials
     access_token = token["access_token"]
     refresh_token = token["refresh_token"]

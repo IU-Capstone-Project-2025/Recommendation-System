@@ -23,6 +23,7 @@ class UserList:
 
             return res[0]
 
+
     def get_completed_list(self) -> list[tuple[Book, Score]]:
         with self._db.client().cursor() as cur:
             cur.execute(
@@ -31,6 +32,7 @@ class UserList:
             )
 
             res = cur.fetchall()
+
 
             return [(Book(row[0]), Score(self.username, row[0])) for row in res]
 
