@@ -14,7 +14,7 @@
     {% if books %}
       <div class="book-grid">
         {% for book in books %}
-          <div  class="book-card" onclick="window.location=`/book/{{book.id}}`">
+          <div  class="book-card" onclick="window.location=`/book?id={{book.id}}`">
             <img src="{{ book.cover }}" alt="Book_cover">
             <h3>{{ book.title }}</h3>
             <p>{{ book.author }}</p>
