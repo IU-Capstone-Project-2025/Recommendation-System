@@ -16,13 +16,13 @@
       <p class="book-author">{{book.author}}</p>
             <div class="rating-wrapper">
               <div class="rating">
-                  <span onclick="set_score({{book.id}}, 1)" id="rating-1" class="rating-star">{% if score > 1 %}<i class="bi bi-star"></i>{% else %}<i class="bi bi-star-fill"></i>{%endif%}</span>
-                  <span onclick="set_score({{book.id}}, 2)" id="rating-2" class="rating-star">{% if score > 2 %}<i class="bi bi-star"></i>{% else %}<i class="bi bi-star-fill"></i>{%endif%}</span>
-                  <span onclick="set_score({{book.id}}, 3)" id="rating-3" class="rating-star">{% if score > 3 %}<i class="bi bi-star"></i>{% else %}<i class="bi bi-star-fill"></i>{%endif%}</span>
-                  <span onclick="set_score({{book.id}}, 4)" id="rating-4" class="rating-star">{% if score > 4 %}<i class="bi bi-star"></i>{% else %}<i class="bi bi-star-fill"></i>{%endif%}</span>
-                  <span onclick="set_score({{book.id}}, 5)" id="rating-5" class="rating-star">{% if score > 5 %}<i class="bi bi-star"></i>{% else %}<i class="bi bi-star-fill"></i>{%endif%}</span>
+                  <span onclick="set_score({{book.id}}, 5)" id="rating-5" class="rating-star">{% if score < 5 %}<i class="bi bi-star"></i>{% else %}<i class="bi bi-star-fill"></i>{%endif%}</span>
+                  <span onclick="set_score({{book.id}}, 4)" id="rating-4" class="rating-star">{% if score < 4 %}<i class="bi bi-star"></i>{% else %}<i class="bi bi-star-fill"></i>{%endif%}</span>
+                  <span onclick="set_score({{book.id}}, 3)" id="rating-3" class="rating-star">{% if score < 3 %}<i class="bi bi-star"></i>{% else %}<i class="bi bi-star-fill"></i>{%endif%}</span>
+                  <span onclick="set_score({{book.id}}, 2)" id="rating-2" class="rating-star">{% if score < 2 %}<i class="bi bi-star"></i>{% else %}<i class="bi bi-star-fill"></i>{%endif%}</span>
+                  <span onclick="set_score({{book.id}}, 1)" id="rating-1" class="rating-star">{% if score < 1 %}<i class="bi bi-star"></i>{% else %}<i class="bi bi-star-fill"></i>{%endif%}</span>
               </div>
-              <div class="rating-score" id="ratingScore">0/5</div>
+              <div class="rating-score" id="ratingScore">{{score}}/5</div>
             </div>
 
 
