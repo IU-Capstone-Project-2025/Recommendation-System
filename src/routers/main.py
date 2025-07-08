@@ -39,7 +39,6 @@ async def catalog(request: Request, filter: str = "Top", page: int = 0):
     else:
         book_lists = BookList(filter)
         book_list = book_lists.get_book_list(page)
-    
     return templates.TemplateResponse(
         "catalog.html",
         {

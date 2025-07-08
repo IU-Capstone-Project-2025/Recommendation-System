@@ -20,9 +20,10 @@ function set_score(bookId, score) {
 		.then((response) => response.text())
 		.then((data) => {
 			if (data === "OK") {
+				document.getElementById(`ratingScore`).innerText = `${score}/5`;
 				for (let i = 1; i <= 5; i++) {
 					document.getElementById(`rating-${i}`).innerHTML =
-						score > i
+						score < i
 							? "<i class='bi bi-star'></i>"
 							: "<i class='bi bi-star-fill'></i>";
 				}
