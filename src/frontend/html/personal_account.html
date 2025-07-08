@@ -56,7 +56,7 @@
         <ul>
             {% for book in user_lists[2] %}
             <li class="book-list-item">
-                <a class="book-link" href="/book/{{book[0].id}}">{{ book[0].title }} — {{ book[0].author }}</a>
+                <a class="book-link" href="/book?id={{book[0].id}}">{{ book[0].title }} — {{ book[0].author }}</a>
                 {% if book[1].score %}
                 <span class="rating-ball">{{ book[1].score }}</span>
                 {% endif %}
@@ -70,7 +70,7 @@
         <ul>
             {% for book in user_lists[1] %}
             <li class="book-list-item">
-                <a class="book-link" href="/book/{{book[0].id}}">{{ book[0].title }} — {{ book[0].author }}</a>
+                <a class="book-link" href="/book?id={{book[0].id}}">{{ book[0].title }} — {{ book[0].author }}</a>
                 {% if book[1].score %}
                 <span class="rating-ball">{{ book[1].score }}</span>
                 {% endif %}
@@ -84,7 +84,7 @@
         <ul>
             {% for book in user_lists[0] %}
             <li class="book-list-item">
-                <a class="book-link" href="/book/{{book[0].id}}">{{ book[0].title }} — {{ book[0].author }}</a>
+                <a class="book-link" href="/book?id={{book[0].id}}">{{ book[0].title }} — {{ book[0].author }}</a>
                 {% if book[1].score %}
                 <span class="rating-ball">{{ book[1].score }}</span>
                 {% endif %}
