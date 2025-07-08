@@ -4,3 +4,5 @@ venv
 .DS_Store
 lldap_*
 *.log
+src/scripts/searching_mechanism/levenshtein_length.dSYM
+src/scripts/searching_mechanism/levenshtein_length
