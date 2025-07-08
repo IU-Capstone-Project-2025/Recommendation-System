@@ -2,6 +2,7 @@ from fastapi import APIRouter, Form, Request
 from fastapi.responses import RedirectResponse
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
+from fastapi.encoders import jsonable_encoder
 
 from src import config
 from src.scripts import auth
@@ -9,8 +10,10 @@ from src.scripts.exceptions import BadCredentials, UsernameNotUnique
 from src.constants import TOP_LIST
 
 from src.scripts.book_list import BookList
+from src.scripts.search import Search
 from src.scripts.user_list import UserList
 from src.scripts.user_stats import UserStats
+
 
 # from fastapi.templates import Jinja2Templates
 router = APIRouter()
@@ -55,6 +58,44 @@ async def account(request: Request):
     user_data = auth.get_user_data(request)
     return templates.TemplateResponse(
         "book_info.html", {"request": request, "user_data": user_data}
+    )
+
+@router.post("/search", response_class=HTMLResponse)
+async def search(request: Request):
+    
+    import os
+
+    data = await request.form()
+    data = jsonable_encoder(data)
+    search_string = data[search_string]
+
+    
+    import subprocess
+
+    result = subprocess.run(
+        ["./src/scripts/searching_mechanism/levenshtein_length", search_string],
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+
+    output_lines = result.stdout.splitlines()
+
+
+    cleaned_lines = [
+        line.strip() 
+        for line in output_lines 
+        if line.strip()
+    ]
+
+    search_instance = Search(cleaned_lines)
+    books = search_instance.get_search_result()
+
+    user_data = auth.get_user_data(request)
+
+    return templates.TemplateResponse(
+        "catalog.html",
+        {"request": request, "user_data": user_data, "books": books},
     )
 
 
