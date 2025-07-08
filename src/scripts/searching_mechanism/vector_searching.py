@@ -35,6 +35,6 @@ if __name__ == "__main__":
     search_engine.load_books("titles_only.csv")
     
     while True:
-        query = input("temp:")
+        query = input("Input:")
         results = search_engine.search(query)
         print(results)
