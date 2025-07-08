@@ -159,3 +159,14 @@ async def signin_post(
     response.set_cookie("access", access)
     response.set_cookie("refresh", refresh)
     return response
+
+@router.post("/search", response_class=HTMLResponse)
+async def search_post(request: Request, search_string: str = Form(...)):
+    search_results = [
+        {"title": "Found book", "author": "Author", "cover": "/img/book_cover.jpg"}
+    ]
+
+    return templates.TemplateResponse(
+        "search_results.html",
+        {"request": request, "results": search_results, "query": search_string}
+    )

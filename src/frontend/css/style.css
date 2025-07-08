@@ -180,17 +180,42 @@ main {
 }
 
 .search-box {
-	flex: 1;
-	margin: 0 40px;
+    flex: 1;
+    margin: 0 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
 }
 
 .search-input {
-	width: 100%;
-	padding: 8px 16px;
-	font-size: 16px;
-	border-radius: 20px;
-	border: 1px solid #ccc;
+    flex: 1;
+    padding: 8px 16px;
+    font-size: 16px;
+    border-radius: 20px;
+    border: 1px solid #ccc;
+    outline: none;
 }
+
+.search-button {
+    padding: 8px 16px;
+    font-size: 16px;
+    border-radius: 20px;
+    border: none;
+    background-color: #5300a0;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.search-button:hover {
+    background-color: #6600c5;
+}
+
+.search-button:active {
+    background-color: #888888;
+}
+
 
 .user-box {
 	display: flex;

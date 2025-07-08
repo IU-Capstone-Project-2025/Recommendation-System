@@ -1,9 +1,10 @@
 {% extends "base.html" %}
 
 {% block search %}
-<div class="search-box">
-    <input type="search" placeholder="Search..." class="search-input">
-</div>
+<form action="/search" method="post" class="search-box" style="display: flex; gap: 8px;">
+    <input type="search" name="search_string" placeholder="Search..." class="search-input" required>
+    <button type="submit" class="search-button">Search</button>
+</form>
 {% endblock %}
 
 {% block content %}
