@@ -6,13 +6,13 @@
     <div class="book-header">
   <div class="book-info">
     <div class="book-cover anim-border">
-      <img src="/img/book_cover.jpg" alt="Фото">
+        <img src="{{book.cover}}" alt="{{book.title}}">
       <span></span>
       <span></span>
     </div>
     <div class="book-details">
-      <h2 class="book-title">Book Title Goes Here</h2>
-      <p class="book-author">by Author Name</p>
+        <h2 class="book-title">{{book.title}}</h2>
+      <p class="book-author">{{book.author}}</p>
       <form id="bookForm" method="POST">
             <div class="rating-wrapper">
               <div class="rating">
@@ -37,18 +37,15 @@
 
 
       <p class="book-description">
-        This is a placeholder description of the book. It gives an overview of the story. This is a placeholder description of the book. It gives an overview of the story. This is a placeholder description of the book. It gives an overview of the story. This is a placeholder description of the book. It gives an overview of the story. This is a placeholder description of the book. It gives an overview of the story. This is a placeholder description of the book. It gives an overview of the story.
+        {{book.description}}
       </p>
           <br>
           <div class="status-save-wrapper">
               <div class="book-status">
-                <label for="status">Status:</label>
-                <select id="status" name="status">
-                  <option value="">— Select —</option>
-                  <option value="Already read">Already read</option>
-                  <option value="In process">In process</option>
-                  <option value="Planned">Planned</option>
-                </select>
+                <div class="select-btn">Already read</div>
+                <div class="select-btn active">In progress</div>
+                <div class="select-btn">Planned</div>
+                <div class="select-btn">Untracked</div>
               </div>
 
               <input type="hidden" name="rating" id="hiddenRating" value="0">
