@@ -33,7 +33,7 @@ class Score:
     def get_score(self) -> int | None:
         with self._db.client().cursor() as cur:
             cur.execute(
-                "SELECT score FROM score WHERE userid = %(userid)s AND bookid = %(bookid)s",
+                "SELECT score FROM score WHERE userid = %(userid)s AND bookid = %(bookid)s AND isactual = true",
                 {"userid": self.userid, "bookid": self.bookId},
             )
 

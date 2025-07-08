@@ -24,6 +24,43 @@
   --yellow: #cccc00;
 }
 
+.search-box {
+  flex: 1;
+  margin: 0 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.search-input {
+  flex: 1;
+  padding: 8px 16px;
+  font-size: 16px;
+  border-radius: 20px;
+  border: 1px solid #ccc;
+  outline: none;
+}
+
+.search-button {
+  padding: 8px 16px;
+  font-size: 16px;
+  border-radius: 20px;
+  border: none;
+  background-color: #5300a0;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.search-button:hover {
+  background-color: #6600c5;
+}
+
+.search-button:active {
+  background-color: #888888;
+}
+
 body {
   font-family:
     system-ui,
@@ -42,6 +79,7 @@ body {
   min-height: 100vh;
   line-height: 1.5;
 }
+
 .image-gradient {
   position: absolute;
   top: 0;
@@ -49,6 +87,7 @@ body {
   opacity: 0.5;
   z-index: -1;
 }
+
 .layer-blur {
   height: 0;
   width: 30rem;
@@ -59,6 +98,7 @@ body {
   rotate: -30deg;
   z-index: -1;
 }
+
 .container {
   width: 100%;
   margin: 0 auto;
@@ -74,11 +114,13 @@ header {
   padding: 1rem 5rem;
   z-index: 999;
 }
+
 header h1 {
   margin: 0;
   font-size: 3rem;
   font-weight: 300;
 }
+
 nav {
   display: flex;
   align-items: center;
@@ -93,9 +135,11 @@ nav a {
   text-decoration: none;
   color: inherit;
 }
+
 nav a:hover {
   color: var(--grey);
 }
+
 .btn-signing {
   background-color: var(--grey);
   color: black;
@@ -107,20 +151,24 @@ nav a:hover {
   transition: background-color 0.2s ease;
   cursor: pointer;
 }
+
 .btn-signing:hover {
   background-color: white;
 }
+
 main {
   display: flex;
   flex-direction: column;
   justify-content: center;
   min-height: calc(90vh - 6rem);
 }
+
 .content {
   max-width: 40rem;
   margin-left: 10%;
   z-index: 999;
 }
+
 .tag-box {
   position: relative;
   width: 35rem;
@@ -131,11 +179,13 @@ main {
   animation: animationGradient 2.5s linear infinite;
   box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
 }
+
 @keyframes animationGradient {
   to {
     background-position: 200%;
   }
 }
+
 .tag-box .tag {
   position: absolute;
   inset: 3px 3px 3px 3px;
@@ -147,9 +197,11 @@ main {
   transition: 0.5s ease;
   cursor: pointer;
 }
+
 .tag-box .tag:hover {
   color: var(--purple);
 }
+
 .content h1 {
   font-size: 4rem;
   font-weight: 600;
@@ -158,17 +210,20 @@ main {
   line-height: 1.2;
   text-shadow: 0 0 10px rgba(128, 128, 128, 0.418);
 }
+
 .description {
   font-size: 1.2rem;
   letter-spacing: 0.05em;
   max-width: 35rem;
   color: gray;
 }
+
 .buttons {
   display: flex;
   gap: 1rem;
   margin-top: 3rem;
 }
+
 .btn-get-started {
   text-decoration: none;
   border: 1px solid #2a2a2a;
@@ -179,9 +234,11 @@ main {
   letter-spacing: 0.1em;
   transition: background-color 0.2s ease;
 }
+
 .btn-get-started:hover {
   background-color: #1a1a1a;
 }
+
 .btn-signing-main {
   text-decoration: none;
   background-color: lightgray;
@@ -193,9 +250,11 @@ main {
   letter-spacing: 0.1em;
   transition: background-color 0.2s ease;
 }
+
 .btn-signing-main:hover {
   background-color: gray;
 }
+
 .bookshelve {
   position: absolute;
   top: 20%;
@@ -233,6 +292,7 @@ main {
   font-weight: 500;
   color: var(--white);
 }
+
 .book-catalog {
   padding: 4rem 2rem;
   background-attachment: fixed;
@@ -297,6 +357,7 @@ main {
   font-size: 0.9rem;
   color: gray;
 }
+
 .side-nav {
   font-weight: 500;
   width: 250px;
@@ -312,6 +373,7 @@ main {
   backdrop-filter: blur(4px);
   background-color: rgba(0, 0, 0, 0.2);
 }
+
 .filter-title {
   color: white;
   font-size: 18px;
@@ -349,6 +411,7 @@ input[type="radio"]:checked::before {
   background-color: var(--white);
   border-radius: 50%;
 }
+
 .progress-bars {
   max-width: 300px;
   margin-left: auto;
@@ -390,6 +453,7 @@ input[type="radio"]:checked::before {
   border-radius: 6px 0 0 6px;
   transition: width 0.3s ease;
 }
+
 .side-nav-prog {
   font-weight: 500;
   width: 250px;
@@ -405,6 +469,7 @@ input[type="radio"]:checked::before {
   backdrop-filter: blur(4px);
   background-color: rgba(0, 0, 0, 0.2);
 }
+
 .side-nav-rating {
   font-weight: 500;
   width: 250px;
@@ -420,10 +485,12 @@ input[type="radio"]:checked::before {
   backdrop-filter: blur(4px);
   background-color: rgba(0, 0, 0, 0.2);
 }
+
 input.tag {
   color: white;
   border: none;
 }
+
 .anim-border {
   position: relative;
   width: 250px;
@@ -437,6 +504,7 @@ input.tag {
   border-radius: 12px;
   margin: 0 0 30px -10px;
 }
+
 .anim-border span {
   position: absolute;
   top: 0;
@@ -448,12 +516,15 @@ input.tag {
   z-index: 1;
   pointer-events: none;
 }
+
 .anim-border span:nth-child(1) {
   transform: rotate(0deg);
 }
+
 .anim-border span:nth-child(3) {
   transform: rotate(180deg);
 }
+
 .anim-border span::before {
   content: "";
   position: absolute;
@@ -462,24 +533,29 @@ input.tag {
   background: var(--purple);
   animation: anim-anim-border 4s linear infinite;
 }
+
 @keyframes anim-anim-border {
   0% {
     transform: scaleX(0);
     transform-origin: left;
   }
+
   50% {
     transform: scaleX(1);
     transform-origin: left;
   }
+
   50.1% {
     transform: scaleX(1);
     transform-origin: right;
   }
+
   100% {
     transform: scaleX(0);
     transform-origin: right;
   }
 }
+
 .anim-border img {
   width: 90%;
   height: 90%;
@@ -487,11 +563,13 @@ input.tag {
   border-radius: 12px;
   z-index: 0;
 }
+
 .book-info {
   display: flex;
   gap: 60px;
   align-items: flex-start;
 }
+
 .book-details {
   flex: 1;
   max-width: 600px;
@@ -499,6 +577,7 @@ input.tag {
   flex-direction: column;
   justify-content: flex-start;
 }
+
 .comments-section {
   margin-top: 20px;
   max-width: 75%;
@@ -618,6 +697,70 @@ input.tag {
 
 .rating-score {
   font-size: 1.2rem;
+  color: #ccc;
+  min-width: 3rem;
+  text-align: left;
+  font-weight: bold;
+  text-shadow: 0 0 4px rgba(255, 255, 255, 0.3);
+}
+
+.error {
+  border: 1px solid;
+  color: #d92626;
+  padding: 5px 15px;
+  border-radius: 50px;
+}
+
+.input-title {
+  font-size: 1.3rem;
+  margin-bottom: 0.8rem;
+  font-weight: 500;
+  color: #f0f0f0;
+  letter-spacing: 0.5px;
+}
+
+.tag-box .tag {
+  position: absolute;
+  inset: 3px;
+  background-color: black;
+  border-radius: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+
+  font-size: 1.3rem;
+  padding: 0.8rem 1.5rem;
+}
+
+.tag-box .tag::placeholder {
+  font-size: 1.3rem;
+  color: #bbbbbb;
+  opacity: 0.8;
+}
+
+.tag-box .tag:focus {
+  outline: none;
+  background-color: rgba(30, 30, 30, 0.9);
+  box-shadow: 0 0 0 2px #5300a0;
+}
+
+.tag-box .tag[type="submit"] {
+  font-size: 1.3rem;
+  font-weight: 600;
+  padding: 0.3rem 1.5rem;
+  background: #5300a0;
+  transition: background 0.3s ease;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 86%;
+}
+
+.tag-box .tag:hover {
+  color: white !important;
+  font-size: 1.2rem;
   color: var(--dimmed-white);
   min-width: 3rem;
   text-align: left;
@@ -698,6 +841,26 @@ input.tag {
 .tag-box-centered .tag:hover {
   color: #5300a0;
 }
+
+.rating-ball {
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+  border-radius: 50%;
+  background-color: #5300a0;
+  color: #fff;
+  font-weight: bold;
+  font-size: 12px;
+  margin-right: 70%;
+}
+
+.book-list-item {
+  display: flex;
+  justify-content: space-between;
+}
+
 .error {
   border: 1px solid;
   color: var(--error-red);
@@ -736,13 +899,14 @@ input.tag {
   color: black;
 }
 
-.loader {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  position: relative;
-  animation: rotate 1s linear infinite;
+.rating-star {
+  padding-left: 5px;
+  background: var(--gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: animationGradient 2.5s linear infinite;
 }
+
 .loader::before,
 .loader::after {
   content: "";
@@ -753,6 +917,7 @@ input.tag {
   border: 5px solid #fff;
   animation: prixClipFix 2s linear infinite;
 }
+
 .loader::after {
   inset: 8px;
   transform: rotate3d(90, 90, 0, 180deg);
@@ -763,6 +928,7 @@ input.tag {
   0% {
     transform: rotate(0deg);
   }
+
   100% {
     transform: rotate(360deg);
   }
@@ -772,19 +938,13 @@ input.tag {
   0% {
     clip-path: polygon(50% 50%, 0 0, 0 0, 0 0, 0 0, 0 0);
   }
+
   50% {
     clip-path: polygon(50% 50%, 0 0, 100% 0, 100% 0, 100% 0, 100% 0);
   }
+
   75%,
   100% {
     clip-path: polygon(50% 50%, 0 0, 100% 0, 100% 100%, 100% 100%, 100% 100%);
   }
-}
-
-.rating-star {
-  padding-left: 5px;
-  background: var(--gradient);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: animationGradient 2.5s linear infinite;
 }
