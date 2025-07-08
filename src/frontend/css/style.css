@@ -642,8 +642,6 @@ input.tag {
   height: 120px;
 }
 
-
-
 .jump {
   animation: jump 1s ease-in-out infinite;
 }
@@ -653,7 +651,8 @@ input.tag {
 }
 
 @keyframes jump {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0);
   }
   30% {
@@ -665,32 +664,39 @@ input.tag {
 }
 
 .tag-box-centered {
-    position: relative;
-    width: 20rem;
-    height: 2.5rem;
-    margin: 0 auto;
-    border-radius: 50px;
-    background: linear-gradient(to right, #656565, #7f42a7, #6600c5, #5300a0, #757575, #656565);
-    background-size: 200%;
-    animation: animationGradient 2.5s linear infinite;
-    box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+  position: relative;
+  width: 20rem;
+  height: 2.5rem;
+  margin: 0 auto;
+  border-radius: 50px;
+  background: linear-gradient(
+    to right,
+    #656565,
+    #7f42a7,
+    #6600c5,
+    #5300a0,
+    #757575,
+    #656565
+  );
+  background-size: 200%;
+  animation: animationGradient 2.5s linear infinite;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
 }
 
-
 .tag-box-centered .tag {
-    position: absolute;
-    inset: 3px 3px 3px 3px;
-    background-color: black;
-    border-radius: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: 0.5s ease;
-    cursor: pointer;
+  position: absolute;
+  inset: 3px 3px 3px 3px;
+  background-color: black;
+  border-radius: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.5s ease;
+  cursor: pointer;
 }
 
 .tag-box-centered .tag:hover {
-    color: #5300a0;
+  color: #5300a0;
 }
 .error {
   border: 1px solid;
@@ -731,35 +737,54 @@ input.tag {
 }
 
 .loader {
-        width: 48px;
-        height: 48px;
-        border-radius: 50%;
-        position: relative;
-        animation: rotate 1s linear infinite
-      }
-      .loader::before , .loader::after {
-        content: "";
-        box-sizing: border-box;
-        position: absolute;
-        inset: 0px;
-        border-radius: 50%;
-        border: 5px solid #FFF;
-        animation: prixClipFix 2s linear infinite ;
-      }
-      .loader::after{
-        inset: 8px;
-        transform: rotate3d(90, 90, 0, 180deg );
-        border-color: #FF3D00;
-      }
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  position: relative;
+  animation: rotate 1s linear infinite;
+}
+.loader::before,
+.loader::after {
+  content: "";
+  box-sizing: border-box;
+  position: absolute;
+  inset: 0px;
+  border-radius: 50%;
+  border: 5px solid #fff;
+  animation: prixClipFix 2s linear infinite;
+}
+.loader::after {
+  inset: 8px;
+  transform: rotate3d(90, 90, 0, 180deg);
+  border-color: #ff3d00;
+}
 
-      @keyframes rotate {
-        0%   {transform: rotate(0deg)}
-        100%   {transform: rotate(360deg)}
-      }
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
 
-      @keyframes prixClipFix {
-          0%   {clip-path:polygon(50% 50%,0 0,0 0,0 0,0 0,0 0)}
-          50%  {clip-path:polygon(50% 50%,0 0,100% 0,100% 0,100% 0,100% 0)}
-          75%, 100%  {clip-path:polygon(50% 50%,0 0,100% 0,100% 100%,100% 100%,100% 100%)}
-      }
+@keyframes prixClipFix {
+  0% {
+    clip-path: polygon(50% 50%, 0 0, 0 0, 0 0, 0 0, 0 0);
+  }
+  50% {
+    clip-path: polygon(50% 50%, 0 0, 100% 0, 100% 0, 100% 0, 100% 0);
+  }
+  75%,
+  100% {
+    clip-path: polygon(50% 50%, 0 0, 100% 0, 100% 100%, 100% 100%, 100% 100%);
+  }
+}
 
+.rating-star {
+  padding-left: 5px;
+  background: var(--gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: animationGradient 2.5s linear infinite;
+}

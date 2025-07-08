@@ -8,19 +8,19 @@ class Score:
     newscore: int | None
     score: int | None
     userid: int
-    
-    def __init__(self, username: str, bookId: int, score: int | None):
+
+    def __init__(self, username: str, bookId: int, score: int | None = None):
         self.username = username
         self.bookId = bookId
         self.newscore = score
         self._db = PgConnectionBuilder.pg_conn()
-        self.score = self.get_score()
         self.userid = self.get_userid()
+        self.score = self.get_score()
 
     def get_userid(self) -> int:
         with self._db.client().cursor() as cur:
             cur.execute(
-                "SELECT id FROM \"User\" WHERE username = %(username)s",
+                'SELECT id FROM "User" WHERE username = %(username)s',
                 {"username": self.username},
             )
 
@@ -38,14 +38,15 @@ class Score:
             )
 
             res = cur.fetchone()
-            if not res: 
+            if not res:
                 return None
-            
+
             return res[0]
 
     def set_score(self) -> None:
         if self.get_score():
-            with self._db.client().cursor() as cur:
+            client = self._db.client()
+            with client.cursor() as cur:
                 cur.execute(
                     "UPDATE score SET score = %(score)s, updatets = NOW() WHERE userid = %(userid)s AND bookid = %(bookid)s",
                     {
@@ -54,8 +55,10 @@ class Score:
                         "score": self.newscore,
                     },
                 )
+                client.commit()
         else:
-            with self._db.client().cursor() as cur:
+            client = self._db.client()
+            with client.cursor() as cur:
                 cur.execute(
                     "INSERT INTO score (userid, bookid, score) VALUES (%(userid)s, %(bookid)s, %(score)s)",
                     {
@@ -64,6 +67,7 @@ class Score:
                         "score": self.newscore,
                     },
                 )
+                client.commit()
 
     def drop_score(self) -> None:
         with self._db.client().cursor() as cur:
@@ -71,4 +75,3 @@ class Score:
                 "UPDATE score SET isactual = false WHERE userid = %(userid)s AND bookid = %(bookid)s",
                 {"userid": self.userid, "bookid": self.bookId},
             )
-

@@ -2,6 +2,7 @@
 {% block content %}
 <main class="book-catalog">
     <script src="js/feedback.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
     <div class="book-header">
   <div class="book-info">
     <div class="book-cover anim-border">
@@ -12,23 +13,13 @@
     <div class="book-details">
         <h2 class="book-title">{{book.title}}</h2>
       <p class="book-author">{{book.author}}</p>
-      <form id="bookForm" method="POST">
             <div class="rating-wrapper">
               <div class="rating">
-                <input type="radio" name="rating" id="r5" value="5">
-                <label for="r5" title="5 stars"></label>
-
-                <input type="radio" name="rating" id="r4" value="4">
-                <label for="r4" title="4 stars"></label>
-
-                <input type="radio" name="rating" id="r3" value="3">
-                <label for="r3" title="3 stars"></label>
-
-                <input type="radio" name="rating" id="r2" value="2">
-                <label for="r2" title="2 stars"></label>
-
-                <input type="radio" name="rating" id="r1" value="1">
-                <label for="r1" title="1 star"></label>
+                  <span onclick="set_score({{book.id}}, 1)" id="rating-1" class="rating-star">{% if score > 1 %}<i class="bi bi-star"></i>{% else %}<i class="bi bi-star-fill"></i>{%endif%}</span>
+                  <span onclick="set_score({{book.id}}, 2)" id="rating-2" class="rating-star">{% if score > 2 %}<i class="bi bi-star"></i>{% else %}<i class="bi bi-star-fill"></i>{%endif%}</span>
+                  <span onclick="set_score({{book.id}}, 3)" id="rating-3" class="rating-star">{% if score > 3 %}<i class="bi bi-star"></i>{% else %}<i class="bi bi-star-fill"></i>{%endif%}</span>
+                  <span onclick="set_score({{book.id}}, 4)" id="rating-4" class="rating-star">{% if score > 4 %}<i class="bi bi-star"></i>{% else %}<i class="bi bi-star-fill"></i>{%endif%}</span>
+                  <span onclick="set_score({{book.id}}, 5)" id="rating-5" class="rating-star">{% if score > 5 %}<i class="bi bi-star"></i>{% else %}<i class="bi bi-star-fill"></i>{%endif%}</span>
               </div>
               <div class="rating-score" id="ratingScore">0/5</div>
             </div>
@@ -47,13 +38,8 @@
                 <div id="status-planned"   onclick="set_status({{book.id}}, planned)"   class="select-btn {%if status == 'planned'%}active{%endif%}">  Planned     </div>
                 <div id="status-untracked" onclick="set_status({{book.id}}, untracked)" class="select-btn {%if status == 'untracked'%}active{%endif%}">Untracked   </div>
               </div>
-
-              <input type="hidden" name="rating" id="hiddenRating" value="0">
-
-              <button type="submit" id="saveButton" style="display: none;">Save</button>
           </div>
           {%endif%}
-        </form>
     </div>
 
 

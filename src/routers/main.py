@@ -9,6 +9,7 @@ from src.scripts.exceptions import BadCredentials, ObjectNotFound, UsernameNotUn
 from src.constants import TOP_LIST
 
 from src.scripts.book_list import BookList
+from src.scripts.score import Score
 from src.scripts.status import Status
 
 # from fastapi.templates import Jinja2Templates
@@ -65,9 +66,19 @@ async def book(request: Request, id: int):
     if not status:
         status = "untracked"
 
+    score = Score(user_data["preferred_username"], id).score
+    if not score:
+        score = 0
+
     return templates.TemplateResponse(
         "book_info.html",
-        {"request": request, "user_data": user_data, "book": book, "status": status},
+        {
+            "request": request,
+            "user_data": user_data,
+            "book": book,
+            "status": status,
+            "score": score,
+        },
     )
 
 
