@@ -3,10 +3,19 @@
 #include "fstream"
 #include <sstream>
 #include "vector"
+#include <queue>
 #include <algorithm> 
 using namespace std;
 
 vector<string> Book_Titles_From_CSV;
+
+struct Comparator {
+    bool operator ()(const pair<string,int>& a, const pair<string,int>&b){
+        return a.second > b.second;
+    }
+};
+
+priority_queue<pair<string, int>, vector<pair<string,int> >, Comparator> Priority_Queue_With_Most_Similar_Books;
 
 void read_From_CSV(){
     string filepath = "titles_only.csv";
@@ -34,7 +43,8 @@ void read_From_CSV(){
 
 
 void solve(string book_name){
-    
+    transform(book_name.begin(),book_name.end(), book_name.begin(),::tolower);
+
 }
 
 
