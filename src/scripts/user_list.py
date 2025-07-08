@@ -1,6 +1,7 @@
 from src.scripts.exceptions import ObjectNotFound
 from src.scripts.pg_connect import PgConnectionBuilder
 from src.scripts.book import Book
+from src.scripts.score import Score
 
 
 class UserList:
@@ -22,35 +23,37 @@ class UserList:
 
             return res[0]
 
-    def get_completed_list(self) -> list[Book]:
+
+    def get_completed_list(self) -> list[tuple[Book, Score]]:
         with self._db.client().cursor() as cur:
             cur.execute(
-                f"SELECT bookid FROM completed WHERE userid = %(userid)s ORDER BY rank ASC",
+                f"SELECT bookid FROM completed WHERE userid = %(userid)s ORDER BY bookid ASC",
                 {"userid": self.userid},
             )
 
             res = cur.fetchall()
 
-            return [Book(row[0]) for row in res]
 
-    def get_planned_list(self) -> list[Book]:
+            return [(Book(row[0]), Score(self.username, row[0])) for row in res]
+
+    def get_planned_list(self) -> list[tuple[Book, Score]]:
         with self._db.client().cursor() as cur:
             cur.execute(
-                f"SELECT bookid FROM planned WHERE userid = %(userid)s ORDER BY rank ASC",
+                f"SELECT bookid FROM planned WHERE userid = %(userid)s ORDER BY bookid ASC",
                 {"userid": self.userid},
             )
 
             res = cur.fetchall()
 
-            return [Book(row[0]) for row in res]
+            return [(Book(row[0]), Score(self.username, row[0])) for row in res]
 
-    def get_reading_list(self) -> list[Book]:
+    def get_reading_list(self) -> list[tuple[Book, Score]]:
         with self._db.client().cursor() as cur:
             cur.execute(
-                f"SELECT bookid FROM reading WHERE userid = %(userid)s ORDER BY rank ASC",
+                f"SELECT bookid FROM reading WHERE userid = %(userid)s ORDER BY bookid ASC",
                 {"userid": self.userid},
             )
 
             res = cur.fetchall()
 
-            return [Book(row[0]) for row in res]
+            return [(Book(row[0]), Score(self.username, row[0])) for row in res]

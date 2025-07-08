@@ -1,4 +1,10 @@
 {% extends "base.html" %}
+{% block search %}
+<form action="/search" method="post" class="search-box" style="display: flex; gap: 8px;">
+    <input type="search" name="search_string" placeholder="Search..." class="search-input" required>
+    <button type="submit" class="search-button">Search</button>
+</form>
+{% endblock %}
 {% block content %}
 <main class="book-catalog">
 
@@ -12,31 +18,31 @@
                 <div class="progress-item">
                     <span class="progress-label">5</span>
                     <div class="progress-bar">
-                        <div class="progress-fill" style="width: 90%;"></div>
+                        <div class="progress-fill" style="width: {{user_stats.scores[4]}}%;"></div>
                     </div>
                 </div>
                 <div class="progress-item">
                     <span class="progress-label">4</span>
                     <div class="progress-bar">
-                        <div class="progress-fill" style="width: 75%;"></div>
+                        <div class="progress-fill" style="width: {{user_stats.scores[3]}}%;"></div>
                     </div>
                 </div>
                 <div class="progress-item">
                     <span class="progress-label">3</span>
                     <div class="progress-bar">
-                        <div class="progress-fill" style="width: 60%;"></div>
+                        <div class="progress-fill" style="width: {{user_stats.scores[2]}}%;"></div>
                     </div>
                 </div>
                 <div class="progress-item">
                     <span class="progress-label">2</span>
                     <div class="progress-bar">
-                        <div class="progress-fill" style="width: 60%;"></div>
+                        <div class="progress-fill" style="width: {{user_stats.scores[1]}}%;"></div>
                     </div>
                 </div>
                 <div class="progress-item">
                     <span class="progress-label">1</span>
                     <div class="progress-bar">
-                        <div class="progress-fill" style="width: 60%;"></div>
+                        <div class="progress-fill" style="width: {{user_stats.scores[0]}}%;"></div>
                     </div>
                 </div>
 
@@ -47,12 +53,44 @@
     </div>
     <section class="book-list-section" style="margin-bottom: 2rem;">
         <h3>Planned to Read</h3>
-        <ul id="plannedList" class="book-list"></ul>
+        <ul>
+            {% for book in user_lists[2] %}
+            <li class="book-list-item">
+                <a class="book-link" href="/book/{{book[0].id}}">{{ book[0].title }} — {{ book[0].author }}</a>
+                {% if book[1].score %}
+                <span class="rating-ball">{{ book[1].score }}</span>
+                {% endif %}
+            </li>
+            {% endfor %}
+        </ul>
     </section>
 
     <section class="book-list-section" style="margin-bottom: 2rem;">
         <h3>Currently Reading</h3>
-        <ul id="currentList" class="book-list"></ul>
+        <ul>
+            {% for book in user_lists[1] %}
+            <li class="book-list-item">
+                <a class="book-link" href="/book/{{book[0].id}}">{{ book[0].title }} — {{ book[0].author }}</a>
+                {% if book[1].score %}
+                <span class="rating-ball">{{ book[1].score }}</span>
+                {% endif %}
+            </li>
+            {% endfor %}
+        </ul>
+    </section>
+
+    <section class="book-list-section" style="margin-bottom: 2rem;">
+        <h3>Completed</h3>
+        <ul>
+            {% for book in user_lists[0] %}
+            <li class="book-list-item">
+                <a class="book-link" href="/book/{{book[0].id}}">{{ book[0].title }} — {{ book[0].author }}</a>
+                {% if book[1].score %}
+                <span class="rating-ball">{{ book[1].score }}</span>
+                {% endif %}
+            </li>
+            {% endfor %}
+        </ul>
     </section>
 
 
