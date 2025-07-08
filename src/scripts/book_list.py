@@ -36,9 +36,9 @@ class BookList:
                 )
 
                 if not res:
-                    return None
+                    return []
 
-                return [Book(row[0]) for row in res]
+                return [Book(row[0]) for row in res]  # pyright: ignore type
             else:
                 raise WrongListType
 
@@ -52,8 +52,8 @@ class BookList:
                 )
 
                 if not res:
-                    return None
+                    return []
 
-                return [Book(row[0]) for row in res]
+                return [Book(row[0]) for row in res]  # pyright: ignore type
             else:
                 raise WrongListType
