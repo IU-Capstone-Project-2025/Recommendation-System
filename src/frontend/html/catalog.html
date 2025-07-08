@@ -35,10 +35,12 @@
                 <input type="radio" id="filter-week" name="filter" value="weekly">
                 <label for="filter-week">Popular per week</label>
               </div>
-              <div class="radio-option">
-                <input type="radio" id="filter-recommend" name="filter" value="recommend">
-                <label for="filter-recommend">Recommendations</label>
-              </div>
+              {% if is_authenticated %}
+                  <div class="radio-option">
+                    <input type="radio" id="filter-recommend" name="filter" value="recommend">
+                    <label for="filter-recommend">Recommendations</label>
+                  </div>
+              {% endif %}
             </div>
 
             </div>
