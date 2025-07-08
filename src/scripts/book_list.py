@@ -36,7 +36,7 @@ class BookList:
                 )
 
                 if not res:
-                    raise ObjectNotFound
+                    return None
 
                 return [Book(row[0]) for row in res]
             else:
@@ -52,7 +52,7 @@ class BookList:
                 )
 
                 if not res:
-                    raise ObjectNotFound
+                    return None
 
                 return [Book(row[0]) for row in res]
             else:
