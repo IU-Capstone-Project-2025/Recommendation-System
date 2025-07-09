@@ -35,7 +35,7 @@
           <br>
           {%if status != None%}
           <div class="status-save-wrapper">
-              <div class="book-status">
+              <div class="selector">
                 <div id="status-completed" onclick="set_status({{book.id}}, completed)" class="select-btn {%if status == 'completed'%}active{%endif%}">Already read</div>
                 <div id="status-reading"   onclick="set_status({{book.id}}, reading)"   class="select-btn {%if status == 'reading'%}active{%endif%}">  In progress </div>
                 <div id="status-planned"   onclick="set_status({{book.id}}, planned)"   class="select-btn {%if status == 'planned'%}active{%endif%}">  Planned     </div>
