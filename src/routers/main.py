@@ -4,6 +4,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.encoders import jsonable_encoder
 
+
 from src.scripts import auth
 from src.scripts.book import Book
 from src.scripts.book_messages import BookMessages
@@ -18,15 +19,15 @@ from src.scripts.user_list import UserList
 from src.scripts.user_stats import UserStats
 from src.scripts.status import Status
 from src.scripts.score import Score
-from src.scripts.searching_mechanism.vector_searching import BookSearchEngine
+from src.microservices.recommendation_system_project import search_engine
+
 
 # from fastapi.templates import Jinja2Templates
 router = APIRouter()
 
-search_engine = BookSearchEngine()
-search_engine.load_books("src/scripts/searching_mechanism/titles_only.csv")
 
 templates = Jinja2Templates(directory="src/frontend/html")
+
 
 
 @router.get("/", response_class=HTMLResponse)
