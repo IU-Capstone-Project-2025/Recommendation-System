@@ -51,48 +51,60 @@
 
 
     </div>
-    <section class="book-list-section" style="margin-bottom: 2rem;">
-        <h3>Planned to Read</h3>
-        <ul>
-            {% for book in user_lists[2] %}
-            <li class="book-list-item">
-                <a class="book-link" href="/book?id={{book[0].id}}">{{ book[0].title }} — {{ book[0].author }}</a>
-                {% if book[1].score %}
-                <span class="rating-ball">{{ book[1].score }}</span>
-                {% endif %}
-            </li>
-            {% endfor %}
-        </ul>
-    </section>
-
-    <section class="book-list-section" style="margin-bottom: 2rem;">
-        <h3>Currently Reading</h3>
-        <ul>
-            {% for book in user_lists[1] %}
-            <li class="book-list-item">
-                <a class="book-link" href="/book?id={{book[0].id}}">{{ book[0].title }} — {{ book[0].author }}</a>
-                {% if book[1].score %}
-                <span class="rating-ball">{{ book[1].score }}</span>
-                {% endif %}
-            </li>
-            {% endfor %}
-        </ul>
-    </section>
-
-    <section class="book-list-section" style="margin-bottom: 2rem;">
-        <h3>Completed</h3>
-        <ul>
-            {% for book in user_lists[0] %}
-            <li class="book-list-item">
-                <a class="book-link" href="/book?id={{book[0].id}}">{{ book[0].title }} — {{ book[0].author }}</a>
-                {% if book[1].score %}
-                <span class="rating-ball">{{ book[1].score }}</span>
-                {% endif %}
-            </li>
-            {% endfor %}
-        </ul>
-    </section>
-
+    <div class="selector">
+        <div id="status-completed" onclick="select_list('completed', 0)" class="select-btn active">Already read</div>
+        <div id="status-reading"   onclick="select_list('reading', 100)"   class="select-btn">  In progress </div>
+        <div id="status-planned"   onclick="select_list('planned', 200)"   class="select-btn">  Planned     </div>
+    </div>
+    <div class="book-lists">
+        <div id="book-lists-container">
+            <div class="book-grid" id="bookGrid">
+                {% for book in user_lists[0] %}
+                <div class="book-card" onclick="window.location=`/book?id={{book[0].id}}`">
+                    <img src="{{book[0].cover}}" alt="{{book[0].title}}">
+                    <h3 class="book-title">{{book[0].title}}</h3>
+                    <p class="book-author">{{book[0].author}}</p>
+                    {% if book[1].score != None %}
+                        <p class="user-rating">{% for i in range(book[1].score) %}☆{% endfor %}</p>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            <div class="book-grid" id="bookGrid">
+                {% for book in user_lists[1] %}
+                <div class="book-card" onclick="window.location=`/book?id={{book[0].id}}`">
+                    <img src="{{book[0].cover}}" alt="{{book[0].title}}">
+                    <h3 class="book-title">{{book[0].title}}</h3>
+                    <p class="book-author">{{book[0].author}}</p>
+                    {% if book[1].score != None %}
+                        <p class="user-rating">{% for i in range(book[1].score) %}☆{% endfor %}</p>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            <div class="book-grid" id="bookGrid">
+                {% for book in user_lists[2] %}
+                <div class="book-card" onclick="window.location=`/book?id={{book[0].id}}`">
+                    <img src="{{book[0].cover}}" alt="{{book[0].title}}">
+                    <h3 class="book-title">{{book[0].title}}</h3>
+                    <p class="book-author">{{book[0].author}}</p>
+                    {% if book[1].score != None %}
+                        <p class="user-rating">{% for i in range(book[1].score) %}☆{% endfor %}</p>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <script>
+        function select_list(list, offset) {
+            document.getElementById("status-completed").className = "select-btn";
+            document.getElementById("status-reading").className = "select-btn";
+            document.getElementById("status-planned").className = "select-btn";
+            document.getElementById(`status-${list}`).className = "select-btn active";
+            document.getElementById("book-lists-container").style.marginLeft = `-${offset}%`;
+        }
+    </script>
 
 </main>
 {% endblock %}
