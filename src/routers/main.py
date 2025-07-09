@@ -38,10 +38,10 @@ async def catalog(request: Request, filter: str = "Top", page: int = 0):
     user_data = auth.get_user_data(request)
     if filter == "Recommendations":
         book_lists = BookList(filter, user_data["preferred_username"])
-        book_list = book_lists.get_recommendation_book_list(page)
+        book_list, pages = book_lists.get_recommendation_book_list(page)
     else:
         book_lists = BookList(filter)
-        book_list = book_lists.get_book_list(page)
+        book_list, pages = book_lists.get_book_list(page)
     return templates.TemplateResponse(
         "catalog.html",
         {
@@ -49,7 +49,9 @@ async def catalog(request: Request, filter: str = "Top", page: int = 0):
             "user_data": user_data,
             "books": book_list,
             "current_filter": filter,
-            "page": page,
+            "current_page": page,
+            "pages": pages,
+            "filter": filter,
         },
     )
 
@@ -252,3 +254,15 @@ async def search_post(request: Request, search_string: str = Form(...)):
         "search_results.html",
         {"request": request, "results": search_results, "query": search_string},
     )
+
+
+@router.get("/logout")
+async def logout(request: Request):
+    response = RedirectResponse("/", status_code=303)
+    refresh = request.cookies.get("refresh")
+    if not refresh:
+        return response
+    auth.logout(refresh)
+    response.delete_cookie("refresh")
+    response.delete_cookie("access")
+    return response

@@ -1,5 +1,5 @@
 from typing import Tuple
-from fastapi import Request
+from fastapi import Request, Response
 from keycloak import KeycloakOpenID
 from ldap3 import ALL, MODIFY_REPLACE, Connection, Server
 
@@ -70,3 +70,7 @@ def get_user_data(request: Request) -> dict:
         return {}
     data = keycloak_openid.userinfo(access_token)
     return data
+
+
+def logout(refresh: str):
+    keycloak_openid.logout(refresh)
