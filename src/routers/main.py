@@ -254,3 +254,15 @@ async def search_post(request: Request, search_string: str = Form(...)):
         "search_results.html",
         {"request": request, "results": search_results, "query": search_string},
     )
+
+
+@router.get("/logout")
+async def logout(request: Request):
+    response = RedirectResponse("/", status_code=303)
+    refresh = request.cookies.get("refresh")
+    if not refresh:
+        return response
+    auth.logout(refresh)
+    response.delete_cookie("refresh")
+    response.delete_cookie("access")
+    return response
