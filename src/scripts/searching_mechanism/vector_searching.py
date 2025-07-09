@@ -30,11 +30,11 @@ class BookSearchEngine:
         
         return [(self.book_titles[i]) for i in top_indices]
 
-if __name__ == "__main__":
-    search_engine = BookSearchEngine()
-    search_engine.load_books("titles_only.csv")
+# if __name__ == "__main__":
+#     search_engine = BookSearchEngine()
+#     search_engine.load_books("titles_only.csv")
     
-    while True:
-        query = input("Input:")
-        results = search_engine.search(query)
-        print(results)
+#     while True:
+#         query = input("Input:")
+#         results = search_engine.search(query)
+#         print(results)
