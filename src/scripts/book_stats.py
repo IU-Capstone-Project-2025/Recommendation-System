@@ -3,8 +3,8 @@ from src.scripts.pg_connect import PgConnectionBuilder
 
 class BookStats:
     bookId: int
-    scores: tuple[int, int, int, int, int, int]
-    statuses: tuple[int, int, int, int]
+    scores: list[int | float]
+    statuses: list[int]
 
     def __init__(self, bookId: int):
         self.bookId = bookId
@@ -12,7 +12,7 @@ class BookStats:
         self.scores = self.get_scores()
         self.statuses = self.get_statuses()
 
-    def get_scores(self) -> tuple[int, int, int, int, int, int]:
+    def get_scores(self) -> list[int | float]:
         with self._db.client().cursor() as cur:
             cur.execute(
                 """
@@ -22,18 +22,25 @@ class BookStats:
                     SUM(CASE WHEN score = 2 THEN 1 ELSE 0 END) AS two_score,
                     SUM(CASE WHEN score = 3 THEN 1 ELSE 0 END) AS three_score,
                     SUM(CASE WHEN score = 4 THEN 1 ELSE 0 END) AS four_score,
-                    SUM(CASE WHEN score = 5 THEN 1 ELSE 0 END) AS five_score
+                    SUM(CASE WHEN score = 5 THEN 1 ELSE 0 END) AS five_score,
+                    AVG(score) AS avg_score
                 FROM score
                 WHERE bookid = %(bookid)s AND isactual = true
                 """,
                 {"bookid": self.bookId},
             )
 
-            res = cur.fetchone()
+            res: tuple[int, int, int, int, int, int, float] = (
+                cur.fetchone()
+            )  # pyright: ignore type
 
-            return res
+            scores = [
+                int(res[i] / res[0] * 100) if res[0] else 0 for i in range(1, 6)
+            ] + [round(res[6] if res[6] else 0, 1)]
 
-    def get_statuses(self) -> tuple[int, int, int, int]:
+            return scores
+
+    def get_statuses(self) -> list[int]:
         with self._db.client().cursor() as cur:
             cur.execute(
                 """
@@ -63,6 +70,8 @@ class BookStats:
                 {"bookid": self.bookId},
             )
 
-            res = cur.fetchone()
+            res: tuple[int, int, int, int] = cur.fetchone()  # pyright: ignore type
 
-            return res
+            scores = [int(res[i] / res[0] * 100) if res[0] else 0 for i in range(1, 4)]
+
+            return scores

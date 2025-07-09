@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block search %}
+<form action="/search" method="post" class="search-box" style="display: flex; gap: 8px;">
+    <input type="search" name="search_string" placeholder="Search..." class="search-input" required>
+    <button type="submit" class="search-button">Search</button>
+</form>
+{% endblock %}
+
+{% block content %}
+<main class="book-catalog">
+    <h2 id="section-title_search" class="section-title">Search Results for "{{ query }}"</h2>
+
+    {% if books %}
+      <div class="book-grid">
+        {% for book in books %}
+          <div  class="book-card" onclick="window.location=`/book?id={{book.id}}`">
+            <img src="{{ book.cover }}" alt="Book_cover">
+            <h3>{{ book.title }}</h3>
+            <p>{{ book.author }}</p>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p>Nothing found</p>
+    {% endif %}
+
+    <button id="toggleButton" class="mobile-only"></button>
+    <div id="hiddenContent" class="desktop-content"></div>
+</main>
+{% endblock %}

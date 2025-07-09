@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recomendation System</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
     <link href='/css/style.css' rel='stylesheet'>
     <link href="/css/mobile.css" rel="stylesheet">
 </head>
@@ -17,12 +18,15 @@
 
             <div class="user-box">
                 {% if user_data.preferred_username %}
-                <div class="avatar-circle"></div>
-                <span class="username"><a href="/personal" style="text-decoration: none; color: inherit;">{{user_data.preferred_username}}</a></span>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <div class="avatar-circle"></div>
+                    <span class="username"><a href="/personal" style="text-decoration: none; color: inherit;">{{user_data.preferred_username}}</a></span>
+                    <a href="/logout" style="background: transparent; font-size: 22pt; text-decoration: none; color: white;"><i class="bi bi-box-arrow-right"></i></a>
+                </div>
                 {% else %}
                 <div style="display: flex; gap: 10px;">
-                    <a href="/signin" class="btn-signing" style="text-decoration: none; color: black;">LOG IN</a>
-                    <a href="/registration" class="btn-signing" style="text-decoration: none; color: black;">SIGN UP</a>
+                    <a href="/signin" class="btn-signing" style="text-decoration: none; color: black;">SIGN IN</a>
+                    <a href="/registration" class="btn-signing" style="text-decoration: none; color: black;">SIGN IN</a>
                 </div>
                 {% endif %}
             </div>
@@ -37,8 +41,8 @@
     <script src="/js/navbut.js"></script>
     <script src="/js/count_stars.js"></script>
     <script src="/js/update_form.js"></script>
-    <script src="/js/catalogFilter.js"></script>
-    <script src="/js/search.js"></script>
 
+
+    <div id="notification"></div>
 </body>
 </html>

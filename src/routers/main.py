@@ -4,16 +4,20 @@ from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.encoders import jsonable_encoder
 
-from src import config
 from src.scripts import auth
-from src.scripts.exceptions import BadCredentials, UsernameNotUnique
+from src.scripts.book import Book
+from src.scripts.book_messages import BookMessages
+from src.scripts.book_stats import BookStats
+from src.scripts.exceptions import BadCredentials, ObjectNotFound, UsernameNotUnique
 from src.constants import TOP_LIST
 
 from src.scripts.book_list import BookList
+from src.scripts.message import Message
 from src.scripts.search import Search
 from src.scripts.user_list import UserList
 from src.scripts.user_stats import UserStats
-
+from src.scripts.status import Status
+from src.scripts.score import Score
 
 # from fastapi.templates import Jinja2Templates
 router = APIRouter()
@@ -24,19 +28,31 @@ templates = Jinja2Templates(directory="src/frontend/html")
 @router.get("/", response_class=HTMLResponse)
 async def root(request: Request):
     user_data = auth.get_user_data(request)
-    print(user_data)
     return templates.TemplateResponse(
         "index.html", {"request": request, "user_data": user_data}
     )
 
 
 @router.get("/catalog", response_class=HTMLResponse)
-async def catalog(request: Request):
+async def catalog(request: Request, filter: str = "Top", page: int = 0):
     user_data = auth.get_user_data(request)
-    book_list = BookList(TOP_LIST)
+    if filter == "Recommendations":
+        book_lists = BookList(filter, user_data["preferred_username"])
+        book_list, pages = book_lists.get_recommendation_book_list(page)
+    else:
+        book_lists = BookList(filter)
+        book_list, pages = book_lists.get_book_list(page)
     return templates.TemplateResponse(
         "catalog.html",
-        {"request": request, "user_data": user_data, "books": book_list.get_book_list(0)},
+        {
+            "request": request,
+            "user_data": user_data,
+            "books": book_list,
+            "current_filter": filter,
+            "current_page": page,
+            "pages": pages,
+            "filter": filter,
+        },
     )
 
 
@@ -49,43 +65,105 @@ async def personal(request: Request):
     planned = user_lists.get_planned_list()
     user_stats = UserStats(user_data["preferred_username"])
     return templates.TemplateResponse(
-        "personal_account.html", {"request": request, "user_data": user_data, "user_lists": [completed, reading, planned], "user_stats": user_stats}
+        "personal_account.html",
+        {
+            "request": request,
+            "user_data": user_data,
+            "user_lists": [completed, reading, planned],
+            "user_stats": user_stats,
+        },
     )
+
+
+@router.post("/book")
+async def book_post(request: Request, id: int, page: int = 0, comment: str = Form(...)):
+    try:
+        Book(id)
+    except ObjectNotFound:
+        return templates.TemplateResponse("404.html", {"request": request})
+
+    user_data = auth.get_user_data(request)
+
+    if user_data != {}:
+        username = user_data["preferred_username"]
+        Message(username, id, comment).set_message()
+
+    return await book(request, id, page)
 
 
 @router.get("/book", response_class=HTMLResponse)
-async def account(request: Request):
+async def book(request: Request, id: int, page: int = 0):
+    try:
+        book = Book(id)
+    except ObjectNotFound:
+        return templates.TemplateResponse("404.html", {"request": request})
+
+    book_stats = BookStats(id)
+    comments = BookMessages(id)
+    comments = (comments.get_book_comments(page), comments.get_pages_count())
+
     user_data = auth.get_user_data(request)
+    if not user_data:
+        return templates.TemplateResponse(
+            "book_info.html",
+            {
+                "request": request,
+                "user_data": {},
+                "book": book,
+                "status": None,
+                "score": None,
+                "comments_allowed": False,
+                "book_stats": book_stats,
+                "comments": comments,
+                "current_page": page,
+            },
+        )
+
+    status = Status(user_data["preferred_username"], id).status
+    if not status:
+        status = "untracked"
+
+    score = Score(user_data["preferred_username"], id).score
+    if not score:
+        score = 0
+
     return templates.TemplateResponse(
-        "book_info.html", {"request": request, "user_data": user_data}
+        "book_info.html",
+        {
+            "request": request,
+            "user_data": user_data,
+            "book": book,
+            "status": status,
+            "score": score,
+            "comments_allowed": True,
+            "book_stats": book_stats,
+            "comments": comments,
+            "current_page": page,
+        },
     )
+
 
 @router.post("/search", response_class=HTMLResponse)
-async def search(request: Request):
-    
-    import os
+async def search(request: Request, search_string: str = Form(...)):
 
-    data = await request.form()
-    data = jsonable_encoder(data)
-    search_string = data[search_string]
-
-    
     import subprocess
 
-    result = subprocess.run(
-        ["./src/scripts/searching_mechanism/levenshtein_length", search_string],
-        capture_output=True,
+    result = subprocess.Popen(
+        ["./levenshtein_length"],
+        stdin=subprocess.PIPE,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
         text=True,
-        check=True,
+        cwd="src/scripts/searching_mechanism",
     )
 
-    output_lines = result.stdout.splitlines()
-
+    output_data, stderr_data = result.communicate(input=search_string + "\n")
+    output_lines = output_data.splitlines()
 
     cleaned_lines = [
-        line.strip() 
-        for line in output_lines 
-        if line.strip()
+        line.strip()
+        for line in output_lines
+        if line.strip() and not line.startswith("----")
     ]
 
     search_instance = Search(cleaned_lines)
@@ -94,8 +172,13 @@ async def search(request: Request):
     user_data = auth.get_user_data(request)
 
     return templates.TemplateResponse(
-        "catalog.html",
-        {"request": request, "user_data": user_data, "books": books},
+        "search_results.html",
+        {
+            "request": request,
+            "user_data": user_data,
+            "books": books,
+            "query": search_string,
+        },
     )
 
 
@@ -158,4 +241,28 @@ async def signin_post(
     response = RedirectResponse("/personal", status_code=303)
     response.set_cookie("access", access)
     response.set_cookie("refresh", refresh)
+    return response
+
+
+@router.post("/search", response_class=HTMLResponse)
+async def search_post(request: Request, search_string: str = Form(...)):
+    search_results = [
+        {"title": "Found book", "author": "Author", "cover": "/img/book_cover.jpg"}
+    ]
+
+    return templates.TemplateResponse(
+        "search_results.html",
+        {"request": request, "results": search_results, "query": search_string},
+    )
+
+
+@router.get("/logout")
+async def logout(request: Request):
+    response = RedirectResponse("/", status_code=303)
+    refresh = request.cookies.get("refresh")
+    if not refresh:
+        return response
+    auth.logout(refresh)
+    response.delete_cookie("refresh")
+    response.delete_cookie("access")
     return response

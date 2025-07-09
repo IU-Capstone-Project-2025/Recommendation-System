@@ -13,7 +13,9 @@ from src import middlewares
 app = fastapi.FastAPI()
 
 # inject middlewares
-app.middleware("http")(middlewares.make_authorization_middleware(["/personal"]))
+app.middleware("http")(
+    middlewares.make_authorization_middleware(["/personal", "/set_status"])
+)
 app.middleware("http")(middlewares.refresh)
 
 # include routers
@@ -28,8 +30,9 @@ app.mount("/img", StaticFiles(directory="src/frontend/img"), name="img")
 
 @app.get("/api/healthchecker")
 def root():
-    return {'message': 'Healthy'}
-  
+    return {"message": "Healthy"}
+
+
 def start():
     uvicorn.run(
         "src.microservices.recommendation_system_project:app",
@@ -42,4 +45,3 @@ def start():
 
 if __name__ == "__main__":
     start()
-

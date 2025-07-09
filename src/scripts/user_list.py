@@ -26,7 +26,7 @@ class UserList:
     def get_completed_list(self) -> list[tuple[Book, Score]]:
         with self._db.client().cursor() as cur:
             cur.execute(
-                f"SELECT bookid FROM completed WHERE userid = %(userid)s ORDER BY bookid ASC",
+                f"SELECT bookid FROM completed WHERE userid = %(userid)s AND isactual = true ORDER BY bookid ASC",
                 {"userid": self.userid},
             )
 
@@ -37,7 +37,7 @@ class UserList:
     def get_planned_list(self) -> list[tuple[Book, Score]]:
         with self._db.client().cursor() as cur:
             cur.execute(
-                f"SELECT bookid FROM planned WHERE userid = %(userid)s ORDER BY bookid ASC",
+                f"SELECT bookid FROM planned WHERE userid = %(userid)s AND isactual = true ORDER BY bookid ASC",
                 {"userid": self.userid},
             )
 
@@ -48,7 +48,7 @@ class UserList:
     def get_reading_list(self) -> list[tuple[Book, Score]]:
         with self._db.client().cursor() as cur:
             cur.execute(
-                f"SELECT bookid FROM reading WHERE userid = %(userid)s ORDER BY bookid ASC",
+                f"SELECT bookid FROM reading WHERE userid = %(userid)s AND isactual = true ORDER BY bookid ASC",
                 {"userid": self.userid},
             )
 

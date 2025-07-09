@@ -10,16 +10,22 @@ class Search:
 
     def get_search_result(self) -> list[Book]:
         with self._db.client().cursor() as cur:
-            cur.execute(
-                """
-                    SELECT
-                        id
-                    FROM Book b
-                    WHERE title = ANY(%(titles)s)
-                """,
-                {"titles": self.titles},
-            )
+            books = []
+            for i in range(len(self.titles)):
+                cur.execute(
+                    """
+                        SELECT
+                            id
+                        FROM Book b
+                        WHERE title = %(title)s
+                    """,
+                    {"title": self.titles[i]},
+                )
 
-            res = cur.fetchall()
+                res = cur.fetchone()
+                if not res:
+                    continue
 
-            return [Book(row[0]) for row in res]
+                books.append(Book(res[0]))
+
+            return books

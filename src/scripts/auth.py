@@ -1,10 +1,11 @@
 from typing import Tuple
-from fastapi import Request
+from fastapi import Request, Response
 from keycloak import KeycloakOpenID
 from ldap3 import ALL, MODIFY_REPLACE, Connection, Server
 
 from src import config
 from src.scripts.exceptions import BadCredentials, UsernameNotUnique
+from src.scripts.user import User
 
 
 keycloak_openid = KeycloakOpenID(
@@ -43,6 +44,8 @@ def create_user(username: str, password: str, email: str):
     if "code: 1555" in res:
         raise UsernameNotUnique
 
+    User(username).insert()
+
     ldap.modify(dn, changes={"userPassword": [(MODIFY_REPLACE, password)]})
 
 
@@ -50,7 +53,8 @@ def authenticate(username: str, password: str) -> Tuple[str, str]:
 
     try:
         token = keycloak_openid.token(username, password, scope="openid profile email")
-    except:
+    except Exception as e:
+        print(e)
         raise BadCredentials
     access_token = token["access_token"]
     refresh_token = token["refresh_token"]
@@ -66,3 +70,7 @@ def get_user_data(request: Request) -> dict:
         return {}
     data = keycloak_openid.userinfo(access_token)
     return data
+
+
+def logout(refresh: str):
+    keycloak_openid.logout(refresh)
