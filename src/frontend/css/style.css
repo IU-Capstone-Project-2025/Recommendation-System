@@ -762,27 +762,29 @@ input.tag {
   box-shadow: 0 0 0 2px #5300a0;
 }
 
+.tag-box .tag:hover {
+  color: white !important;
+  color: var(--dimmed-white);
+  min-width: 3rem;
+  text-align: left;
+  -webkit-box-shadow: 0px 0px 52px 0px rgba(255, 255, 255, 1);
+  -moz-box-shadow: 0px 0px 52px 0px rgba(255, 255, 255, 1);
+  box-shadow: 0px 0px 52px 0px rgba(255, 255, 255, 1);
+}
+
 .tag-box .tag[type="submit"] {
   font-size: 1.3rem;
   font-weight: 600;
   padding: 0.3rem 1.5rem;
   background: #5300a0;
-  transition: background 0.3s ease;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 86%;
 }
 
-.tag-box .tag:hover {
-  color: white !important;
-  font-size: 1.2rem;
-  color: var(--dimmed-white);
-  min-width: 3rem;
-  text-align: left;
-  font-weight: bold;
-  text-shadow: 0 0 4px rgba(255, 255, 255, 0.3);
+.tag-box .tag[type="submit"]:hover {
+  text-align: center;
+  font-size: 1.3rem;
+  font-weight: 600;
+  padding: 0.3rem 1.5rem;
+  background: #5300a0;
 }
 
 .error-page {
@@ -984,6 +986,7 @@ input.tag {
   flex-direction: row;
   width: 100%;
   justify-content: center;
+  margin-top: 20px;
 }
 
 .pagination-link {
