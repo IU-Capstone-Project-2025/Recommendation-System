@@ -321,7 +321,7 @@ main {
   max-width: 960px;
   width: 100%;
   justify-items: center;
-  padding-top: 30px;
+  padding: 40px;
 }
 
 .book-card {
