@@ -19,7 +19,7 @@ from src.scripts.user_list import UserList
 from src.scripts.user_stats import UserStats
 from src.scripts.status import Status
 from src.scripts.score import Score
-from src.microservices.recommendation_system_project import search_engine
+#from src.microservices.recommendation_system_project import search_engine
 
 
 # from fastapi.templates import Jinja2Templates
@@ -151,25 +151,25 @@ async def book(request: Request, id: int, page: int = 0):
 @router.post("/search", response_class=HTMLResponse)
 async def search(request: Request, search_string: str = Form(...)):
 
-    # import subprocess
+    import subprocess
 
-    # result = subprocess.Popen(
-    #     ["./levenshtein_length"],
-    #     stdin=subprocess.PIPE,
-    #     stdout=subprocess.PIPE,
-    #     stderr=subprocess.PIPE,
-    #     text=True,
-    #     cwd="src/scripts/searching_mechanism",
-    # )
-    cleaned_lines = search_engine.search(search_string)
-    # output_data, stderr_data = result.communicate(input=search_string + "\n")
-    # output_lines = output_data.splitlines()
+    result = subprocess.Popen(
+        ["./levenshtein_length"],
+        stdin=subprocess.PIPE,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+        cwd="src/scripts/searching_mechanism",
+    )
+    #cleaned_lines = search_engine.search(search_string)
+    output_data, stderr_data = result.communicate(input=search_string + "\n")
+    output_lines = output_data.splitlines()
 
-    # cleaned_lines = [
-    #     line.strip()
-    #     for line in output_lines
-    #     if line.strip() and not line.startswith("----")
-    # ]
+    cleaned_lines = [
+        line.strip()
+        for line in output_lines
+        if line.strip() and not line.startswith("----")
+    ]
 
     search_instance = Search(cleaned_lines)
     books = search_instance.get_search_result()
