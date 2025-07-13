@@ -5,6 +5,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Recomendation System</title>
 		<link href="/css/style.css" rel="stylesheet" />
+		<link href="/css/mobile.css" rel="stylesheet" />
 	</head>
 	<body>
 		<img class="image-gradient" src="../img/gradient.png" alt="gradient" />
@@ -31,14 +32,28 @@
 
 			<main>
 				<div class="content">
-                    <div style="display: flex; flex-direction: row; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; width: 35rem;">
-                        <h2 style="color: white; font-size: 2.2rem;">
-                            SIGN IN
-                        </h2>
-                        <h4 style="color: var(--grey); text-decoration: underline; cursor: pointer;" onclick="window.location='/registration'">
-                            SIGN UP
-                        </h4>
-                    </div>
+					<div
+						style="
+							display: flex;
+							flex-direction: row;
+							justify-content: space-between;
+							align-items: center;
+							margin-bottom: 1.5rem;
+							width: 35rem;
+						"
+					>
+						<h2 style="color: white; font-size: 2.2rem">SIGN IN</h2>
+						<h4
+							style="
+								color: var(--grey);
+								text-decoration: underline;
+								cursor: pointer;
+							"
+							onclick="window.location='/registration'"
+						>
+							SIGN UP
+						</h4>
+					</div>
 					<form action="/signin" method="post">
 						<div class="input-title">Username:</div>
 						<div class="tag-box">
