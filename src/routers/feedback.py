@@ -5,7 +5,7 @@ from fastapi.responses import Response
 from src.scripts.book import Book
 from src.scripts.score import Score
 from src.scripts.status import Status
-from src.constants import COMPLETED, READING, PLANNED
+from src.constants import COMPLETED, READING, PLANNED, UNTRACKED
 from src.scripts import auth
 from src.scripts.exceptions import ObjectNotFound
 
@@ -24,12 +24,16 @@ async def set_score(request: Request):
         return Response(content="Book doesn't exist", status_code=404)
 
     if "status" in data.keys():
-        if data["status"] not in [COMPLETED, READING, PLANNED]:
+        if data["status"] not in [COMPLETED, READING, PLANNED, UNTRACKED]:
             return Response(content="Unknown book status", status_code=400)
-        status = Status(
-            user_data["preferred_username"], data["book_id"], status=data["status"]
-        )
-        status.set_status()
+        if data["status"] == UNTRACKED:
+            status = Status(user_data["preferred_username"], data["book_id"])
+            status.drop_status()
+        else:
+            status = Status(
+                user_data["preferred_username"], data["book_id"], status=data["status"]
+            )
+            status.set_status()
 
     if "score" in data.keys():
         try:
