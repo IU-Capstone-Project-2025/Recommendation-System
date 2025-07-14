@@ -2,11 +2,13 @@ import os
 
 import uvicorn
 import fastapi
+import asyncio
 
 from starlette.staticfiles import StaticFiles
 
 from src.routers.main import router
 from src.routers.feedback import router as score_router
+#from src.scripts.searching_mechanism.vector_searching import BookSearchEngine
 from src import middlewares
 
 # fastapi application
@@ -26,6 +28,16 @@ app.include_router(score_router, tags=["Score"])
 app.mount("/css", StaticFiles(directory="src/frontend/css"), name="css")
 app.mount("/js", StaticFiles(directory="src/frontend/js"), name="js")
 app.mount("/img", StaticFiles(directory="src/frontend/img"), name="img")
+
+
+# search_engine = None
+
+# @app.on_event("startup")
+# async def load_search_engine():
+#     global search_engine
+#     engine = BookSearchEngine()
+#     await asyncio.to_thread(engine.load_books, "src/scripts/searching_mechanism/titles_only.csv")
+#     search_engine = engine
 
 
 @app.get("/api/healthchecker")

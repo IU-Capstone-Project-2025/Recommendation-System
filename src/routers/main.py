@@ -4,6 +4,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.encoders import jsonable_encoder
 
+
 from src.scripts import auth
 from src.scripts.book import Book
 from src.scripts.book_messages import BookMessages
@@ -18,11 +19,15 @@ from src.scripts.user_list import UserList
 from src.scripts.user_stats import UserStats
 from src.scripts.status import Status
 from src.scripts.score import Score
+#from src.microservices.recommendation_system_project import search_engine
+
 
 # from fastapi.templates import Jinja2Templates
 router = APIRouter()
 
+
 templates = Jinja2Templates(directory="src/frontend/html")
+
 
 
 @router.get("/", response_class=HTMLResponse)
@@ -156,7 +161,7 @@ async def search(request: Request, search_string: str = Form(...)):
         text=True,
         cwd="src/scripts/searching_mechanism",
     )
-
+    #cleaned_lines = search_engine.search(search_string)
     output_data, stderr_data = result.communicate(input=search_string + "\n")
     output_lines = output_data.splitlines()
 
