@@ -35,10 +35,10 @@
           {%if status != None%}
           <div class="status-save-wrapper">
               <div class="selector">
-                <div id="status-completed" onclick="set_status({{book.id}}, completed)" class="select-btn {%if status == 'completed'%}active{%endif%}">Already read</div>
-                <div id="status-reading"   onclick="set_status({{book.id}}, reading)"   class="select-btn {%if status == 'reading'%}active{%endif%}">  In progress </div>
-                <div id="status-planned"   onclick="set_status({{book.id}}, planned)"   class="select-btn {%if status == 'planned'%}active{%endif%}">  Planned     </div>
-                <div id="status-untracked" onclick="set_status({{book.id}}, untracked)" class="select-btn {%if status == 'untracked'%}active{%endif%}">Untracked   </div>
+                <div id="status-completed" onclick="set_status({{book.id}}, completed)" class="select-btn {%if status == 'completed'%}active{%endif%}">Completed</div>
+                <div id="status-reading"   onclick="set_status({{book.id}}, reading)"   class="select-btn {%if status == 'reading'%}active{%endif%}">Reading</div>
+                <div id="status-planned"   onclick="set_status({{book.id}}, planned)"   class="select-btn {%if status == 'planned'%}active{%endif%}">Planned</div>
+                <div id="status-untracked" onclick="set_status({{book.id}}, untracked)" class="select-btn {%if status == 'untracked'%}active{%endif%}">Untracked</div>
               </div>
           </div>
           {%endif%}

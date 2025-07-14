@@ -1,110 +1,162 @@
-{% extends "base.html" %}
-{% block search %}
-<form action="/search" method="post" class="search-box" style="display: flex; gap: 8px;">
-    <input type="search" name="search_string" placeholder="Search..." class="search-input" required>
-    <button type="submit" class="search-button">Search</button>
+{% extends "base.html" %} {% block search %}
+<form
+	action="/search"
+	method="post"
+	class="search-box"
+	style="display: flex; gap: 8px"
+>
+	<input
+		type="search"
+		name="search_string"
+		placeholder="Search..."
+		class="search-input"
+		required
+	/>
+	<button type="submit" class="search-button">Search</button>
 </form>
-{% endblock %}
-{% block content %}
+{% endblock %} {% block content %}
 <main class="book-catalog">
-
-    <button id="toggleButton" class="mobile-only"></button>
+	<button id="toggleButton" class="mobile-only"></button>
 	<div id="hiddenContent" class="desktop-content">
-        <div class="side-nav-rating">
-
-
-            <div class="progress-bars">
-                <h3 class="progress-title">Given rating</h3>
-                <div class="progress-item">
-                    <span class="progress-label">5</span>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: {{user_stats.scores[4]}}%;"></div>
-                    </div>
-                </div>
-                <div class="progress-item">
-                    <span class="progress-label">4</span>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: {{user_stats.scores[3]}}%;"></div>
-                    </div>
-                </div>
-                <div class="progress-item">
-                    <span class="progress-label">3</span>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: {{user_stats.scores[2]}}%;"></div>
-                    </div>
-                </div>
-                <div class="progress-item">
-                    <span class="progress-label">2</span>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: {{user_stats.scores[1]}}%;"></div>
-                    </div>
-                </div>
-                <div class="progress-item">
-                    <span class="progress-label">1</span>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: {{user_stats.scores[0]}}%;"></div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-
-
-    </div>
-    <div class="selector">
-        <div id="status-completed" onclick="select_list('completed', 0)" class="select-btn active">Already read</div>
-        <div id="status-reading"   onclick="select_list('reading', 100)"   class="select-btn">  In progress </div>
-        <div id="status-planned"   onclick="select_list('planned', 200)"   class="select-btn">  Planned     </div>
-    </div>
-    <div class="book-lists">
-        <div id="book-lists-container">
-            <div class="book-grid" id="bookGrid">
-                {% for book in user_lists[0] %}
-                <div class="book-card" onclick="window.location=`/book?id={{book[0].id}}`">
-                    <img src="{{book[0].cover}}" alt="{{book[0].title}}">
-                    <h3 class="book-title">{{book[0].title}}</h3>
-                    <p class="book-author">{{book[0].author}}</p>
-                    {% if book[1].score != None %}
-                        <p class="user-rating">{% for i in range(book[1].score) %}☆{% endfor %}</p>
-                    {% endif %}
-                </div>
-                {% endfor %}
-            </div>
-            <div class="book-grid" id="bookGrid">
-                {% for book in user_lists[1] %}
-                <div class="book-card" onclick="window.location=`/book?id={{book[0].id}}`">
-                    <img src="{{book[0].cover}}" alt="{{book[0].title}}">
-                    <h3 class="book-title">{{book[0].title}}</h3>
-                    <p class="book-author">{{book[0].author}}</p>
-                    {% if book[1].score != None %}
-                        <p class="user-rating">{% for i in range(book[1].score) %}☆{% endfor %}</p>
-                    {% endif %}
-                </div>
-                {% endfor %}
-            </div>
-            <div class="book-grid" id="bookGrid">
-                {% for book in user_lists[2] %}
-                <div class="book-card" onclick="window.location=`/book?id={{book[0].id}}`">
-                    <img src="{{book[0].cover}}" alt="{{book[0].title}}">
-                    <h3 class="book-title">{{book[0].title}}</h3>
-                    <p class="book-author">{{book[0].author}}</p>
-                    {% if book[1].score != None %}
-                        <p class="user-rating">{% for i in range(book[1].score) %}☆{% endfor %}</p>
-                    {% endif %}
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-    </div>
-    <script>
-        function select_list(list, offset) {
-            document.getElementById("status-completed").className = "select-btn";
-            document.getElementById("status-reading").className = "select-btn";
-            document.getElementById("status-planned").className = "select-btn";
-            document.getElementById(`status-${list}`).className = "select-btn active";
-            document.getElementById("book-lists-container").style.marginLeft = `-${offset}%`;
-        }
-    </script>
-
+		<div class="side-nav-rating">
+			<div class="progress-bars">
+				<h3 class="progress-title">Given rating</h3>
+				<div class="progress-item">
+					<span class="progress-label">5</span>
+					<div class="progress-bar">
+						<div
+							class="progress-fill"
+							style="width: {{user_stats.scores[4]}}%;"
+						></div>
+					</div>
+				</div>
+				<div class="progress-item">
+					<span class="progress-label">4</span>
+					<div class="progress-bar">
+						<div
+							class="progress-fill"
+							style="width: {{user_stats.scores[3]}}%;"
+						></div>
+					</div>
+				</div>
+				<div class="progress-item">
+					<span class="progress-label">3</span>
+					<div class="progress-bar">
+						<div
+							class="progress-fill"
+							style="width: {{user_stats.scores[2]}}%;"
+						></div>
+					</div>
+				</div>
+				<div class="progress-item">
+					<span class="progress-label">2</span>
+					<div class="progress-bar">
+						<div
+							class="progress-fill"
+							style="width: {{user_stats.scores[1]}}%;"
+						></div>
+					</div>
+				</div>
+				<div class="progress-item">
+					<span class="progress-label">1</span>
+					<div class="progress-bar">
+						<div
+							class="progress-fill"
+							style="width: {{user_stats.scores[0]}}%;"
+						></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="selector">
+		<div
+			id="status-completed"
+			onclick="select_list('completed', 0)"
+			class="select-btn active"
+		>
+			Completed
+		</div>
+		<div
+			id="status-reading"
+			onclick="select_list('reading', 100)"
+			class="select-btn"
+		>
+			Reading
+		</div>
+		<div
+			id="status-planned"
+			onclick="select_list('planned', 200)"
+			class="select-btn"
+		>
+			Planned
+		</div>
+	</div>
+	<div class="book-lists">
+		<div id="book-lists-container">
+			<div class="book-grid" id="bookGrid">
+				{% for book in user_lists[0] %}
+				<div
+					class="book-card"
+					onclick="window.location=`/book?id={{book[0].id}}`"
+				>
+					<img src="{{book[0].cover}}" alt="{{book[0].title}}" />
+					<h3 class="book-title">{{book[0].title}}</h3>
+					<p class="book-author">{{book[0].author}}</p>
+					{% if book[1].score != None %}
+					<p class="user-rating">
+						{% for i in range(book[1].score) %}☆{% endfor %}
+					</p>
+					{% endif %}
+				</div>
+				{% endfor %}
+			</div>
+			<div class="book-grid" id="bookGrid">
+				{% for book in user_lists[1] %}
+				<div
+					class="book-card"
+					onclick="window.location=`/book?id={{book[0].id}}`"
+				>
+					<img src="{{book[0].cover}}" alt="{{book[0].title}}" />
+					<h3 class="book-title">{{book[0].title}}</h3>
+					<p class="book-author">{{book[0].author}}</p>
+					{% if book[1].score != None %}
+					<p class="user-rating">
+						{% for i in range(book[1].score) %}☆{% endfor %}
+					</p>
+					{% endif %}
+				</div>
+				{% endfor %}
+			</div>
+			<div class="book-grid" id="bookGrid">
+				{% for book in user_lists[2] %}
+				<div
+					class="book-card"
+					onclick="window.location=`/book?id={{book[0].id}}`"
+				>
+					<img src="{{book[0].cover}}" alt="{{book[0].title}}" />
+					<h3 class="book-title">{{book[0].title}}</h3>
+					<p class="book-author">{{book[0].author}}</p>
+					{% if book[1].score != None %}
+					<p class="user-rating">
+						{% for i in range(book[1].score) %}☆{% endfor %}
+					</p>
+					{% endif %}
+				</div>
+				{% endfor %}
+			</div>
+		</div>
+	</div>
+	<script>
+		function select_list(list, offset) {
+			document.getElementById('status-completed').className = 'select-btn'
+			document.getElementById('status-reading').className = 'select-btn'
+			document.getElementById('status-planned').className = 'select-btn'
+			document.getElementById(`status-${list}`).className = 'select-btn active'
+			document.getElementById(
+				'book-lists-container'
+			).style.marginLeft = `-${offset}%`
+		}
+	</script>
 </main>
 {% endblock %}
