@@ -19,7 +19,8 @@ from src.scripts.user_list import UserList
 from src.scripts.user_stats import UserStats
 from src.scripts.status import Status
 from src.scripts.score import Score
-#from src.microservices.recommendation_system_project import search_engine
+
+# from src.microservices.recommendation_system_project import search_engine
 
 
 # from fastapi.templates import Jinja2Templates
@@ -27,7 +28,6 @@ router = APIRouter()
 
 
 templates = Jinja2Templates(directory="src/frontend/html")
-
 
 
 @router.get("/", response_class=HTMLResponse)
@@ -41,12 +41,16 @@ async def root(request: Request):
 @router.get("/catalog", response_class=HTMLResponse)
 async def catalog(request: Request, filter: str = "Top", page: int = 0):
     user_data = auth.get_user_data(request)
-    if filter == "Recommendations":
-        book_lists = BookList(filter, user_data["preferred_username"])
-        book_list, pages = book_lists.get_recommendation_book_list(page)
-    else:
-        book_lists = BookList(filter)
-        book_list, pages = book_lists.get_book_list(page)
+    try:
+        if filter == "Recommendations":
+            book_lists = BookList(filter, user_data["preferred_username"])
+            book_list, pages = book_lists.get_recommendation_book_list(page)
+        else:
+            book_lists = BookList(filter)
+            book_list, pages = book_lists.get_book_list(page)
+    except:
+        book_list, pages = [], 0
+
     return templates.TemplateResponse(
         "catalog.html",
         {
@@ -161,7 +165,7 @@ async def search(request: Request, search_string: str = Form(...)):
         text=True,
         cwd="src/scripts/searching_mechanism",
     )
-    #cleaned_lines = search_engine.search(search_string)
+    # cleaned_lines = search_engine.search(search_string)
     output_data, stderr_data = result.communicate(input=search_string + "\n")
     output_lines = output_data.splitlines()
 
