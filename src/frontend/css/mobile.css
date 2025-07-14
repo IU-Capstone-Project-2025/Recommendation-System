@@ -41,6 +41,7 @@
 
 	.content > div:first-child h4 {
 		text-align: center !important;
+		display: none !important;
 	}
 
 	.content form {
@@ -52,9 +53,29 @@
 		margin-bottom: 0.5rem !important;
 	}
 
-	.tag-box input[type='submit'] {
-		font-size: 1.1rem !important;
-		padding: 0.8rem 2rem !important;
+	.tag-box {
+		position: relative !important;
+		height: 2.5rem !important;
+		border-radius: 50px !important;
+		padding: 0 !important;
+	}
+	.tag-box input.tag[type='submit'] {
+		position: absolute !important;
+		inset: 3px !important;
+		width: calc(100% - 6px) !important;
+		height: calc(100% - 6px) !important;
+		border-radius: 50px !important;
+		background: #5300a0 !important;
+		color: white !important;
+		font-size: 1.3rem !important;
+		font-weight: 600 !important;
+		display: flex !important;
+		align-items: center !important;
+		justify-content: center !important;
+		padding: 0 !important;
+		margin: 0 !important;
+		border: none !important;
+		box-sizing: border-box !important;
 	}
 }
 
