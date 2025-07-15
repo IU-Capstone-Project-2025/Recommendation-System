@@ -29,16 +29,16 @@ app.mount("/js", StaticFiles(directory="src/frontend/js"), name="js")
 app.mount("/img", StaticFiles(directory="src/frontend/img"), name="img")
 
 
-search_engine = None
+# search_engine = None
 
-@app.on_event("startup")
-async def startup_event():
-    """Initialize the search engine when the application starts."""
-    global search_engine
-    from src.scripts.searching_mechanism.vector_searching import BookSearchEngine
-    engine = BookSearchEngine()
-    engine.load_books("src/scripts/searching_mechanism/titles_only.csv")
-    search_engine = engine
+# @app.on_event("startup")
+# async def startup_event():
+#     """Initialize the search engine when the application starts."""
+#     global search_engine
+#     from src.scripts.searching_mechanism.vector_searching import BookSearchEngine
+#     engine = BookSearchEngine()
+#     engine.load_books("src/scripts/searching_mechanism/titles_only.csv")
+#     search_engine = engine
 
 
 @app.get("/api/healthchecker")
