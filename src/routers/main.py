@@ -86,12 +86,14 @@ async def personal(request: Request):
 
 @router.post("/book")
 async def book_post(request: Request, id: int, page: int = 0, comment: str = Form(...)):
+    user_data = auth.get_user_data(request)
+
     try:
         Book(id)
     except ObjectNotFound:
-        return templates.TemplateResponse("404.html", {"request": request})
-
-    user_data = auth.get_user_data(request)
+        return templates.TemplateResponse(
+            "not_found.html", {"request": request, "user_data": user_data}
+        )
 
     if user_data != {}:
         username = user_data["preferred_username"]
@@ -102,16 +104,19 @@ async def book_post(request: Request, id: int, page: int = 0, comment: str = For
 
 @router.get("/book", response_class=HTMLResponse)
 async def book(request: Request, id: int, page: int = 0):
+    user_data = auth.get_user_data(request)
+
     try:
         book = Book(id)
     except ObjectNotFound:
-        return templates.TemplateResponse("404.html", {"request": request})
+        return templates.TemplateResponse(
+            "not_found.html", {"request": request, "user_data": user_data}
+        )
 
     book_stats = BookStats(id)
     comments = BookMessages(id)
     comments = (comments.get_book_comments(page), comments.get_pages_count())
 
-    user_data = auth.get_user_data(request)
     if not user_data:
         return templates.TemplateResponse(
             "book_info.html",
