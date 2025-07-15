@@ -24,6 +24,9 @@
               </div>
               <div class="rating-score" id="ratingScore">{{score}}/5</div>
             </div>
+            <div id="remove-mark" class="tag-box" style="display: {% if score != 0 %}block{% else %}none{% endif %};">
+                <span class="tag" onclick="set_score({{book.id}}, 0)">Remove mark</span>
+            </div>
             {%endif%}
 
 

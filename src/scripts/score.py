@@ -70,8 +70,10 @@ class Score:
                 client.commit()
 
     def drop_score(self) -> None:
-        with self._db.client().cursor() as cur:
+        client = self._db.client()
+        with client.cursor() as cur:
             cur.execute(
                 "UPDATE score SET isactual = false WHERE userid = %(userid)s AND bookid = %(bookid)s",
                 {"userid": self.userid, "bookid": self.bookId},
             )
+            client.commit()

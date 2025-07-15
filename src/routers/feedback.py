@@ -38,14 +38,18 @@ async def set_score(request: Request):
     if "score" in data.keys():
         try:
             score = int(data["score"])
-            if score < 1 or score > 5:
+            if score < 0 or score > 5:
                 return Response(
-                    content="score value should be integer from 1 to 5", status_code=400
+                    content="score value should be integer from 1 to 5",
+                    status_code=400,
                 )
         except ValueError:
             return Response(
                 content="score value should be integer from 1 to 5", status_code=400
             )
-        Score(user_data["preferred_username"], data["book_id"], score).set_score()
+        if score == 0:
+            Score(user_data["preferred_username"], data["book_id"]).drop_score()
+        else:
+            Score(user_data["preferred_username"], data["book_id"], score).set_score()
 
     return Response(content="OK", status_code=200)
