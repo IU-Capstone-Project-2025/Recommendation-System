@@ -217,6 +217,7 @@ async def register_post(
     password: str = Form(...),
     password_confirm: str = Form(...),
 ):
+    username = username.lower()
     if password != password_confirm:
         return templates.TemplateResponse(
             "registration.html", {"request": request, "error": "passwords don't match"}
@@ -240,6 +241,7 @@ async def register_post(
 async def signin_post(
     request: Request, username: str = Form(...), password: str = Form(...)
 ):
+    username = username.lower()
     try:
         access, refresh = auth.authenticate(username=username, password=password)
     except BadCredentials:
