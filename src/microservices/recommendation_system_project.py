@@ -8,7 +8,7 @@ from starlette.staticfiles import StaticFiles
 
 from src.routers.main import router
 from src.routers.feedback import router as score_router
-#from src.scripts.searching_mechanism.vector_searching import BookSearchEngine
+from src.scripts.searching_mechanism.vector_searching import BookSearchEngine
 from src import middlewares
 
 # fastapi application
@@ -30,14 +30,14 @@ app.mount("/js", StaticFiles(directory="src/frontend/js"), name="js")
 app.mount("/img", StaticFiles(directory="src/frontend/img"), name="img")
 
 
-# search_engine = None
+search_engine = None
 
-# @app.on_event("startup")
-# async def load_search_engine():
-#     global search_engine
-#     engine = BookSearchEngine()
-#     await asyncio.to_thread(engine.load_books, "src/scripts/searching_mechanism/titles_only.csv")
-#     search_engine = engine
+
+def load_search_engine():
+    global search_engine
+    engine = BookSearchEngine()
+    engine.load_books("src/scripts/searching_mechanism/titles_only.csv")
+    search_engine = engine
 
 
 @app.get("/api/healthchecker")
@@ -46,6 +46,7 @@ def root():
 
 
 def start():
+    load_search_engine()
     uvicorn.run(
         "src.microservices.recommendation_system_project:app",
         host="0.0.0.0",
