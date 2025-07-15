@@ -31,10 +31,11 @@ app.mount("/img", StaticFiles(directory="src/frontend/img"), name="img")
 
 search_engine = None
 
-
-def load_search_engine():
-    from src.scripts.searching_mechanism.vector_searching import BookSearchEngine
+@app.on_event("startup")
+async def startup_event():
+    """Initialize the search engine when the application starts."""
     global search_engine
+    from src.scripts.searching_mechanism.vector_searching import BookSearchEngine
     engine = BookSearchEngine()
     engine.load_books("src/scripts/searching_mechanism/titles_only.csv")
     search_engine = engine
@@ -46,7 +47,6 @@ def root():
 
 
 def start():
-    load_search_engine()
     uvicorn.run(
         "src.microservices.recommendation_system_project:app",
         host="0.0.0.0",
