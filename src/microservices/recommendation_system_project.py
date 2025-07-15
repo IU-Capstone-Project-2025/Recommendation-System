@@ -8,7 +8,6 @@ from starlette.staticfiles import StaticFiles
 
 from src.routers.main import router
 from src.routers.feedback import router as score_router
-from src.scripts.searching_mechanism.vector_searching import BookSearchEngine
 from src import middlewares
 
 # fastapi application
@@ -34,6 +33,7 @@ search_engine = None
 
 
 def load_search_engine():
+    from src.scripts.searching_mechanism.vector_searching import BookSearchEngine
     global search_engine
     engine = BookSearchEngine()
     engine.load_books("src/scripts/searching_mechanism/titles_only.csv")
