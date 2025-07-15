@@ -20,7 +20,6 @@ from src.scripts.user_stats import UserStats
 from src.scripts.status import Status
 from src.scripts.score import Score
 
-from src.microservices.recommendation_system_project import search_engine
 
 
 # from fastapi.templates import Jinja2Templates
@@ -170,6 +169,7 @@ async def search(request: Request, search_string: str = Form(...)):
     #     text=True,
     #     cwd="src/scripts/searching_mechanism",
     # )
+    from src.microservices.recommendation_system_project import search_engine
     cleaned_lines = search_engine.search(search_string)
     # output_data, stderr_data = result.communicate(input=search_string + "\n")
     # output_lines = output_data.splitlines()
