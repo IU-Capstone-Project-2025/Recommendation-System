@@ -142,8 +142,10 @@ class Status:
 
     def drop_status(self) -> None:
         if self.status in [COMPLETED, READING, PLANNED]:
-            with self._db.client().cursor() as cur:
+            client = self._db.client()
+            with client.cursor() as cur:
                 cur.execute(
                     f"UPDATE {self.status} SET isactual = false WHERE userid = %(userid)s AND bookid = %(bookid)s",
                     {"userid": self.userid, "bookid": self.bookId},
                 )
+                client.commit()

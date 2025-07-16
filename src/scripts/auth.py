@@ -50,7 +50,6 @@ def create_user(username: str, password: str, email: str):
 
 
 def authenticate(username: str, password: str) -> Tuple[str, str]:
-
     try:
         token = keycloak_openid.token(username, password, scope="openid profile email")
     except Exception as e:

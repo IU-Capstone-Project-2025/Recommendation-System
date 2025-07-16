@@ -19,7 +19,7 @@ from src.scripts.user_list import UserList
 from src.scripts.user_stats import UserStats
 from src.scripts.status import Status
 from src.scripts.score import Score
-#from src.microservices.recommendation_system_project import search_engine
+
 
 
 # from fastapi.templates import Jinja2Templates
@@ -29,8 +29,13 @@ router = APIRouter()
 templates = Jinja2Templates(directory="src/frontend/html")
 
 
-
-@router.get("/", response_class=HTMLResponse)
+@router.get(
+    "/",
+    response_class=HTMLResponse,
+    summary="Main page",
+    description="Displays the application's home page with basic information",
+    response_description="HTML page with main content"
+)
 async def root(request: Request):
     user_data = auth.get_user_data(request)
     return templates.TemplateResponse(
@@ -38,15 +43,25 @@ async def root(request: Request):
     )
 
 
-@router.get("/catalog", response_class=HTMLResponse)
+@router.get(
+    "/catalog",
+    response_class=HTMLResponse,
+    summary="Book catalog",
+    description="Displays a paginated list of books with filtering options (Top, Recommendations, etc.)",
+    response_description="HTML page with book catalog"
+    )
 async def catalog(request: Request, filter: str = "Top", page: int = 0):
     user_data = auth.get_user_data(request)
-    if filter == "Recommendations":
-        book_lists = BookList(filter, user_data["preferred_username"])
-        book_list, pages = book_lists.get_recommendation_book_list(page)
-    else:
-        book_lists = BookList(filter)
-        book_list, pages = book_lists.get_book_list(page)
+    try:
+        if filter == "Recommendations":
+            book_lists = BookList(filter, user_data["preferred_username"])
+            book_list, pages = book_lists.get_recommendation_book_list(page)
+        else:
+            book_lists = BookList(filter)
+            book_list, pages = book_lists.get_book_list(page)
+    except:
+        book_list, pages = [], 0
+
     return templates.TemplateResponse(
         "catalog.html",
         {
@@ -61,7 +76,14 @@ async def catalog(request: Request, filter: str = "Top", page: int = 0):
     )
 
 
-@router.get("/personal", response_class=HTMLResponse)
+@router.get(
+    "/personal",
+    response_class=HTMLResponse,
+    summary="Personal account",
+    description="Displays a user's personal account with information about their reading lists and statistics",
+    response_description="HTML page with personal account"
+
+)
 async def personal(request: Request):
     user_data = auth.get_user_data(request)
     user_lists = UserList(user_data["preferred_username"])
@@ -80,14 +102,21 @@ async def personal(request: Request):
     )
 
 
-@router.post("/book")
+@router.post(
+    "/book",
+    summary="Post a book comment",
+    description="Allows authenticated users to post comments about a specific book",
+    response_description="Redirects to book page with new comment"
+)
 async def book_post(request: Request, id: int, page: int = 0, comment: str = Form(...)):
+    user_data = auth.get_user_data(request)
+
     try:
         Book(id)
     except ObjectNotFound:
-        return templates.TemplateResponse("404.html", {"request": request})
-
-    user_data = auth.get_user_data(request)
+        return templates.TemplateResponse(
+            "not_found.html", {"request": request, "user_data": user_data}
+        )
 
     if user_data != {}:
         username = user_data["preferred_username"]
@@ -96,18 +125,27 @@ async def book_post(request: Request, id: int, page: int = 0, comment: str = For
     return await book(request, id, page)
 
 
-@router.get("/book", response_class=HTMLResponse)
+@router.get(
+    "/book",
+    response_class=HTMLResponse,
+    summary="Book details",
+    description="Displays detailed information about a specific book including comments, ratings, and user status",
+    response_description="HTML page with book details"
+)
 async def book(request: Request, id: int, page: int = 0):
+    user_data = auth.get_user_data(request)
+
     try:
         book = Book(id)
     except ObjectNotFound:
-        return templates.TemplateResponse("404.html", {"request": request})
+        return templates.TemplateResponse(
+            "not_found.html", {"request": request, "user_data": user_data}
+        )
 
     book_stats = BookStats(id)
     comments = BookMessages(id)
     comments = (comments.get_book_comments(page), comments.get_pages_count())
 
-    user_data = auth.get_user_data(request)
     if not user_data:
         return templates.TemplateResponse(
             "book_info.html",
@@ -148,7 +186,13 @@ async def book(request: Request, id: int, page: int = 0):
     )
 
 
-@router.post("/search", response_class=HTMLResponse)
+@router.post(
+    "/search",
+    response_class=HTMLResponse,
+     summary="Search books",
+    description="Performs a search across books using Levenshtein distance algorithm",
+    response_description="HTML page with search results"
+)
 async def search(request: Request, search_string: str = Form(...)):
 
     import subprocess
@@ -161,7 +205,8 @@ async def search(request: Request, search_string: str = Form(...)):
         text=True,
         cwd="src/scripts/searching_mechanism",
     )
-    #cleaned_lines = search_engine.search(search_string)
+    # from src.microservices.recommendation_system_project import search_engine
+    # cleaned_lines = search_engine.search(search_string)
     output_data, stderr_data = result.communicate(input=search_string + "\n")
     output_lines = output_data.splitlines()
 
@@ -187,12 +232,24 @@ async def search(request: Request, search_string: str = Form(...)):
     )
 
 
-@router.get("/signin", response_class=HTMLResponse)
+@router.get(
+    "/signin",
+    response_class=HTMLResponse,
+    summary="Sign in page",
+    description="Displays the login form for existing users",
+    response_description="HTML page with login form"
+)
 async def signin_get(request: Request):
     return templates.TemplateResponse("signin.html", {"request": request})
 
 
-@router.get("/lost", response_class=HTMLResponse)
+@router.get(
+    "/lost",
+    response_class=HTMLResponse,
+    summary="Not found page",
+    description="Displays a 404 error page when content is not found",
+    response_description="HTML page with 404 error"
+)
 async def lost(request: Request):
     user_data = auth.get_user_data(request)
     return templates.TemplateResponse(
@@ -200,12 +257,24 @@ async def lost(request: Request):
     )
 
 
-@router.get("/registration", response_class=HTMLResponse)
+@router.get(
+    "/registration",
+    summary="Registration page",
+    description="Displays the registration form for new users",
+    response_description="HTML page with registration form",
+    response_class=HTMLResponse,
+)
 async def register(request: Request):
     return templates.TemplateResponse("registration.html", {"request": request})
 
 
-@router.post("/registration", response_class=HTMLResponse)
+@router.post(
+    "/registration",
+    response_class=HTMLResponse,
+    summary="Register new user",
+    description="Processes user registration with username, email, and password",
+    response_description="Redirects to sign in page"
+)
 async def register_post(
     request: Request,
     username: str = Form(...),
@@ -213,6 +282,7 @@ async def register_post(
     password: str = Form(...),
     password_confirm: str = Form(...),
 ):
+    username = username.lower()
     if password != password_confirm:
         return templates.TemplateResponse(
             "registration.html", {"request": request, "error": "passwords don't match"}
@@ -232,10 +302,15 @@ async def register_post(
     return await signin_post(request, username, password)
 
 
-@router.post("/signin")
+@router.post("/signin",
+    summary="Authenticate user",
+    description="Processes user authentication with username and password",
+    response_description="Sets auth cookies and redirects to personal account"
+)
 async def signin_post(
     request: Request, username: str = Form(...), password: str = Form(...)
 ):
+    username = username.lower()
     try:
         access, refresh = auth.authenticate(username=username, password=password)
     except BadCredentials:
@@ -249,7 +324,11 @@ async def signin_post(
     return response
 
 
-@router.post("/search", response_class=HTMLResponse)
+@router.post(
+        "/search",
+        response_class=HTMLResponse,
+        
+)
 async def search_post(request: Request, search_string: str = Form(...)):
     search_results = [
         {"title": "Found book", "author": "Author", "cover": "/img/book_cover.jpg"}
@@ -261,7 +340,11 @@ async def search_post(request: Request, search_string: str = Form(...)):
     )
 
 
-@router.get("/logout")
+@router.get("/logout",
+    summary="Log out user",
+    description="Clears authentication cookies and logs out the user",
+    response_description="Redirects to home page"
+)
 async def logout(request: Request):
     response = RedirectResponse("/", status_code=303)
     refresh = request.cookies.get("refresh")
