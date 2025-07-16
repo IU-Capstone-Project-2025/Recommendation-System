@@ -1,76 +1,131 @@
 @media (max-width: 1024px) {
-  header {
-    display: flex;
-    align-items: center;
-    margin: auto;
-    z-index: 999;
-    flex-direction: column !important;
-    text-align: center !important;
-  }
-  main {
-    min-height: unset !important;
-  }
-  .btn-signing {
-    margin: 20px auto;
-  }
-  .content {
-    max-width: none !important;
-    margin-left: 0 !important;
-  }
-  .tag-box {
-    width: auto !important;
-  }
-  .bookshelve {
-    position: unset !important;
-  }
-  .book-catalog {
-    margin: auto !important;
-  }
+	header {
+		display: flex;
+		align-items: center;
+		margin: auto;
+		z-index: 999;
+		flex-direction: column !important;
+		text-align: center !important;
+	}
+	main {
+		min-height: unset !important;
+	}
+	.btn-signing {
+		margin: 20px auto;
+	}
+	.content {
+		max-width: none !important;
+		margin-left: 0 !important;
+	}
+	.tag-box {
+		width: auto !important;
+	}
+	.bookshelve {
+		display: none !important;
+	}
+	.book-catalog {
+		margin: auto !important;
+	}
+
+	.content > div:first-child {
+		width: 100% !important;
+		max-width: 100% !important;
+		flex-direction: column !important;
+		gap: 1rem !important;
+	}
+
+	.content > div:first-child h2 {
+		font-size: 1.8rem !important;
+		text-align: center !important;
+	}
+
+	.content > div:first-child h4 {
+		text-align: center !important;
+		display: none !important;
+	}
+
+	.content form {
+		padding: 0 1rem !important;
+	}
+
+	.input-title {
+		font-size: 1rem !important;
+		margin-bottom: 0.5rem !important;
+	}
+
+	.tag-box {
+		position: relative !important;
+		height: 2.5rem !important;
+		border-radius: 50px !important;
+		padding: 0 !important;
+	}
+	.tag-box input.tag[type='submit'] {
+		position: absolute !important;
+		inset: 3px !important;
+		width: calc(100% - 6px) !important;
+		height: calc(100% - 6px) !important;
+		border-radius: 50px !important;
+		background: #5300a0 !important;
+		color: white !important;
+		font-size: 1.3rem !important;
+		font-weight: 600 !important;
+		display: flex !important;
+		align-items: center !important;
+		justify-content: center !important;
+		padding: 0 !important;
+		margin: 0 !important;
+		border: none !important;
+		box-sizing: border-box !important;
+	}
 }
 
 @media (min-width: 100px) {
-  .book-grid {
-    grid-template-columns: repeat(1, 1fr) !important;
-  }
+	.book-grid {
+		grid-template-columns: repeat(1, 1fr) !important;
+	}
 }
 
 @media (min-width: 500px) {
-  .book-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
-  }
+	.book-grid {
+		grid-template-columns: repeat(2, 1fr) !important;
+	}
 }
 
 @media (min-width: 900px) {
-  .book-grid {
-    grid-template-columns: repeat(3, 1fr) !important;
-  }
+	.book-grid {
+		grid-template-columns: repeat(3, 1fr) !important;
+	}
 }
 
 #toggleButton {
-  display: none;
+	display: none;
 }
 
 @media (max-width: 1440px) {
-  .desktop-content {
-    display: none;
-  }
-  
-  #toggleButton {
-    position: fixed;
-    top: 20%;
-    right: 5%;
-    display: block;
-    padding: 12px;
-    color: white;
-    background-color: transparent;
-    border-radius: 42px;
-    cursor: pointer;
-    border: 2px solid white;
-    width: 50px;
-    height: 50px;
-  }
-  
-  .mobile-content-visible {
-    display: block !important;
-  }
+	.desktop-content {
+		display: none;
+	}
+
+	.bookshelve {
+		display: none !important;
+	}
+
+	#toggleButton {
+		position: fixed;
+		top: 20%;
+		right: 5%;
+		display: block;
+		padding: 12px;
+		color: white;
+		background-color: transparent;
+		border-radius: 42px;
+		cursor: pointer;
+		border: 2px solid white;
+		width: 50px;
+		height: 50px;
+	}
+
+	.mobile-content-visible {
+		display: block !important;
+	}
 }
