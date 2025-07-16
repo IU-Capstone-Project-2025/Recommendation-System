@@ -12,7 +12,38 @@ from src.scripts.exceptions import ObjectNotFound
 router = APIRouter()
 
 
-@router.post("/feedback")
+@router.post(
+    "/feedback",
+    summary="Submit book feedback",
+    description="""Allows authenticated users to submit feedback for books including:
+    - Setting reading status (Completed, Reading, Planned, Untracked)
+    - Rating books with a score (1-5)
+    """,
+    responses={
+        200: {
+            "description": "Feedback successfully submitted",
+            "content": {"text/plain": {"example": "OK"}}
+        },
+        400: {
+            "description": "Invalid input data",
+            "content": {
+                "text/plain": {
+                    "examples": {
+                        "invalid_status": {"value": "Unknown book status"},
+                        "invalid_score": {"value": "score value should be integer from 1 to 5"}
+                    }
+                }
+            }
+        },
+        404: {
+            "description": "Book not found",
+            "content": {"text/plain": {"example": "Book doesn't exist"}}
+        },
+        401: {
+            "description": "Unauthorized - User not authenticated"
+        }
+    }
+)
 async def set_score(request: Request):
     data = await request.form()
     data = jsonable_encoder(data)
