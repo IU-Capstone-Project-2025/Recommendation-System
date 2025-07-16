@@ -1,48 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recomendation System</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
-    <link href='/css/style.css' rel='stylesheet'>
-    <link href="/css/mobile.css" rel="stylesheet">
-</head>
-<body>
-    <img class="image-gradient" src="img/gradient.png" alt="gradient">
-    <div class="layer-blur"></div>
-    <div class="container">
-        <header>
-            <h1 class="logo"><a href="/" style="text-decoration: none; color: inherit;">Recomendation System</a></h1>
-             {% block search %}{% endblock %}
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Recomendation System</title>
+		<link
+			rel="stylesheet"
+			href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+		/>
+		<link href="/css/style.css" rel="stylesheet" />
+		<link href="/css/mobile.css" rel="stylesheet" />
+	</head>
+	<body>
+		<img class="image-gradient" src="img/gradient.png" alt="gradient" />
+		<div class="layer-blur"></div>
+		<div class="container">
+			<header>
+				<h1 class="logo">
+					<a href="/" style="text-decoration: none; color: inherit"
+						>Recomendation System</a
+					>
+				</h1>
+				{% block search %}{% endblock %}
 
-            <div class="user-box">
-                {% if user_data.preferred_username %}
-                <div style="display: flex; gap: 10px; align-items: center;">
-                    <img src="/img/avatar.svg" alt="User Avatar" width="40" height="40" />
-                    <span class="username"><a href="/personal" style="text-decoration: none; color: inherit;">{{user_data.preferred_username}}</a></span>
-                    <a href="/logout" style="background: transparent; font-size: 22pt; text-decoration: none; color: white;"><i class="bi bi-box-arrow-right"></i></a>
-                </div>
-                {% else %}
-                <div style="display: flex; gap: 10px;">
-                    <a href="/signin" class="btn-signing" style="text-decoration: none; color: black;">LOG IN</a>
-                    <a href="/registration" class="btn-signing" style="text-decoration: none; color: black;">SIGN UP</a>
-                </div>
-                {% endif %}
-            </div>
-        </header>
-    </div>
+				<div class="user-box">
+					{% if user_data.preferred_username %}
+					<div style="display: flex; gap: 10px; align-items: center">
+						<img src="/img/avatar.svg" alt="User Avatar" width="40" height="40" />
+						<span class="username"
+							><a href="/personal" style="text-decoration: none; color: inherit"
+								>{{user_data.preferred_username}}</a
+							></span
+						>
+						<a
+							href="/logout"
+							style="
+								background: transparent;
+								font-size: 22pt;
+								text-decoration: none;
+								color: white;
+							"
+							><i class="bi bi-box-arrow-right"></i
+						></a>
+					</div>
+					{% else %}
+					<div style="display: flex; gap: 10px">
+						<a
+							href="/signin"
+							class="btn-signing"
+							style="text-decoration: none; color: black"
+							>SIGN IN</a
+						>
+						<a
+							href="/registration"
+							class="btn-signing"
+							style="text-decoration: none; color: black"
+							>SIGN UP</a
+						>
+					</div>
+					{% endif %}
+				</div>
+			</header>
+		</div>
 
-    {% block content %}{% endblock %}
+		{% block content %}{% endblock %}
 
-    <script src="/js/books.js"></script>
-    <script src="/js/main.js"></script>
-    <script src="/js/generateLinks.js"></script>
-    <script src="/js/navbut.js"></script>
-    <script src="/js/count_stars.js"></script>
-    <script src="/js/update_form.js"></script>
+		<script src="/js/books.js"></script>
+		<script src="/js/main.js"></script>
+		<script src="/js/generateLinks.js"></script>
+		<script src="/js/navbut.js"></script>
+		<script src="/js/count_stars.js"></script>
+		<script src="/js/update_form.js"></script>
 
-
-    <div id="notification"></div>
-</body>
+		<div id="notification"></div>
+	</body>
 </html>
