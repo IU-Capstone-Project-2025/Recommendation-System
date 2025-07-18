@@ -482,8 +482,8 @@ SELECT
     ) AS compatibility,
     now() AS updatets
 FROM
-    PersonalPart pp
-    INNER JOIN Top t ON t.bookid = pp.bookid
+    PersonalPart pp FINAL
+    INNER JOIN Top t FINAL ON t.bookid = pp.bookid
 WHERE
     (pp.userid, pp.bookid) NOT IN (
         SELECT
