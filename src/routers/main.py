@@ -240,7 +240,9 @@ async def search(request: Request, search_string: str = Form(...)):
     response_description="HTML page with login form"
 )
 async def signin_get(request: Request):
-    return templates.TemplateResponse("signin.html", {"request": request})
+    return templates.TemplateResponse(
+        "signin.html", {"request": request, "saved_values": {}}
+    )
 
 
 @router.get(
@@ -265,7 +267,9 @@ async def lost(request: Request):
     response_class=HTMLResponse,
 )
 async def register(request: Request):
-    return templates.TemplateResponse("registration.html", {"request": request})
+    return templates.TemplateResponse(
+        "registration.html", {"request": request, "saved_values": {}}
+    )
 
 
 @router.post(
@@ -285,7 +289,16 @@ async def register_post(
     username = username.lower()
     if password != password_confirm:
         return templates.TemplateResponse(
-            "registration.html", {"request": request, "error": "passwords don't match"}
+            "registration.html",
+            {
+                "request": request,
+                "error": "passwords don't match",
+                "saved_values": {
+                    "username": username,
+                    "email": email,
+                    "password": password,
+                },
+            },
         )
 
     try:
@@ -296,6 +309,11 @@ async def register_post(
             {
                 "request": request,
                 "error": "This username is already taken, try another one",
+                "saved_values": {
+                    "username": username,
+                    "email": email,
+                    "password": password,
+                },
             },
         )
 
@@ -315,7 +333,12 @@ async def signin_post(
         access, refresh = auth.authenticate(username=username, password=password)
     except BadCredentials:
         return templates.TemplateResponse(
-            "signin.html", {"request": request, "error": "wrong password or username"}
+            "signin.html",
+            {
+                "request": request,
+                "error": "wrong password or username",
+                "saved_values": {"username": username, "password": password},
+            },
         )
 
     response = RedirectResponse("/personal", status_code=303)
