@@ -46,6 +46,7 @@
 								class="tag"
 								type="text"
 								name="username"
+                                {%if saved_values.username%}value="{{saved_values.username}}"{%endif%}
 								placeholder="Enter your username"
 							/>
 						</div>
@@ -56,6 +57,7 @@
 								class="tag"
 								type="password"
 								name="password"
+                                {%if saved_values.password%}value="{{saved_values.password}}"{%endif%}
 								placeholder="Enter your password"
 							/>
 						</div>
