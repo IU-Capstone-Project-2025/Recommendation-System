@@ -60,37 +60,43 @@
         <div id="book-lists-container">
             <div class="book-grid" id="bookGrid">
                 {% for book in user_lists[0] %}
-                <div class="book-card" onclick="window.location=`/book?id={{book[0].id}}`">
-                    <img src="{{book[0].cover}}" alt="{{book[0].title}}">
-                    <h3 class="book-title">{{book[0].title}}</h3>
-                    <p class="book-author">{{book[0].author}}</p>
-                    {% if book[1].score != None %}
-                        <p class="user-rating">{% for i in range(book[1].score) %}☆{% endfor %}</p>
-                    {% endif %}
+                <div>
+                    <div class="book-card" onclick="window.location=`/book?id={{book[0].id}}`">
+                        <img src="{{book[0].cover}}" alt="{{book[0].title}}">
+                        <h3 class="book-title">{{book[0].title}}</h3>
+                        <p class="book-author">{{book[0].author}}</p>
+                        {% if book[1].score != None %}
+                            <p class="user-rating">{% for i in range(book[1].score) %}☆{% endfor %}</p>
+                        {% endif %}
+                    </div>
                 </div>
                 {% endfor %}
             </div>
             <div class="book-grid" id="bookGrid">
                 {% for book in user_lists[1] %}
-                <div class="book-card" onclick="window.location=`/book?id={{book[0].id}}`">
-                    <img src="{{book[0].cover}}" alt="{{book[0].title}}">
-                    <h3 class="book-title">{{book[0].title}}</h3>
-                    <p class="book-author">{{book[0].author}}</p>
-                    {% if book[1].score != None %}
-                        <p class="user-rating">{% for i in range(book[1].score) %}☆{% endfor %}</p>
-                    {% endif %}
+                <div>
+                    <div class="book-card" onclick="window.location=`/book?id={{book[0].id}}`">
+                        <img src="{{book[0].cover}}" alt="{{book[0].title}}">
+                        <h3 class="book-title">{{book[0].title}}</h3>
+                        <p class="book-author">{{book[0].author}}</p>
+                        {% if book[1].score != None %}
+                            <p class="user-rating">{% for i in range(book[1].score) %}☆{% endfor %}</p>
+                        {% endif %}
+                    </div>
                 </div>
                 {% endfor %}
             </div>
             <div class="book-grid" id="bookGrid">
                 {% for book in user_lists[2] %}
-                <div class="book-card" onclick="window.location=`/book?id={{book[0].id}}`">
-                    <img src="{{book[0].cover}}" alt="{{book[0].title}}">
-                    <h3 class="book-title">{{book[0].title}}</h3>
-                    <p class="book-author">{{book[0].author}}</p>
-                    {% if book[1].score != None %}
-                        <p class="user-rating">{% for i in range(book[1].score) %}☆{% endfor %}</p>
-                    {% endif %}
+                <div>
+                    <div class="book-card" onclick="window.location=`/book?id={{book[0].id}}`">
+                        <img src="{{book[0].cover}}" alt="{{book[0].title}}">
+                        <h3 class="book-title">{{book[0].title}}</h3>
+                        <p class="book-author">{{book[0].author}}</p>
+                        {% if book[1].score != None %}
+                            <p class="user-rating">{% for i in range(book[1].score) %}☆{% endfor %}</p>
+                        {% endif %}
+                    </div>
                 </div>
                 {% endfor %}
             </div>
