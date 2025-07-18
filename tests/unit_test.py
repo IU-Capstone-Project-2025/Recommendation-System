@@ -17,7 +17,7 @@ def test_catalog_endpoint():
     assert response.status_code == 200
 
 def test_book_endpoint():
-    response = requests.get("http://backend:8000/book")
+    response = requests.get("http://backend:8000/book?id=1")
     assert response.status_code == 200
 
 def test_registration_endpoint():
