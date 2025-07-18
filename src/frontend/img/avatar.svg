@@ -1,0 +1,20 @@
+<svg width="200" height="200" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="animatedGradient" y1="0%" y2="0%">
+      <stop offset="0%" stop-color="#656565" />
+      <stop offset="20%" stop-color="#7f42a7" />
+      <stop offset="40%" stop-color="#6600c5" />
+      <stop offset="60%" stop-color="#5300a0" />
+      <stop offset="80%" stop-color="#757575" />
+      <stop offset="100%" stop-color="#656565" />
+      <animate attributeName="x1" values="100%;0%;100%" dur="4s" repeatCount="indefinite"/>
+      <animate attributeName="x2" values="-200%;0%;-200%" dur="4s" repeatCount="indefinite"/>
+
+    </linearGradient>
+  </defs>
+
+  <g fill="url(#animatedGradient)">
+    <path d="M16,14a6,6,0,1,1,6-6A6,6,0,0,1,16,14ZM16,4a4,4,0,1,0,4,4A4,4,0,0,0,16,4Z"/>
+    <path d="M24,30H8a2,2,0,0,1-2-2V22a7,7,0,0,1,7-7h6a7,7,0,0,1,7,7v6A2,2,0,0,1,24,30ZM13,17a5,5,0,0,0-5,5v6H24V22a5,5,0,0,0-5-5Z"/>
+  </g>
+</svg>

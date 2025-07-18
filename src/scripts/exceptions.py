@@ -4,3 +4,10 @@ class ObjectNotFound(Exception):
 
 class UsernameNotUnique(Exception):
     pass
+
+
+class BadCredentials(Exception):
+    pass
+
+class WrongListType(Exception):
+    pass

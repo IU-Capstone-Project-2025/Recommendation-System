@@ -1,32 +1,53 @@
 {% extends "base.html" %}
 {% block content %}
 <main class="book-catalog">
-
-
+    <script src="js/update_form.js"></script>
+    <script src="js/feedback.js"></script>
     <div class="book-header">
   <div class="book-info">
     <div class="book-cover anim-border">
-      <img src="/img/book_cover.jpg" alt="Фото">
+        <img src="{{book.cover}}" alt="{{book.title}}">
       <span></span>
       <span></span>
     </div>
     <div class="book-details">
-      <h2 class="book-title">Book Title Goes Here</h2>
-      <p class="book-author">by Author Name</p>
+        <h2 class="book-title">{{book.title}}</h2>
+      <p class="book-author">{{book.author}}</p>
+            {%if score != None%}
+            <div class="rating-wrapper">
+              <div class="rating">
+                  <span onclick="set_score({{book.id}}, 5)" id="rating-5" class="rating-star">{% if score < 5 %}☆{% else %}★{%endif%}</span>
+                  <span onclick="set_score({{book.id}}, 4)" id="rating-4" class="rating-star">{% if score < 4 %}☆{% else %}★{%endif%}</span>
+                  <span onclick="set_score({{book.id}}, 3)" id="rating-3" class="rating-star">{% if score < 3 %}☆{% else %}★{%endif%}</span>
+                  <span onclick="set_score({{book.id}}, 2)" id="rating-2" class="rating-star">{% if score < 2 %}☆{% else %}★{%endif%}</span>
+                  <span onclick="set_score({{book.id}}, 1)" id="rating-1" class="rating-star">{% if score < 1 %}☆{% else %}★{%endif%}</span>
+              </div>
+              <div class="rating-score" id="ratingScore">{{score}}/5</div>
+            </div>
+            <div id="remove-mark" class="tag-box" style="display: {% if score != 0 %}block{% else %}none{% endif %};">
+                <span class="tag" onclick="set_score({{book.id}}, 0)">Remove mark</span>
+            </div>
+            {%endif%}
 
-      <div class="book-rating">
-        <span class="star">&#9733;</span>
-        <span class="star">&#9733;</span>
-        <span class="star">&#9733;</span>
-        <span class="star">&#9733;</span>
-        <span class="star">&#9734;</span>
-        <span class="rating-value">4.0 / 5</span>
-      </div>
+
 
       <p class="book-description">
-        This is a placeholder description of the book. It gives an overview of the story.
+        {{book.description}}
       </p>
+          <br>
+          {%if status != None%}
+          <div class="status-save-wrapper">
+              <div class="selector">
+                <div id="status-completed" onclick="set_status({{book.id}}, completed)" class="select-btn {%if status == 'completed'%}active{%endif%}">Already read</div>
+                <div id="status-reading"   onclick="set_status({{book.id}}, reading)"   class="select-btn {%if status == 'reading'%}active{%endif%}">  In progress </div>
+                <div id="status-planned"   onclick="set_status({{book.id}}, planned)"   class="select-btn {%if status == 'planned'%}active{%endif%}">  Planned     </div>
+                <div id="status-untracked" onclick="set_status({{book.id}}, untracked)" class="select-btn {%if status == 'untracked'%}active{%endif%}">Untracked   </div>
+              </div>
+          </div>
+          {%endif%}
     </div>
+
+
   </div>
 </div>
     <button id="toggleButton" class="mobile-only"></button>
@@ -37,46 +58,89 @@
               <div class="progress-item">
                   <span class="progress-label">Planned</span>
                   <div class="progress-bar">
-                      <div class="progress-fill" style="width: 90%;"></div>
+                      <div class="progress-fill" style="width: {{book_stats.statuses.0}}%;"></div>
                   </div>
               </div>
               <div class="progress-item">
                   <span class="progress-label">Already read</span>
                   <div class="progress-bar">
-                      <div class="progress-fill" style="width: 75%;"></div>
+                      <div class="progress-fill" style="width: {{book_stats.statuses.1}}%;"></div>
                   </div>
               </div>
               <div class="progress-item">
                   <span class="progress-label">In progress</span>
                   <div class="progress-bar">
-                      <div class="progress-fill" style="width: 60%;"></div>
+                      <div class="progress-fill" style="width: {{book_stats.statuses.2}}%;"></div>
                   </div>
               </div>
-              <div class="progress-item">
-                  <span class="progress-label">Recommended</span>
+              Average score: {{book_stats.scores.5}}
+              <div class="progress-item small">
+                  <span class="progress-label">5☆</span>
                   <div class="progress-bar">
-                      <div class="progress-fill" style="width: 82%;"></div>
+                      <div class="progress-fill" style="width: {{book_stats.scores.4}}%;"></div>
+                  </div>
+              </div>
+              <div class="progress-item small">
+                  <span class="progress-label">4☆</span>
+                  <div class="progress-bar">
+                      <div class="progress-fill" style="width: {{book_stats.scores.3}}%;"></div>
+                  </div>
+              </div>
+              <div class="progress-item small">
+                  <span class="progress-label">3☆</span>
+                  <div class="progress-bar">
+                      <div class="progress-fill" style="width: {{book_stats.scores.2}}%;"></div>
+                  </div>
+              </div>
+              <div class="progress-item small">
+                  <span class="progress-label">2☆</span>
+                  <div class="progress-bar">
+                      <div class="progress-fill" style="width: {{book_stats.scores.1}}%;"></div>
+                  </div>
+              </div>
+              <div class="progress-item small">
+                  <span class="progress-label">1☆</span>
+                  <div class="progress-bar">
+                      <div class="progress-fill" style="width: {{book_stats.scores.0}}%;"></div>
                   </div>
               </div>
           </div>
       </div>
     </div>
     <div class="comments-section">
-    <h3>Comments</h3>
-    <div class="comment-list">
-      <div class="comment">
-        <p class="comment-author"><strong>John Doe</strong></p>
-        <p class="comment-text">This book was truly amazing! Highly recommend it.</p>
-      </div>
-      <div class="comment">
-        <p class="comment-author"><strong>Jane Smith</strong></p>
-        <p class="comment-text">A bit slow in the middle, but the ending was powerful.</p>
-      </div>
+        <h3>Comments</h3>
+        {% if comments_allowed %}
+        <form method="post" class="comment-form">
+          <textarea name="comment" placeholder="Leave a comment..." rows="4" required></textarea>
+          <button type="submit">Post Comment</button>
+        </form>
+        {% endif %}
+
+        <div class="comment-list">
+        {% for comment in comments.0 %}
+          <div class="comment">
+              <p class="comment-author"><strong>{{comment.0}}</strong></p>
+              <p class="comment-text">{{comment.1}}</p>
+          </div>
+        {% endfor %}
+
+        {% if comments.1 > 0 %}
+            <div class="pagination-wrapper">
+                <a class="pagination-link" href="?page=0&id={{book.id}}">First</a>
+                {% if current_page != 0 %}
+                    <a class="pagination-link" href="?page={{current_page - 1}}&id={{book.id}}"><</a>
+                {% endif %}
+                {% for page in range([0, current_page - 2]|max, [current_page + 3, comments.1]|min) %}
+                    <a class="pagination-link" href="?page={{page}}&id={{book.id}}" {% if page == current_page %}style="color: white;"{% endif %}>{{page + 1}}</a>
+                {% endfor %}
+                {% if current_page + 1 != comments.1 %}
+                    <a class="pagination-link" href="?page={{current_page + 1}}&id={{book.id}}">></a>
+                {% endif %}
+                <a class="pagination-link" href="?page={{comments.1 - 1}}&id={{book.id}}">Last</a>
+            </div>
+        {% endif %}
     </div>
-    <form class="comment-form">
-      <textarea placeholder="Leave a comment..." rows="4" required></textarea>
-      <button type="submit">Post Comment</button>
-    </form>
+
 
   </div>
 </main>

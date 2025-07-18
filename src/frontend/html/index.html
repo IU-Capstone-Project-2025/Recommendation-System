@@ -1,31 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recomendation System</title>
-    <link href='/css/style.css' rel='stylesheet'>
-    <link href="/css/mobile.css" rel="stylesheet">
-</head>
+{% extends "base.html" %}
+{% block content %}
 <body>
     <img class="image-gradient" src="/img/gradient.png" alt="gradient">
 
 
     <div class="layer-blur"></div>
     <div class="container">
-        <header>
-            <h1 class="logo"><a href="/" style="text-decoration: none; color: inherit;">Recomendation System</a></h1>
-
-            <div style="display: flex; gap: 10px;">
-                <a href="/signin" class="btn-signing" style="text-decoration: none; color: black;">LOG IN</a>
-                <a href="/registration" class="btn-signing" style="text-decoration: none; color: black;">SIGN UP</a>
-            </div>
-        </header>
-
         <main>
             <div class="content">
                 <div class="tag-box">
-                    <div class="tag"><a href="/catalog" style="text-decoration: none; color: inherit;">Start Exploring</a></div>
+                    <a href="/catalog" class="tag">Start Exploring</a>
                 </div>
 
                 <h1>Discover books you'll love — powered by your reading history.</h1>
@@ -38,7 +22,13 @@
         <spline-viewer  class="bookshelve" url="https://prod.spline.design/6sSB4NA7WSJtxw3F/scene.splinecode"></spline-viewer>
 
     </div>
+    <footer style="padding-left: 6.5rem">
+        <blockquote style="border-left: 3px solid #ccc; padding-left: 15px; margin-left: 0;">
+            <p style="font-style: italic;">Made weak by time and fate, but strong in will.</br>To strive, to seek, to find, and not to yield.</p>
+            <footer style="font-weight: bold;">— Alfred, Lord Tennyson</footer>
+        </blockquote>
+    </footer>
     <script type="module" src="https://unpkg.com/@splinetool/viewer@1.10.7/build/spline-viewer.js"></script>
 
 </body>
-</html>
+{% endblock %}

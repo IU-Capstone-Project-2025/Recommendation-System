@@ -1,30 +1,62 @@
 {% extends "base.html" %}
+
+{% block search %}
+<form action="/search" method="post" class="search-box" style="display: flex; gap: 8px;">
+    <input type="search" name="search_string" placeholder="Search..." class="search-input" required>
+    <button type="submit" class="search-button">Search</button>
+</form>
+{% endblock %}
+
 {% block content %}
 <main class="book-catalog">
-    <h2 class="section-title">Top</h2>
-    <div class="book-grid" id="bookGrid"></div>
+  <script src="js/filtering.js"></script>
+    <h2 id="section-title" class="section-title">{{ current_filter }}</h2>
+    <div class="book-grid" id="bookGrid">
+        {% for book in books %}
+            <div class="book-card" onclick="window.location=`/book?id={{book.id}}`">
+                <img src="{{book.cover}}" alt="{{book.title}}">
+                <h3 class="book-title">{{book.title}}</h3>
+                <p class="book-author">{{book.author}}</p>
+            </div>
+        {% endfor %}
+    </div>
+    <div class="pagination-wrapper" style="max-width: 960px">
+        <a class="pagination-link" href="?page=0&filter={{filter}}">First</a>
+        {% if current_page != 0 %}
+            <a class="pagination-link" href="?page={{current_page - 1}}&filter={{filter}}"><</a>
+        {% endif %}
+        {% for page in range([0, current_page - 2]|max, [pages, current_page + 3]|min) %}
+            <a class="pagination-link" href="?page={{page}}&filter={{filter}}" {% if page == current_page %}style="color: white;"{% endif %}>{{page + 1}}</a>
+        {% endfor %}
+        {% if current_page + 1 != pages %}
+            <a class="pagination-link" href="?page={{current_page + 1}}&filter={{filter}}">></a>
+        {% endif %}
+        <a class="pagination-link" href="?page={{pages - 1}}&filter={{filter}}">Last</a>
+    </div>
     <button id="toggleButton" class="mobile-only"></button>
     <div id="hiddenContent" class="desktop-content">
     <div class="side-nav">
         <div class="catalog-sidebar">
             <h3 class="filter-title">Filter by:</h3>
+            <form id="filterForm" method="get" action="/catalog">
             <div class="filter-options">
+              <div class="filter-options">
               <div class="radio-option">
-                <input type="radio" id="filter-top" name="filter" checked>
+                <input type="radio" id="filter-top" name="filter" value="Top" {% if current_filter == "Top" %} checked {% endif %}>
                 <label for="filter-top">Top</label>
               </div>
               <div class="radio-option">
-                <input type="radio" id="filter-popular" name="filter">
-                <label for="filter-popular">Popular</label>
+                <input type="radio" id="filter-week" name="filter" value="WeeklyTop" {% if current_filter == "WeeklyTop" %} checked {% endif %}>
+                <label for="filter-week">Weekly Top</label>
               </div>
+              {% if user_data.preferred_username %}
               <div class="radio-option">
-                <input type="radio" id="filter-week" name="filter">
-                <label for="filter-week">Popular per week</label>
-              </div>
-              <div class="radio-option">
-                <input type="radio" id="filter-recommend" name="filter">
+                <input type="radio" id="filter-recommend" name="filter" value="Recommendations" {% if current_filter == "Recommendations" %} checked {% endif %}>
                 <label for="filter-recommend">Recommendations</label>
               </div>
+              {% endif %}
+            </div>
+            </form>
             </div>
           </div>
         </div>
